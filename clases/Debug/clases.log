@@ -1,2 +1,5 @@
-﻿  opcion.cpp
+﻿  cuenta.h
+  opcion.h
+  operacion.h
+  Generando código...
   clases.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\clases.lib

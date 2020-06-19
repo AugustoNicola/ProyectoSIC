@@ -1,7 +1,13 @@
 #include <iostream>
-#include "clases.h"
-void func() {};
-Opcion* opciones[1] = { &Opcion("Operacion Convencional", &func) };
+#include <vector>
+#include "clases.h" //header con todas las clases que requiere el programa
+
+//================== LISTAS GLOBALES IMPORTANTES ==================//
+std::vector<std::vector<Operacion*>> DIAS = {}; //lista de todas las operaciones que deben exportarse, en orden cronologico
+std::vector<Opcion*> OPCIONES = {}; //lista de diferentes templates disponibles
+std::vector<Cuenta*> CUENTAS = {}; //lista de todas las cuentas que maneja el programa
+std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
+std::vector<int> IVA = {}; //registro mensual del saldo del iva (positivo para A Favor, negativo para A Pagar
 
 int main()
 {
@@ -11,21 +17,14 @@ int main()
 	while (loop)
 	{
 		std::cout << "=============== PROYECTO SIC ===============\n";
-		std::cout << "Seleccione una opción:\n";
-		for (int i = 0; i < 1; i++)
-		{
-			std::cout << i++ << ". " << opciones[i]->nombre << "\n";
-		}
+		std::cout << "Seleccione una opcion:\n";
 		
-		std::cout << "2. Salir\n";
+		for (int i = 0; i < opciones.size(); i++)
+		{std::cout << i+1 << ". " << opciones[i]->nombre << "\n";}
 		std::cin >> op;
-		switch (op)
+		if (op < opciones.size()+1)
 		{
-		case 1:
-
-			break;
-		default:
-			break;
+			opciones[op-1]->pFuncion();
 		}
 	};
 

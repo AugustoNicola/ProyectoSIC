@@ -1,7 +1,2 @@
 ﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(4,32): error C2027: uso del tipo 'Opcion' sin definir
-C:\dev\GitHub\ProyectoSIC\clases\src\clases.h(6): message : vea la declaración de 'Opcion'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(4,26): error C2064: el término no se evalúa como una función con 2 argumentos
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(15,15): error C2079: 'opcion' utiliza struct 'Opcion' sin definir
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(15,32): error C2440: 'inicializando': no se puede realizar la conversión de 'Opcion *' a 'int'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(15,32): message : No existe un contexto en el que sea posible realizar esta conversión
+  ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe
