@@ -20,11 +20,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\presets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\clases\clases.vcxproj">
       <Project>{0773080c-95e0-4748-ab51-883d061d564c}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Main.h" />
+    <ClInclude Include="src\presets.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -1,3 +1,5 @@
+#ifndef CUENTA_DEF
+#define CUENTA_DEF
 #include <string>
 #include <vector>
 
@@ -30,5 +32,7 @@ private:
 	bool modoDebito;
 	std::vector<DiaCuenta> dias;
 public:
-	Cuenta(std::string nom, bool mD) : nombre(nom), modoDebito(mD) {};
+	Cuenta(std::string nom, bool mD) : nombre(nom), modoDebito(mD) { dias = {}; };
 };
+
+#endif

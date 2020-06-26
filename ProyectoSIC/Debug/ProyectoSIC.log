@@ -1,2 +1,4 @@
 ﻿  Main.cpp
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(27,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(33,10): warning C4018: '<': no coinciden signed/unsigned
   ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe

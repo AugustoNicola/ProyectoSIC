@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MERCADERIA_DEF
+#define MERCADERIA_DEF
+
 #include <string>
 #include <vector>
 
@@ -11,8 +13,8 @@
 struct DiaMerca
 {
 	int delta;
-	int precioUnitario;
-	DiaMerca(int delt, int pU) : delta(delt), precioUnitario(pU) {};
+	unsigned int precioUnitario;
+	DiaMerca(int delt, unsigned int pU) : delta(delt), precioUnitario(pU) {};
 };
 
 /**
@@ -26,3 +28,5 @@ private:
 public:
 	Mercaderia(std::string nom) : nombre(nom) {};
 };
+
+#endif

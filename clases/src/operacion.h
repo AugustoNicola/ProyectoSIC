@@ -1,3 +1,6 @@
+#ifndef OPERACION_DEF
+#define OPERACION_DEF
+
 #include <string>
 #include <vector>
 #include "cuenta.h"
@@ -28,3 +31,5 @@ private:
 public:
 	Operacion(std::string doc) : documento(doc) {};
 };
+
+#endif

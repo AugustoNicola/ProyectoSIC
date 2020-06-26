@@ -1,4 +1,6 @@
 #pragma once
+
+#include <string>
 /**
  * @brief Estructura que contiene las caracteristicas de las opciones (o templates) para enlazar a las funciones correspondientes
  * 
