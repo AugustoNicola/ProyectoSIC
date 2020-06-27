@@ -28,10 +28,10 @@ struct DiaCuenta
 class Cuenta
 {
 private:
-	std::string nombre;
 	bool modoDebito;
-	std::vector<DiaCuenta> dias;
 public:
+	std::string nombre;
+	std::vector<DiaCuenta> dias;
 	Cuenta(std::string nom, bool mD) : nombre(nom), modoDebito(mD) { dias = {}; };
 };
 
