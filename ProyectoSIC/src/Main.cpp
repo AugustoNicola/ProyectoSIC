@@ -9,7 +9,9 @@ std::vector<std::vector<Operacion*>> DIAS = {}; //lista de todas las operaciones
 std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
 
-// ------------------ UTILIDADES -------------------
+// ############################################################################################
+// ################################         UTILIDADES         ################################
+// ############################################################################################
 
 /**
  * @brief Verifica si un string es un integer.
@@ -41,68 +43,23 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
 	}
 }
 
-// ------------------ OPERACIONES ------------------
-void opConvencional()
-{
-	int totalPermutado, totalDisminuido = 0, totalAumentado = 0;
-	std::string opString;
-	int cuentaElegida, disminucionCuenta;
 
-	/* Input totalPermutado */
-	do
-	{
-		system("CLS");
-		std::cout << "Ingrese el monto total que se permuta\n";
-		std::cin >> opString;
-		totalPermutado = validarInt(opString, 1, INT_MAX);
-		if (totalPermutado == 0)
-		{
-			///valor no valido
-			std::cout << "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente\n";
-			_getch();
-		}
-	} while (totalPermutado == 0);
 
-	/* Disminuyentes */
-	do
-	{
-	// ------ bucle disminucion total ------
-		system("CLS");
-		std::cout << "Total disminuido: $" << totalDisminuido;
-		std::cout << "\nSeleccione la cuenta que disminuir:";
-
-		cuentaElegida = mostrarCuentas(); ///TODO: REALIZAR INPUT ACA, NO EN FUNC!
-		do
-		{
-		// ------ bucle eleccion cantidad ------
-			system("CLS");
-			std::cout << "Cuenta elegida: " << CUENTAS[cuentaElegida].nombre;
-			std::cout << "\nSeleccione la cantidad que disminuye la cuenta: $";
-			std::cin >> opString;
-
-			disminucionCuenta = validarInt(opString, 1, totalPermutado - totalDisminuido);
-			if (disminucionCuenta == 0)
-			{
-				///valor no valido
-				std::cout << "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente\n";
-				_getch();
-			}
-		} while (disminucionCuenta == 0); //bucle eleccion cantidad
-		CUENTAS[cuentaElegida].dias.push_back(DiaCuenta("01/01", -disminucionCuenta)); //adicion
-
-	} while (totalDisminuido == totalPermutado); //bucle disminucion cantidad
-}
+// ############################################################################################
+// ###############################         OPERACIONES         ################################
+// ############################################################################################
 
 
 const std::vector<Opcion> OPCIONES = {
-	Opcion("Operacion Convencional", &opConvencional)
+	
 };
+
+// ############################################################################################
+// ################################         EJECUCIÓN         #################################
+// ############################################################################################
 
 int main()
 {
-
-	
-	
 	bool loop = true; //Controla la ejecucion del programa
 	std::string opString;
 	int op;
