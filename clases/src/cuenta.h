@@ -14,7 +14,7 @@ struct DiaCuenta
 	std::string dia;
 	int valorActual = 0;
 	int delta;
-	DiaCuenta(std::string d, int delt) : dia(d), delta(delt) { valorActual += delta; };
+	DiaCuenta(std::string d, int delt) : dia(d), delta(delt) { valorActual += delt; };
 };
 
 /**
@@ -28,8 +28,8 @@ class Cuenta
 {
 private:
 	bool modoDebito;
-public:
 	std::string nombre;
+public:
 	std::vector<DiaCuenta> dias;
 	Cuenta(std::string nom, bool mD) : nombre(nom), modoDebito(mD) { dias = {}; };
 };

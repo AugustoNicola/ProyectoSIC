@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "cuenta.h"
+
 /**
  * @brief Elemento con la informacion de una linea del registro
  * 

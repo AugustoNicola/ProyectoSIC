@@ -4,27 +4,42 @@
 #include <vector>
 
 /**
- * @brief Elemento con la informacion de un dia de compra de producto.
+ * @brief Estructura que almacena el estado de un producto a determinado precio segun los dias.
  * 
- * @param cantidad: representa la cantidad de unidades en el momento
- * @param precioUnitario: indica el precio al que se compro el producto, usado para metodos de costeo
+ * @param dia: string que guarda la fecha "DD/MM"
+ * @param delta: variacion del stock respecto a la fecha anterior
+ * @param cantidad: cantidad de productos en el dia
  */
 struct DiaMerca
 {
-	int cantidad;
-	unsigned int precioUnitario;
-	DiaMerca(int delt, unsigned int pU) : cantidad(delt), precioUnitario(pU) {};
+	std::string dia;
+	int delta;
+	unsigned int cantidad;
 };
 
 /**
- * @brief Clase con la informacion de un tipo de producto, asi como un registro de sus utilidades por precio.
+ * @brief Estructura individual de un producto a cierto precio. Contiene un vector con el stock por dias.
+ * 
+ * @param precio: precio diferenciativo de esta subclase.
+ * @param dias: vector con la situacion por dia del producto.
+ */
+struct PrecioMerca
+{
+	float precio;
+	std::vector<DiaMerca> dias;
+};
+
+/**
+ * @brief Clase con la informacion de un tipo de producto, asi como un registro de su stock, por precio.
+ * 
+ * @param nombre: string con el nombre diferenciativo del producto.
+ * @param precios: vector con una lista de todos los precios unitarios a los que se adquirio el producto.
  */
 class Mercaderia
 {
 private:
 	std::string nombre;
-	std::vector<DiaMerca> dias;
 public:
-	Mercaderia(std::string nom) : nombre(nom) {};
+	std::vector<PrecioMerca> precios;
 };
 

@@ -1,11 +1,10 @@
-#include <iostream>
-#include <stdlib.h>
-#include <conio.h>
-#include <climits>
-#include <vector>
+#include <iostream> //I/O basico
+#include <conio.h> // _getch()
+#include <climits> //INT_MIN, INT_MAX, etc
+#include <vector> //arrays dinamicos
 
-#include "clases.h"
-#include "presets.h" //importa CUENTAS
+#include "clases.h" //estructuras de clases personalizadas
+#include "presets.h" //vector CUENTAS
 std::vector<std::vector<Operacion*>> DIAS = {}; //lista de todas las operaciones que deben exportarse, en orden cronologico
 std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
