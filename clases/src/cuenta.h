@@ -1,5 +1,4 @@
-#ifndef CUENTA_DEF
-#define CUENTA_DEF
+#pragma once
 #include <string>
 #include <vector>
 
@@ -34,5 +33,3 @@ public:
 	std::vector<DiaCuenta> dias;
 	Cuenta(std::string nom, bool mD) : nombre(nom), modoDebito(mD) { dias = {}; };
 };
-
-#endif

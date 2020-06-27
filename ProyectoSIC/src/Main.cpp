@@ -3,15 +3,12 @@
 #include <conio.h>
 #include <climits>
 #include <vector>
-#include "clases.h"
-#include "presets.h" //importa los vectores de CUENTAS y OPCIONES
 
+#include "clases.h"
+#include "presets.h" //importa CUENTAS
 std::vector<std::vector<Operacion*>> DIAS = {}; //lista de todas las operaciones que deben exportarse, en orden cronologico
 std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
-std::vector<Cuenta> CUENTAS = {
-	Cuenta("Caja", true)
-};
 
 // ------------------ UTILIDADES -------------------
 

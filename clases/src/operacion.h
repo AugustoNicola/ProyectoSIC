@@ -1,5 +1,4 @@
-#ifndef OPERACION_DEF
-#define OPERACION_DEF
+#pragma once
 
 #include <string>
 #include <vector>
@@ -32,4 +31,3 @@ public:
 	Operacion(std::string doc) : documento(doc) {};
 };
 
-#endif

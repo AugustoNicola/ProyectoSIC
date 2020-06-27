@@ -1,5 +1,4 @@
-#ifndef MERCADERIA_DEF
-#define MERCADERIA_DEF
+#pragma once
 
 #include <string>
 #include <vector>
@@ -7,14 +6,14 @@
 /**
  * @brief Elemento con la informacion de un dia de compra de producto.
  * 
- * @param delta: representa la cantidad de unidades compradas
+ * @param cantidad: representa la cantidad de unidades en el momento
  * @param precioUnitario: indica el precio al que se compro el producto, usado para metodos de costeo
  */
 struct DiaMerca
 {
-	int delta;
+	int cantidad;
 	unsigned int precioUnitario;
-	DiaMerca(int delt, unsigned int pU) : delta(delt), precioUnitario(pU) {};
+	DiaMerca(int delt, unsigned int pU) : cantidad(delt), precioUnitario(pU) {};
 };
 
 /**
@@ -29,4 +28,3 @@ public:
 	Mercaderia(std::string nom) : nombre(nom) {};
 };
 
-#endif

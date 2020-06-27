@@ -1,5 +1,4 @@
-#ifndef IVA_DEF
-#define IVA_DEF
+#pragma once
 
 #include <string>
 
@@ -16,4 +15,3 @@ struct MesIVA
 	int valor;
 };
 
-#endif
