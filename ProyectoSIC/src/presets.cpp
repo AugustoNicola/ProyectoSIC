@@ -5,9 +5,9 @@ extern const std::vector<Cuenta> CUENTAS = {
 	/* ----- activo ----- */
 	Cuenta("Caja", true, Cuenta::A_OPER),
 	Cuenta("Bco. Cuenta Corriente", true, Cuenta::A_OPER),
-	Cuenta("Muebles y Útiles", true, Cuenta::A_OPER),
+	Cuenta("Muebles y Utiles", true, Cuenta::A_OPER),
 	Cuenta("Instalaciones", true, Cuenta::A_OPER),
-	Cuenta("Equipos de Computación", true, Cuenta::A_OPER),
+	Cuenta("Equipos de Computacion", true, Cuenta::A_OPER),
 	Cuenta("Maquinarias", true, Cuenta::A_OPER),
 	Cuenta("Rodados", true, Cuenta::A_OPER),
 	Cuenta("Valores a Depositar", true, Cuenta::A_OPER),

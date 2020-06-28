@@ -34,9 +34,9 @@ public:
 	};
 private:
 	bool modoDebito;
+public:
 	std::string nombre;
 	Cuenta::Tipo tipo;
-public:
 	std::vector<DiaCuenta> dias;
 	Cuenta(std::string nom, bool mD, Tipo t) : nombre(nom), modoDebito(mD), tipo(t) { dias = {}; };
 };

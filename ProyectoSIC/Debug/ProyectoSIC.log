@@ -1,1 +1,5 @@
-﻿  presets.cpp
+﻿  Main.cpp
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(29,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(69,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(137,21): warning C4018: '<': no coinciden signed/unsigned
+  ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe
