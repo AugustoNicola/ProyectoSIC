@@ -1,11 +1,1 @@
-﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(12,21): error C2373: 'CUENTAS': nueva definición; modificadores de tipo distintos
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\presets.h(5): message : vea la declaración de 'CUENTAS'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(30,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,19): error C3861: 'mostrarCuentas': no se encontró el identificador
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(83,60): error C2088: '[': no es válido para class
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(120,21): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(128,21): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(144,15): warning C4018: '<=': no coinciden signed/unsigned
-  presets.cpp
-  Generando código...
+﻿  presets.cpp
