@@ -2,6 +2,7 @@
 #include <conio.h> // _getch()
 #include <climits> //INT_MIN, INT_MAX, etc
 #include <vector> //arrays dinamicos
+#include <optional> //valores optativos
 
 #include "clases.h" //estructuras de clases personalizadas
 #include "presets.h" //vector CUENTAS
@@ -32,8 +33,9 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
 
 	if (esNumero)
 	{
+		/// es numero
 		n = atoi(str.c_str());
-		return (n >= min && n <= max) ? n : 0;
+		return (n >= min && n <= max) ? n : 0; //devuelve 0 si no esta en el rango y el numero si lo esta
 	}
 	else {
 		///input no es numero
@@ -44,6 +46,15 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
 }
 
 
+// ############################################################################################
+// ################################         FUNCIONES         #################################
+// ############################################################################################
+
+void aumentarPartida(bool DebeOHaber, std::optional<float> limite)
+{
+	
+}
+
 
 // ############################################################################################
 // ###############################         OPERACIONES         ################################
@@ -53,6 +64,7 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
 const std::vector<Opcion> OPCIONES = {
 	
 };
+
 
 // ############################################################################################
 // ################################         EJECUCIÓN         #################################
@@ -78,39 +90,20 @@ int main()
 		std::cin >> opString;
 
 		/* Validacion */
-		inputValido = true;
-		for (int i = 0; i < opString.size(); i++)
+		int op = validarInt(opString, 1, OPCIONES.size());
+		if ( op != 0 )
 		{
-			if (!isdigit(opString[i])) { inputValido = false; break; }
-		}
+			/// input valido!
+			OPCIONES[op - 1].pFuncion();
+			_getch();
 
-		if (!inputValido)
-		{
-			///input no es numero
-			inputValido = false;
-			std::cin.clear();
-			std::cin.ignore(1000, '\n');
+			loop = false; //provisorio
+		} else {
+			///input invalido
 			std::cout << "Valor no valido, presione cualquier tecla para volver a intentarlo: ";
 			_getch();
-		} else {
-			///input es numero
-			op = atoi(opString.c_str());
-			if (!( (op <= OPCIONES.size()) && (op > 0)) )
-			{
-				///input no esta en el rango de opciones
-				inputValido = false;
-				std::cin.clear();
-				std::cin.ignore(1000, '\n');
-				std::cout << "Valor no valido, presione cualquier tecla para volver a intentarlo: ";
-				_getch();
-			} else {
-				/// input valido!
-				OPCIONES[op - 1].pFuncion();
-				_getch();
-
-				loop = false;
-			}
 		}
+
 		system("CLS");
 	} while (loop);
 	
