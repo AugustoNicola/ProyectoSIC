@@ -1,5 +1,21 @@
 ﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(29,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(69,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(137,21): warning C4018: '<': no coinciden signed/unsigned
-  ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(26,1): error C2144: error de sintaxis: 'int' debe estar precedido de ';'
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(31,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(72,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(75,20): error C2039: "AoP_OPER": no es un miembro de "Cuenta"
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(28): message : vea la declaración de 'Cuenta'
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(75,28): error C2065: 'AoP_OPER': identificador no declarado
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,36): error C2039: "A_OPER": no es un miembro de "Cuenta"
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(28): message : vea la declaración de 'Cuenta'
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,8): error C2065: 'A_OPER': identificador no declarado
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,73): error C2039: "P_OPER": no es un miembro de "Cuenta"
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(28): message : vea la declaración de 'Cuenta'
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,79): error C2065: 'P_OPER': identificador no declarado
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(154,68): warning C4244: 'argumento': conversión de '_Ty' a 'int'; posible pérdida de datos
+          with
+          [
+              _Ty=float
+          ]
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(154,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(181,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(229,21): warning C4018: '<': no coinciden signed/unsigned

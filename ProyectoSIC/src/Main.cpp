@@ -10,6 +10,8 @@ std::vector<std::vector<Operacion*>> DIAS = {}; //lista de todas las operaciones
 std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
 
+std::vector<Cuenta*> ACTIVOS, PASIVOS, R_NEGS;
+
 // ############################################################################################
 // ################################         UTILIDADES         ################################
 // ############################################################################################
@@ -53,8 +55,9 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
  * 
  * @param  t: el valor del enum de la clase Cuenta que deben tener las clases para mostrarse
  * @param mensaje: el mensaje que se muestra acompaniando el menu de seleccion
+ * @param DebeOHaber: usado para marcar si se realizara un aumento o disminucion a la cuenta (+/-)
  */
-Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje)
+Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 {
 	std::string opStr;
 	int op;
@@ -63,27 +66,66 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje)
 	{
 		std::vector<Cuenta*> pos = {}; //vector que asocia cada posicion con 
 		int cont = 1; //contador para el output
+		std::string modificador; //para mostrar (+/-)
 		
 		system("CLS");
-
 		/* Iteracion de cuentas */
-		for(int i = 0; i < CUENTAS.size(); i++)
+
+		//verifica si se busca solo un tipo o un filtro
+		if(t == Cuenta::F_OPER)
 		{
-			/* verifica si la cuenta actual es del tipo buscado*/
-			if(t == Cuenta::AoP_OPER)
+			/// filtro: mostrar Activos, Pasivos y Resultado Negativo
+
+			std::cout << "-------- ACTIVOS --------";
+			modificador = (DebeOHaber) ? " (A+)" : " (A-)" ;
+			for (int i = 0; i < ACTIVOS.size(); i++)
 			{
-				///mostrar Activos y Pasivos
-				if (CUENTAS[i].tipo == Cuenta::A_OPER || CUENTAS[i].tipo == Cuenta::P_OPER)
-				{
-					std::cout << cont << ". " << CUENTAS[i].nombre << "\n"; //output
-					pos.push_back((Cuenta*)&CUENTAS[i]); //guarda lugar de memoria de cuenta actual en vector
-					cont++;
-				}
-			} else {
-				///mostrar solo Activos o Pasivos (segun t)
+				std::cout << cont << ". " << ACTIVOS[i]->nombre << modificador << "\n"; //output
+				pos.push_back(ACTIVOS[i]);
+				cont++;
+			}
+
+			std::cout << "-------- PASIVOS --------";
+			modificador = (DebeOHaber) ? " (P-)" : " (P+)";
+			for (int i = 0; i < PASIVOS.size(); i++)
+			{
+				std::cout << cont << ". " << PASIVOS[i]->nombre << modificador << "\n"; //output
+				pos.push_back(PASIVOS[i]);
+				cont++;
+			}
+
+			std::cout << "-------- RESULTADOS --------";
+			modificador = (DebeOHaber) ? " (R-)" : " ((R-)+)";
+			for (int i = 0; i < R_NEGS.size(); i++)
+			{
+				std::cout << cont << ". " << R_NEGS[i]->nombre << modificador << "\n"; //output
+				pos.push_back(R_NEGS[i]);
+				cont++;
+			}
+		} else {
+			/// mostrar solo Activos, Pasivos o Resultados Negativos (segun t)
+			/// 
+			/* set el modificador */
+			switch (t)
+			{
+			case Cuenta::ACTIVO:
+				modificador = (DebeOHaber) ? " (A+)" : " (A-)";
+				break;
+			case Cuenta::PASIVO:
+				modificador = (DebeOHaber) ? " (P-)" : " (P+)";
+				break;
+			case Cuenta::R_NEG:
+				modificador = (DebeOHaber) ? " (R-)" : " ((R-)+)";
+				break;
+			}
+			
+			/* recorre CUENTAS*/
+			for(int i = 0; i < CUENTAS.size(); i++)
+			{
+				//solo muestra la cuenta si es del tipo buscado
 				if (CUENTAS[i].tipo == t)
 				{
-					std::cout << cont << ". " << CUENTAS[i].nombre << "\n"; //output
+					std::cout << cont << ". " << CUENTAS[i].nombre << modificador << "\n"; //output
 					pos.push_back((Cuenta*)&CUENTAS[i]); //guarda lugar de memoria de cuenta actual en vector
 					cont++;
 				}
@@ -215,6 +257,14 @@ const std::vector<Opcion> OPCIONES = {
 
 int main()
 {
+	/* division de vectores de Cuentas */
+	for (int i = 0; i < CUENTAS.size(); i++)
+	{
+		if(CUENTAS[i].tipo == Cuenta::ACTIVO) {ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].tipo == Cuenta::PASIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].tipo == Cuenta::R_NEG) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
+	}
+
 	bool loop = true; //Controla la ejecucion del programa
 	std::string opString;
 
