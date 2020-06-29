@@ -28,10 +28,13 @@ struct DiaCuenta
 class Cuenta
 {
 public:
-	/** @brief usado para limitar las apariciones de la cuenta (Activo Operacional, Pasivo Operacional, Otro) */
+	/**
+	 * @brief usado para limitar las apariciones de la cuenta (Activo, Pasivo, Resultado Negativo, Otro).
+	 *  y tambien filtros (Operacionales)
+	 */
 	enum Tipo {
-		A_OPER, P_OPER, OTRO,
-		AoP_OPER
+		ACTIVO, PASIVO, R_NEG, OTRO,
+		F_OPER
 	};
 private:
 	bool modoDebito;
