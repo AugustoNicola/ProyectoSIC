@@ -30,7 +30,8 @@ class Cuenta
 public:
 	/** @brief usado para limitar las apariciones de la cuenta (Activo Operacional, Pasivo Operacional, Otro) */
 	enum Tipo {
-		A_OPER, P_OPER, OTRO
+		A_OPER, P_OPER, OTRO,
+		AoP_OPER
 	};
 private:
 	bool modoDebito;

@@ -52,6 +52,7 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
  *  y devuelve un puntero a ella.
  * 
  * @param  t: el valor del enum de la clase Cuenta que deben tener las clases para mostrarse
+ * @param mensaje: el mensaje que se muestra acompaniando el menu de seleccion
  */
 Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje)
 {
@@ -68,12 +69,24 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje)
 		/* Iteracion de cuentas */
 		for(int i = 0; i < CUENTAS.size(); i++)
 		{
-			// verifica si la cuenta actual es del tipo buscado
-			if (CUENTAS[i].tipo == t)
+			/* verifica si la cuenta actual es del tipo buscado*/
+			if(t == Cuenta::AoP_OPER)
 			{
-				std::cout << cont << ". " << CUENTAS[i].nombre << "\n"; //output
-				pos.push_back((Cuenta *)&CUENTAS[i]); //guarda lugar de memoria de cuenta actual en vector
-				cont++;
+				///mostrar Activos y Pasivos
+				if (CUENTAS[i].tipo == Cuenta::A_OPER || CUENTAS[i].tipo == Cuenta::P_OPER)
+				{
+					std::cout << cont << ". " << CUENTAS[i].nombre << "\n"; //output
+					pos.push_back((Cuenta*)&CUENTAS[i]); //guarda lugar de memoria de cuenta actual en vector
+					cont++;
+				}
+			} else {
+				///mostrar solo Activos o Pasivos (segun t)
+				if (CUENTAS[i].tipo == t)
+				{
+					std::cout << cont << ". " << CUENTAS[i].nombre << "\n"; //output
+					pos.push_back((Cuenta*)&CUENTAS[i]); //guarda lugar de memoria de cuenta actual en vector
+					cont++;
+				}
 			}
 		}
 
@@ -103,14 +116,91 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje)
 // ################################         FUNCIONES         #################################
 // ############################################################################################
 
-void aumentarPartida(bool DebeOHaber, std::optional<float> limite)
+/**
+ * .
+ * 
+ * \param DebeOHaber
+ * \param t
+ * \param mensaje
+ * \param limite
+ * \param mensajeLimite
+ * \return 
+ */
+float aumentarPartida(bool DebeOHaber, Cuenta::Tipo t , std::string mensaje, std::optional<float> limite, std::optional<std::string> mensajeLimite)
 {
-	
+	Cuenta* cuentaActual;
+	std::string aumentoActualStr;
+	float aumentoActual;
+	float aumentoTotal = 0;
+
+	if (limite)
+	{
+		/* ----- permitir aumentos hasta el limite ----- */
+		while(aumentoTotal != limite)
+		{
+			system("CLS");
+			
+			/* seleccion de cuenta */
+			cuentaActual = elegirCuenta(t, mensaje);
+
+			/* seleccion de cantidad */
+			std::cout << "\n\nTotal actual: $" << aumentoTotal;
+			std::cout << "\n\nSeleccione la cantidad: $";
+			std::cin >> aumentoActualStr;
+
+			/* validacion de cantidad */
+			aumentoActual = validarInt(aumentoActualStr, 1, (limite.value() - aumentoTotal)); //se asegura de que la cantidad sea valida
+			
+			if (aumentoActual != 0)
+			{
+				/// cantidad valida!
+				aumentoTotal += aumentoTotal;
+			} else {
+				/// cantidad invalida
+				std::cout << "\n\nCantidad invalida, presione cualquier tecla para intentarlo nuevamente";
+				_getch();
+			}
+		}
+	} else {
+		/* ----- aumentos hasta que el usuario decida parar ----- */
+		bool satisfecho = false;
+
+		while (!satisfecho)
+		{
+			/* seleccion de cuenta */
+			cuentaActual = elegirCuenta(t, mensaje);
+
+			/* seleccion de cantidad */
+			std::cout << "\n\nTotal actual: $" << aumentoTotal;
+			std::cout << "\n\nSeleccione la cantidad: $";
+			std::cin >> aumentoActualStr;
+
+			/* validacion de cantidad */
+			aumentoActual = validarInt(aumentoActualStr, 1, INT_MAX); //se asegura de que la cantidad sea valida
+			if (aumentoActual != 0)
+			{
+				/// cantidad valida!
+				aumentoActual += aumentoTotal;
+
+				/* permitir finalizar */
+				system("CLS");
+				std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
+				std::cin >> aumentoActualStr; //reusado de variables!!
+				if (validarInt(aumentoActualStr, 1, 2) == 2) { satisfecho = true; }
+			}
+			else {
+				/// cantidad invalida
+				std::cout << "\n\nCantidad invalida, presione cualquier tecla para intentarlo nuevamente";
+				_getch();
+			}
+		}
+	}
+	return aumentoTotal;
 }
 
 
 // ############################################################################################
-// ###############################         OPERACIONES         ################################
+// ################################         OPCIONES         ########$#########################
 // ############################################################################################
 
 
