@@ -1,21 +1,50 @@
 ﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(26,1): error C2144: error de sintaxis: 'int' debe estar precedido de ';'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(31,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(72,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(75,20): error C2039: "AoP_OPER": no es un miembro de "Cuenta"
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(28): message : vea la declaración de 'Cuenta'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(75,28): error C2065: 'AoP_OPER': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,36): error C2039: "A_OPER": no es un miembro de "Cuenta"
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(28): message : vea la declaración de 'Cuenta'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,8): error C2065: 'A_OPER': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,73): error C2039: "P_OPER": no es un miembro de "Cuenta"
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(28): message : vea la declaración de 'Cuenta'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(78,79): error C2065: 'P_OPER': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(154,68): warning C4244: 'argumento': conversión de '_Ty' a 'int'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(81,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(90,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(99,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(129,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(201,68): warning C4244: 'argumento': conversión de '_Ty' a 'int'; posible pérdida de datos
           with
           [
               _Ty=float
           ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(154,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(181,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(229,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(201,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(231,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(271,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(68,17): warning C4244: 'inicializando': conversión de '_Ty' a 'float'; posible pérdida de datos
+          with
+          [
+              _Ty=int
+          ]
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(281): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
+          with
+          [
+              _Ty=float
+          ]
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(281): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
+          with
+          [
+              _Ty=float
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(185): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_construct_base<_Ty>::_Optional_construct_base<int>(std::in_place_t,int &&)" que se está compilando
+          with
+          [
+              _Ty=float
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(185): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_construct_base<_Ty>::_Optional_construct_base<int>(std::in_place_t,int &&)" que se está compilando
+          with
+          [
+              _Ty=float
+          ]
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(278): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
+          with
+          [
+              _Ty2=int
+          ]
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(278): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
+          with
+          [
+              _Ty2=int
+          ]
+  ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe

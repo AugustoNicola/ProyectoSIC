@@ -50,10 +50,10 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
 }
 
 /**
- * @brief Muestra todas las cuentas del tipo determinado, en orden numerico. Pide elegir una
+ * @brief Muestra todas las cuentas del tipo/filtro determinado, en orden numerico. Pide elegir una
  *  y devuelve un puntero a ella.
  * 
- * @param  t: el valor del enum de la clase Cuenta que deben tener las clases para mostrarse
+ * @param t: el valor del enum de la clase Cuenta que deben tener las clases para mostrarse/filtro
  * @param mensaje: el mensaje que se muestra acompaniando el menu de seleccion
  * @param DebeOHaber: usado para marcar si se realizara un aumento o disminucion a la cuenta (+/-)
  */
@@ -61,12 +61,12 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 {
 	std::string opStr;
 	int op;
+	std::string modificador; //para mostrar (+/-)
 	/* Bucle validacion */
 	do
 	{
-		std::vector<Cuenta*> pos = {}; //vector que asocia cada posicion con 
+		std::vector<Cuenta*> pos = {}; //vector que asocia cada posicion con su cuenta correspondiente
 		int cont = 1; //contador para el output
-		std::string modificador; //para mostrar (+/-)
 		
 		system("CLS");
 		/* Iteracion de cuentas */
@@ -80,7 +80,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 			modificador = (DebeOHaber) ? " (A+)" : " (A-)" ;
 			for (int i = 0; i < ACTIVOS.size(); i++)
 			{
-				std::cout << cont << ". " << ACTIVOS[i]->nombre << modificador << "\n"; //output
+				std::cout << "\n" << cont << ". " << ACTIVOS[i]->nombre << modificador; //output
 				pos.push_back(ACTIVOS[i]);
 				cont++;
 			}
@@ -89,7 +89,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 			modificador = (DebeOHaber) ? " (P-)" : " (P+)";
 			for (int i = 0; i < PASIVOS.size(); i++)
 			{
-				std::cout << cont << ". " << PASIVOS[i]->nombre << modificador << "\n"; //output
+				std::cout << "\n" << cont << ". " << PASIVOS[i]->nombre << modificador; //output
 				pos.push_back(PASIVOS[i]);
 				cont++;
 			}
@@ -98,34 +98,40 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 			modificador = (DebeOHaber) ? " (R-)" : " ((R-)+)";
 			for (int i = 0; i < R_NEGS.size(); i++)
 			{
-				std::cout << cont << ". " << R_NEGS[i]->nombre << modificador << "\n"; //output
+				std::cout << "\n" << cont << ". " << R_NEGS[i]->nombre << modificador; //output
 				pos.push_back(R_NEGS[i]);
 				cont++;
 			}
-		} else {
+		}
+		else {
 			/// mostrar solo Activos, Pasivos o Resultados Negativos (segun t)
-			/// 
-			/* set el modificador */
+
+			/* set los modificadores */
+			std::string titulo;
 			switch (t)
 			{
 			case Cuenta::ACTIVO:
 				modificador = (DebeOHaber) ? " (A+)" : " (A-)";
+				titulo = "-------- ACTIVOS --------";
 				break;
 			case Cuenta::PASIVO:
 				modificador = (DebeOHaber) ? " (P-)" : " (P+)";
+				titulo = "-------- PASIVOS --------";
 				break;
 			case Cuenta::R_NEG:
 				modificador = (DebeOHaber) ? " (R-)" : " ((R-)+)";
+				titulo = "-------- RESULTADOS --------";
 				break;
 			}
-			
+
+			std::cout << titulo;
 			/* recorre CUENTAS*/
-			for(int i = 0; i < CUENTAS.size(); i++)
+			for (int i = 0; i < CUENTAS.size(); i++)
 			{
 				//solo muestra la cuenta si es del tipo buscado
 				if (CUENTAS[i].tipo == t)
 				{
-					std::cout << cont << ". " << CUENTAS[i].nombre << modificador << "\n"; //output
+					std::cout << "\n" << cont << ". " << CUENTAS[i].nombre << modificador; //output
 					pos.push_back((Cuenta*)&CUENTAS[i]); //guarda lugar de memoria de cuenta actual en vector
 					cont++;
 				}
@@ -159,16 +165,17 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 // ############################################################################################
 
 /**
- * .
+ * @brief Le pide al usuario realizar operaciones con las cuentas permitidas en el sentido dictado hasta que
+ *  se alcance un limite (de haberlo), o se decida parar.
  * 
- * \param DebeOHaber
- * \param t
- * \param mensaje
- * \param limite
- * \param mensajeLimite
- * \return 
+ * @param t enum del tipo de cuenta o filtro permitido para realizar operaciones
+ * @param DebeOHaber booleano que define que columna esta satisfaciendo las cuentas
+ * @param mensaje string con el mensaje que acompania la seleccion de Cuenta
+ * @param [limite] float hasta el cual se deben hacer operaciones
+ * 
+ * @return float con la cantidad total que se sumo
  */
-float aumentarPartida(bool DebeOHaber, Cuenta::Tipo t , std::string mensaje, std::optional<float> limite, std::optional<std::string> mensajeLimite)
+float aumentarPartida(Cuenta::Tipo t, bool DebeOHaber, std::string mensaje, std::optional<float> limite)
 {
 	Cuenta* cuentaActual;
 	std::string aumentoActualStr;
@@ -183,7 +190,7 @@ float aumentarPartida(bool DebeOHaber, Cuenta::Tipo t , std::string mensaje, std
 			system("CLS");
 			
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, mensaje);
+			cuentaActual = elegirCuenta(t, mensaje, DebeOHaber);
 
 			/* seleccion de cantidad */
 			std::cout << "\n\nTotal actual: $" << aumentoTotal;
@@ -196,7 +203,10 @@ float aumentarPartida(bool DebeOHaber, Cuenta::Tipo t , std::string mensaje, std
 			if (aumentoActual != 0)
 			{
 				/// cantidad valida!
-				aumentoTotal += aumentoTotal;
+				aumentoTotal += aumentoActual;
+
+				/* TODO: aumento de cuenta */
+				
 			} else {
 				/// cantidad invalida
 				std::cout << "\n\nCantidad invalida, presione cualquier tecla para intentarlo nuevamente";
@@ -210,7 +220,7 @@ float aumentarPartida(bool DebeOHaber, Cuenta::Tipo t , std::string mensaje, std
 		while (!satisfecho)
 		{
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, mensaje);
+			cuentaActual = elegirCuenta(t, mensaje, DebeOHaber);
 
 			/* seleccion de cantidad */
 			std::cout << "\n\nTotal actual: $" << aumentoTotal;
@@ -228,7 +238,7 @@ float aumentarPartida(bool DebeOHaber, Cuenta::Tipo t , std::string mensaje, std
 				system("CLS");
 				std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
 				std::cin >> aumentoActualStr; //reusado de variables!!
-				if (validarInt(aumentoActualStr, 1, 2) == 2) { satisfecho = true; }
+				satisfecho = (validarInt(aumentoActualStr, 1, 2) == 2) ? true : false;
 			}
 			else {
 				/// cantidad invalida
@@ -289,7 +299,8 @@ int main()
 			_getch();
 
 			loop = false; //provisorio
-		} else {
+		}
+		else {
 			///input invalido
 			std::cout << "Valor no valido, presione cualquier tecla para volver a intentarlo: ";
 			_getch();
