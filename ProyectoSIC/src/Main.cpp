@@ -20,39 +20,73 @@ std::string fecha; //global con la fecha actual
 /// ############################################################################################
 
 /**
- * @brief Verifica si un string es un integer.
+ * @brief Verifica si un string es un integer, y esta dentro del rango permitido. Ademas, acepta porcentajes de los valores especificados
  * 
  * @param str: string a comprobar
+ * @param valorC/valorT: valores de los cuales sacar porcentajes relativos (de querer permitir)
  * @param min/max: valor minimo y maximo (respectivamente e inclusive) que se permiten 
  * @return Si str es un integer, lo devuelve. Sino, devuelve 0
  */
-int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
+int validarInt(std::string str, std::optional<int> valorC = {}, std::optional<int> valorT = {}, std::optional<int> min = INT_MIN, std::optional<int> max = INT_MAX)
 {
-	bool esNumero = true;
-	int n;
-
-	for (int i = 0; i < str.size(); i++)
-	{
-		if (!isdigit(str[i])) { esNumero = false; break; }
-	}
-
 	std::cin.clear();
 	std::cin.ignore(1000, '\n');
-	if (esNumero)
+
+	/* uso de regex */
+
+	std::basic_regex reg("^[ ]*(-)?([0-9]+)(%[c|t])?[ ]*$"); // cubrir posibilidad de valor relativo
+	std::smatch smatch;
+	bool match = std::regex_match(str, smatch, reg);
+
+
+	if (match)
 	{
-		/// es numero
-		n = atoi(str.c_str());
-		return (n >= min && n <= max) ? n : 0; //devuelve 0 si no esta en el rango y el numero si lo esta
+		/// es numero!
+
+		int n = std::stoi(smatch[2].str());
+
+		/* verifica valor relativo o absoluto */
+		if (smatch[3].matched && !smatch[1].matched && 100 >= n > 0)
+		{
+			/// usar valor relativo
+
+			/* verificar si el tipo usado esta disponible */
+			if (smatch[3] == "%c" && valorC)
+			{
+				/// usar valorC
+				return valorC.value() * n / 100;
+			}
+			else if (smatch[3] == "%t" && valorT)
+			{
+				/// usar valorT
+				return valorT.value() * n / 100;
+			}
+			else {
+				/// valor relativo imposible
+				return 0;
+			}
+		}
+		else {
+			/// valor absoluto
+
+			//verifica negativo
+			n *= (smatch[1].matched) ? -1 : 1;
+
+			return (max >= n >= min) ? n : 0;
+		}
+
 	}
 	else {
+		/// no es numero
 		return 0;
 	}
 }
 
 /**
- * @brief Verifica si un string es un float.
+ * @brief Verifica si un string es un float, y esta dentro del rango permitido. Ademas, acepta porcentajes de los valores especificados
  *
  * @param str: string a comprobar
+ * @param valorC/valorT: valores de los cuales sacar porcentajes relativos (de querer permitir)
  * @param min/max: valor minimo y maximo (respectivamente e inclusive) que se permiten
  * @return Si str es un float, lo devuelve. Sino, devuelve 0.0f
  */
@@ -110,7 +144,7 @@ float validarFloat(std::string str, std::optional<float> valorC = {}, std::optio
 			//verifica negativo
 			n *= (smatch[1].matched) ? -1 : 1;
 
-			return (n >= min && n <= max) ? n : 0.0f;
+			return (max >= n >= min) ? n : 0.0f;
 		}
 
 	}
