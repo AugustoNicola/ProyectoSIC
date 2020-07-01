@@ -5,16 +5,16 @@
 /**
  * @brief Representa cada dia en el que la cuenta es modificada.
  *
- * @param dia: string con el dia actual
+ * @param dia: string con el dia actual (DD/MM)
  * @param valorActual: valor de la cuenta al final del dia
  * @param delta: variacion de la cuenta al final del dia
  */
 struct DiaCuenta
 {
 	std::string dia;
-	int valorActual = 0;
-	int delta;
-	DiaCuenta(std::string d, int delt) : dia(d), delta(delt) { valorActual += delt; };
+	float valorActual;
+	float delta;
+	DiaCuenta(std::string d, float vAnterior, float delt) : dia(d), valorActual(vAnterior), delta(delt) { valorActual += delt; };
 };
 
 /**
@@ -42,5 +42,14 @@ public:
 	std::string nombre;
 	Cuenta::Tipo tipo;
 	std::vector<DiaCuenta> dias;
+
+	/**
+	 * @brief Agrega un nuevo valor de dia a la cuenta.
+	 * 
+	 * @param fecha: fecha del dia (DD/MM)
+	 * @param delta: modificacion a la cuenta (positiva o negativa)
+	 */
+	void nuevoDiaCuenta(std::string fecha, float delta) { dias.push_back(DiaCuenta(fecha, dias.back().valorActual, delta)); }
+
 	Cuenta(std::string nom, bool mD, Tipo t) : nombre(nom), modoDebito(mD), tipo(t) { dias = {}; };
 };

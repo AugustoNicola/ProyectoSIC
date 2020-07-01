@@ -13,8 +13,8 @@
 struct Linea
 {
 	const Cuenta *cuenta;
-	int modificacion;
-	Linea(Cuenta *c, int modif) : cuenta(c), modificacion(modif) {};
+	float modificacion;
+	Linea(Cuenta *c, float modif) : cuenta(c), modificacion(modif) {};
 };
 
 /**
@@ -25,10 +25,37 @@ struct Linea
  */
 class Operacion
 {
-private:
+public:
 	std::string documento;
 	std::vector<Linea> lineas;
-public:
+
+	/**
+	 * @brief Agrega una linea a la operacion, con su cuenta y modificacion.
+	 * 
+	 * @param cuenta: cuenta que se anota en la linea
+	 * @param modificacion: valor que se debita (positivo) o acredita (negativo)
+	 */
+	void nuevaLinea(Cuenta *cuenta, float modificacion) { lineas.push_back(Linea(cuenta, modificacion)); }
+
 	Operacion(std::string doc) : documento(doc) {};
 };
 
+/**
+ * @brief Estructura para relacionar todo el conjunto de operaciones de un dia con su fecha.
+ * 
+ * @param fecha: fecha del dia (DD/MM)
+ */
+struct DiaOperaciones
+{
+	std::string fecha;
+	std::vector<Operacion> operaciones;
+
+	/**
+	 * @brief Agrega una operacion al dia.
+	 *
+	 * @param oper: operacion que se anota en el dia
+	 */
+	void nuevaOperacion(Operacion oper) { operaciones.push_back(oper); }
+
+	DiaOperaciones(std::string f) : fecha(f) {};
+};
