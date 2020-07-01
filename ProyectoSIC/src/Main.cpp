@@ -1,6 +1,8 @@
 #include <iostream> //I/O basico
 #include <conio.h> // _getch()
-#include <climits> //INT_MIN, INT_MAX, etc
+#include <climits> //INT_MIN, INT_MAX
+#include <cfloat> //FLT_MIN, FLT_MAX
+#include <regex> //regular expressions
 #include <vector> //arrays dinamicos
 #include <optional> //valores optativos
 
@@ -33,19 +35,53 @@ int validarInt(std::string str, int min = INT_MIN, int max = INT_MAX)
 		if (!isdigit(str[i])) { esNumero = false; break; }
 	}
 
+	std::cin.clear();
+	std::cin.ignore(1000, '\n');
 	if (esNumero)
 	{
 		/// es numero
 		n = atoi(str.c_str());
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
 		return (n >= min && n <= max) ? n : 0; //devuelve 0 si no esta en el rango y el numero si lo esta
 	}
 	else {
-		///input no es numero
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
 		return 0;
+	}
+}
+float validarFloat(std::string str, float min = FLT_MIN, float max = FLT_MAX)
+{
+	std::cin.clear();
+	std::cin.ignore(1000, '\n');
+
+	/* uso de regex */
+	std::basic_regex reg("^[ ]*(-)?([0-9]+)(?:\.?([0-9]+))?[ ]*$");
+	std::smatch smatch;
+	bool match = std::regex_match(str, smatch, reg);
+
+
+	if (match)
+	{
+		/// es numero!
+		
+		//verifica negativo
+		bool esPositivo = (smatch[1].matched) ? false : true;
+		int numero[2];
+		numero[0] = std::stoi(smatch[2].str());
+		numero[1] = (smatch[3].matched) ? std::stoi(smatch[3].str()) : 0 ;
+		
+		/* crea un string con las partes del numero y lo lee como float */
+		std::string numStr;
+		if (!esPositivo) { numStr.append("-"); } //negativo
+		numStr.append(std::to_string(numero[0]));
+		numStr.append(".");
+		numStr.append(std::to_string(numero[1]));
+		float n = std::stof(numStr);
+
+		return (n >= min && n <= max) ? n : 0.0f;
+
+	}
+	else {
+		/// no es numero
+		return 0.0f;
 	}
 }
 

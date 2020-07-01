@@ -1,50 +1,17 @@
 ﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(31,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(81,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(90,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(99,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(129,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(201,68): warning C4244: 'argumento': conversión de '_Ty' a 'int'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(61,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(33,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(56,23): warning C4129: '.': secuencia de escape de carácter no reconocida
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(115,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(124,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(133,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(163,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(235,68): warning C4244: 'argumento': conversión de '_Ty' a 'int'; posible pérdida de datos
           with
           [
               _Ty=float
           ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(201,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(231,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(271,20): warning C4018: '<': no coinciden signed/unsigned
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(68,17): warning C4244: 'inicializando': conversión de '_Ty' a 'float'; posible pérdida de datos
-          with
-          [
-              _Ty=int
-          ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(281): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
-          with
-          [
-              _Ty=float
-          ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(281): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
-          with
-          [
-              _Ty=float
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(185): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_construct_base<_Ty>::_Optional_construct_base<int>(std::in_place_t,int &&)" que se está compilando
-          with
-          [
-              _Ty=float
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(185): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_construct_base<_Ty>::_Optional_construct_base<int>(std::in_place_t,int &&)" que se está compilando
-          with
-          [
-              _Ty=float
-          ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(278): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
-          with
-          [
-              _Ty2=int
-          ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(278): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
-          with
-          [
-              _Ty2=int
-          ]
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(235,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(265,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(305,20): warning C4018: '<': no coinciden signed/unsigned
   ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe
