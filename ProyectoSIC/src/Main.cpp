@@ -8,6 +8,7 @@
 
 #include "clases.h" //estructuras de clases personalizadas
 #include "presets.h" //vector CUENTAS
+
 std::vector<std::vector<Operacion*>> DIAS = {}; //lista de todas las operaciones que deben exportarse, en orden cronologico
 std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
@@ -190,7 +191,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 				cont++;
 			}
 
-			std::cout << "-------- PASIVOS --------";
+			std::cout << "\n\n-------- PASIVOS --------";
 			modificador = (DebeOHaber) ? " (P-)" : " (P+)";
 			for (int i = 0; i < PASIVOS.size(); i++)
 			{
@@ -199,7 +200,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 				cont++;
 			}
 
-			std::cout << "-------- RESULTADOS --------";
+			std::cout << "\n\n-------- RESULTADOS --------";
 			modificador = (DebeOHaber) ? " (R-)" : " ((R-)+)";
 			for (int i = 0; i < R_NEGS.size(); i++)
 			{
@@ -298,13 +299,14 @@ float aumentarPartida(Operacion *operac, Cuenta::Tipo t, bool DebeOHaber, std::s
 			cuentaActual = elegirCuenta(t, mensaje, DebeOHaber);
 
 			/* seleccion de cantidad */
-			std::cout << "\n\nCuenta elegida: " << cuentaActual->nombre;
+			std::cout << "\n\nCuenta elegida: " << cuentaActual->nombre << " (valor: $" << cuentaActual->valorActual() << ")";
 			std::cout << "\n\nTotal actual: $" << aumentoTotal;
+			if (limite) { std::cout << "\nLimite: $" << limite.value();  }
 			std::cout << "\n\nSeleccione la cantidad: $";
 			std::cin >> aumentoActualStr;
 
 			/* validacion de cantidad */
-			aumentoActual = validarFloat(aumentoActualStr, cuentaActual->dias.back().valorActual, 1, (limite.value() - aumentoTotal)); //se asegura de que la cantidad sea valida
+			aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), (limite) ? limite : std::nullopt, 1, (limite.value() - aumentoTotal)); //se asegura de que la cantidad sea valida
 			
 			if (aumentoActual != 0)
 			{
@@ -313,7 +315,7 @@ float aumentarPartida(Operacion *operac, Cuenta::Tipo t, bool DebeOHaber, std::s
 
 				/* Aplicar modificaciones */
 				operac->nuevaLinea(cuentaActual, aumentoActual); //agrega Linea a la Operacion actual
-				cuentaActual->modifDiaCuenta(fecha, aumentoActual); //aumenta el valor de Cuenta
+				cuentaActual->modifDiaCuenta(fecha, aumentoActual, DebeOHaber); //aumenta el valor de Cuenta
 				
 			} else {
 				/// cantidad invalida
@@ -383,39 +385,8 @@ int main()
 		else if (CUENTAS[i].tipo == Cuenta::R_NEG) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
 	}
 
-	bool loop = true; //Controla la ejecucion del programa
-	std::string opString;
-
-	// -------- LOOP PRINCIPAL --------
-	std::cout << "=============== PROYECTO SIC ===============\n";
-	do
-	{
-		/* Display de opciones y ingreso de input */
-		std::cout << "Seleccione una opcion:\n";
-		for (int i = 0; i < OPCIONES.size(); i++)
-		{
-			std::cout << i + 1 << ". " << OPCIONES[i].nombre << "\n";
-		}
-		std::cin >> opString;
-
-		/* Validacion */
-		int op = validarInt(opString, 1, OPCIONES.size());
-		if (op != 0)
-		{
-			/// input valido!
-			OPCIONES[op - 1].pFuncion();
-			_getch();
-
-			loop = false; //provisorio
-		}
-		else {
-			///input invalido
-			std::cout << "Valor no valido, presione cualquier tecla para volver a intentarlo: ";
-			_getch();
-		}
-
-		system("CLS");
-	} while (loop);
+	Operacion oper("tu vieja");
+	aumentarPartida(&oper, Cuenta::F_OPER, true, "Ingrese", 1000);
 	
 	return 0;
 }

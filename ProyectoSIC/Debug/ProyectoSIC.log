@@ -1,31 +1,33 @@
 ﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(59,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(75,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(81,29): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
 C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(61,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(34,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(68,23): warning C4129: '.': secuencia de escape de carácter no reconocida
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(89,62): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(152,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(161,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(170,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(200,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(305,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(345,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(50,62): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(103,23): warning C4129: '.': secuencia de escape de carácter no reconocida
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(124,62): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(187,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(196,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(205,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(235,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(341,30): warning C4244: '=': conversión de 'int' a 'float'; posible pérdida de datos
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(381,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(599,1): warning C4804: '>=': uso no seguro del tipo 'bool' en la operación
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(76): message : Vea la referencia a la creación de una instancia de la función plantilla "bool std::operator >=<bool,int,0>(const _Ty1 &,const std::optional<int> &)" que se está compilando
+          with
+          [
+              _Ty1=bool
+          ]
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(68,17): warning C4244: 'inicializando': conversión de '_Ty' a 'float'; posible pérdida de datos
           with
           [
               _Ty=int
           ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(363): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(393): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
           with
           [
               _Ty=float
           ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(363): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
-          with
-          [
-              _Ty=float
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(185): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_construct_base<_Ty>::_Optional_construct_base<int>(std::in_place_t,int &&)" que se está compilando
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(393): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_destruct_base<_Ty,true>::_Optional_destruct_base<int>(std::in_place_t,int &&)" que se está compilando
           with
           [
               _Ty=float
@@ -35,12 +37,17 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Ty=float
           ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(273): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(185): message : Vea la referencia a la creación de una instancia de la función plantilla "std::_Optional_construct_base<_Ty>::_Optional_construct_base<int>(std::in_place_t,int &&)" que se está compilando
+          with
+          [
+              _Ty=float
+          ]
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(309): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
           with
           [
               _Ty2=int
           ]
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(273): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(309): message : Vea la referencia a la creación de una instancia de la función plantilla "std::optional<float>::optional<int,0>(_Ty2 &&)" que se está compilando
           with
           [
               _Ty2=int
