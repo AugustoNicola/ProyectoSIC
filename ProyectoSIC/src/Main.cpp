@@ -96,8 +96,6 @@ float validarFloat(std::string str, std::optional<float> valorC = {}, std::optio
 	std::cin.clear();
 	std::cin.ignore(1000, '\n');
 
-
-	
 	/* uso de regex */
 
 	std::basic_regex reg("^[ ]*(-)?([0-9]+)(?:\.?([0-9]+))?(%[c|t])?[ ]*$"); // cubrir posibilidad de valor relativo
@@ -152,6 +150,61 @@ float validarFloat(std::string str, std::optional<float> valorC = {}, std::optio
 	else {
 		/// no es numero
 		return 0.0f;
+	}
+}
+
+/**
+ * @brief Verifica si un string es valido como fecha. Si lo es, lo settea como nueva fecha global
+ * 
+ * @param str: string a comprobar
+ * @return Booleano segun si es un valor apto y fue setteado o no
+ */
+bool validarFecha(std::string str)
+{
+	std::cin.clear();
+	std::cin.ignore(1000, '\n');
+
+	/* uso de regex */
+
+	std::basic_regex reg("^[ ]*([0-9]{1,2})\/([0-9]{1,2})[ ]*$");
+	std::smatch smatch;
+	bool match = std::regex_match(str, smatch, reg);
+
+	if (match)
+	{
+		///contiene ambos campos!
+		int numFecha[2] = { std::stoi(smatch[1].str()), std::stoi(smatch[2].str()) }; // extrae partes numericas
+
+		/* verificacion campos validos */
+		if ((31 >= numFecha[0] >= 1) && (12 >= numFecha[1] >= 1))
+		{
+			///ambos campos son validos
+			std::string strFecha[2] = { std::to_string(numFecha[0]), std::to_string(numFecha[1]) };
+
+			/* verificacion formato DD/MM */
+			if (numFecha[0] <= 9) { strFecha[0].insert(0, "0"); }
+			if (numFecha[1] <= 9) { strFecha[1].insert(0, "0"); }
+
+			//construccion de string
+			std::string nuevaFecha = strFecha[0] + "/" + strFecha[1];
+
+			/* verificacion repeticion fecha */
+			if (nuevaFecha != fecha)
+			{
+				/// fechas diferentes, permitir cambio
+				fecha = nuevaFecha; //actualiza la nueva fecha
+				return true;
+			} else {
+				/// misma fecha, invalidar
+				return false;
+			}
+		} else {
+			/// campos no validos
+			return false;
+		}
+	} else {
+		/// no contiene ambos campos
+		return false;
 	}
 }
 
@@ -385,8 +438,15 @@ int main()
 		else if (CUENTAS[i].tipo == Cuenta::R_NEG) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
 	}
 
-	Operacion oper("tu vieja");
-	aumentarPartida(&oper, Cuenta::F_OPER, true, "Ingrese", 1000);
+	while (true)
+	{
+		std::string a;
+		std::cin >> a;
+		bool result = validarFecha(a);
+		std::cout << "\n" << fecha;
+		_getch();
+		system("CLS");
+	}
 	
 	return 0;
 }
