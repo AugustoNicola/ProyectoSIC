@@ -1,4 +1,3 @@
-﻿  cuenta.h
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(75,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(81,29): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+﻿  operacion.h
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(76,22): warning C4018: '<': no coinciden signed/unsigned
   clases.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\clases.lib

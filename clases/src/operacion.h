@@ -27,17 +27,22 @@ class Operacion
 {
 public:
 	std::string documento;
-	std::vector<Linea> lineas;
+	std::vector<Linea> lineas = {};
 
 	/**
 	 * @brief Agrega una linea a la operacion, con su cuenta y modificacion.
 	 * 
 	 * @param cuenta: cuenta que se anota en la linea
 	 * @param modificacion: valor que se debita (positivo) o acredita (negativo)
-	 */
-	void nuevaLinea(Cuenta *cuenta, float modificacion) { lineas.push_back(Linea(cuenta, modificacion)); }
+	 * @param DebeOHaber: booleano especificando la columna
+	*/
+	void nuevaLinea(Cuenta *cuenta, float modificacion, bool DebeOHaber)
+	{
+		lineas.push_back(Linea(cuenta, modificacion * ((DebeOHaber) ? 1 : -1)));
+	}
 
-	Operacion(std::string doc) : documento(doc) {};
+	Operacion(std::string doc) : documento(doc) { };
+	Operacion() {};
 };
 
 /**
