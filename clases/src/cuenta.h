@@ -64,9 +64,8 @@ public:
 	 * 
 	 * @param fecha: fecha del dia (DD/MM)
 	 * @param delta: modificacion a la cuenta (positiva o negativa)
-	 * @param DebeOHaber: booleano especificando la columna
 	 */
-	void modifDiaCuenta(std::string fecha, float delta, bool DebeOHaber)
+	void modifDiaCuenta(std::string fecha, float delta)
 	{
 		/* verifica si ya hay dias */
 		if (!dias.empty())
@@ -79,15 +78,15 @@ public:
 				{
 					/// fecha encontrada, sumar valor actual al previo
 					// verifica si se debe aumentar positivo (debe) o negativo (haber)
-					dias[i].aumentar(delta * ((DebeOHaber) ? 1 : -1));
+					dias[i].aumentar(delta);
 					break;
 				}
 				///fecha no encontrada, crear
-				dias.push_back(DiaCuenta(fecha, dias.back().valorActual, delta * ((DebeOHaber) ? 1 : -1)));
+				dias.push_back(DiaCuenta(fecha, dias.back().valorActual, delta));
 			}
 		} else {
 			/// no hay ningun dia, crear primero
-			dias.push_back(DiaCuenta(fecha, 0, delta * ((DebeOHaber) ? 1 : -1)));
+			dias.push_back(DiaCuenta(fecha, 0, delta));
 		}
 	}
 

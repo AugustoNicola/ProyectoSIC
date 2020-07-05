@@ -15,6 +15,15 @@ std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercade
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
 std::vector<Cuenta*> ACTIVOS, PASIVOS, R_NEGS;
 
+/**
+   enum usado para definir si las operaciones de una funcion son en el Debe, en el Haber,
+   o un caso especial como Apertura.
+ */
+enum tipoPartida
+{
+	Debe, Haber, Apertura
+};
+
 std::string fecha; //global con la fecha actual
 Operacion oper;
 Operacion *operacionActual = &oper; //puntero global con la operacion actual
@@ -230,6 +239,19 @@ bool validarFecha(std::string str)
 }
 
 /**
+ * @brief Crea una Linea en la operacion actual y realiza la modificacion corresponiente en la Cuenta
+ *  con la informacion recibida.
+ * 
+ * @param cuenta: Puntero a la cuenta que se esta modificando
+ * @param modificacion: cantidad (positiva/negativa) de modificacion
+ */
+void modificarCuenta(Cuenta* cuenta, float modificacion)
+{
+	operacionActual->nuevaLinea(cuenta, modificacion); //agrega Linea a la Operacion actual
+	cuenta->modifDiaCuenta(fecha, modificacion); //aumenta el valor de Cuenta
+}
+
+/**
  * @brief Muestra todas las cuentas del tipo/filtro determinado, en orden numerico. Pide elegir una
  *  y devuelve un puntero a ella.
  * 
@@ -237,7 +259,7 @@ bool validarFecha(std::string str)
  * @param mensaje: el mensaje que se muestra acompaniando el menu de seleccion
  * @param DebeOHaber: usado para marcar si se realizara un aumento o disminucion a la cuenta (+/-)
  */
-Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
+Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
 {
 	std::string opStr;
 	int op;
@@ -257,7 +279,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 			/// filtro: mostrar Activos, Pasivos y Resultado Negativo
 
 			std::cout << "-------- ACTIVOS --------";
-			modificador = (DebeOHaber) ? " (A+)" : " (A-)" ;
+			modificador = (tipoPart == Haber) ? " (A-)" : " (A+)";
 			for (int i = 0; i < ACTIVOS.size(); i++)
 			{
 				std::cout << "\n" << cont << ". " << ACTIVOS[i]->nombre << modificador; //output
@@ -266,7 +288,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 			}
 
 			std::cout << "\n\n-------- PASIVOS --------";
-			modificador = (DebeOHaber) ? " (P-)" : " (P+)";
+			modificador = (tipoPart == Debe) ? " (P-)" : " (P+)";
 			for (int i = 0; i < PASIVOS.size(); i++)
 			{
 				std::cout << "\n" << cont << ". " << PASIVOS[i]->nombre << modificador; //output
@@ -275,7 +297,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 			}
 
 			std::cout << "\n\n-------- RESULTADOS --------";
-			modificador = (DebeOHaber) ? " (R-)" : " ((R-)+)";
+			modificador = (tipoPart == Haber) ? " ((R-)+)" : " (R-)";
 			for (int i = 0; i < R_NEGS.size(); i++)
 			{
 				std::cout << "\n" << cont << ". " << R_NEGS[i]->nombre << modificador; //output
@@ -291,15 +313,15 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
 			switch (t)
 			{
 			case Cuenta::ACTIVO:
-				modificador = (DebeOHaber) ? " (A+)" : " (A-)";
+				modificador = (tipoPart == Haber) ? " (A-)" : " (A+)";
 				titulo = "-------- ACTIVOS --------";
 				break;
 			case Cuenta::PASIVO:
-				modificador = (DebeOHaber) ? " (P-)" : " (P+)";
+				modificador = (tipoPart == Debe) ? " (P-)" : " (P+)";
 				titulo = "-------- PASIVOS --------";
 				break;
 			case Cuenta::R_NEG:
-				modificador = (DebeOHaber) ? " (R-)" : " ((R-)+)";
+				modificador = (tipoPart == Haber) ? " ((R-)+)" : "(R-)";
 				titulo = "-------- RESULTADOS --------";
 				break;
 			}
@@ -344,16 +366,15 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, bool DebeOHaber)
  * @brief Le pide al usuario realizar operaciones con las cuentas permitidas en el sentido dictado hasta que
  *  se alcance un limite (de haberlo), o se decida parar.
  * 
- * @param 
- * @param t enum del tipo de cuenta o filtro permitido para realizar operaciones
- * @param DebeOHaber booleano que define que columna esta satisfaciendo las cuentas
- * @param apertura booleano que define si este es el caso excepcional de una apertura, para realizar las excepciones necesarias
- * @param mensaje string con el mensaje que acompania la seleccion de Cuenta
- * @param [limite] float hasta el cual se deben hacer operaciones (siempre positivo)
+ * @param t: enum del tipo de cuenta o filtro permitido para realizar operaciones
+ * @param tipoPartida: enum representando si se estan sumando valores al debe, al haber, o si es el caso de una apertura
+ * @param mensaje: string con el mensaje que acompania la seleccion de Cuenta
+ * @param [limite]: float hasta el cual se deben hacer operaciones (siempre positivo)
  * 
  * @return float con la cantidad total que se sumo
  */
-float aumentarPartida(Cuenta::Tipo t, bool DebeOHaber, bool apertura, std::string mensaje, std::optional<float> limite)
+
+float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje, std::optional<float> limite)
 {
 	Cuenta* cuentaActual;
 	std::string aumentoActualStr;
@@ -363,42 +384,37 @@ float aumentarPartida(Cuenta::Tipo t, bool DebeOHaber, bool apertura, std::strin
 	if (limite)
 	{
 		/* ----- permitir aumentos hasta el limite ----- */
-		while((aumentoTotal * ((DebeOHaber) ? 1 : -1)) != limite)
+		while(abs(aumentoTotal) != limite)
 		{
 			system("CLS");
 			
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, mensaje, DebeOHaber);
+			cuentaActual = elegirCuenta(t, mensaje, tipoPartida);
 
 			/* seleccion de cantidad */
 			std::cout << "\n\nCuenta elegida: " << cuentaActual->nombre << " (valor: $" << cuentaActual->valorActual() << ")";
-			std::cout << "\n\nTotal actual: $" << aumentoTotal * ((DebeOHaber) ? 1 : -1);
-			if (limite) { std::cout << "\nLimite: $" << limite.value();  }
+			std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
+			std::cout << "\nLimite: $" << limite.value();
 			std::cout << "\n\nSeleccione la cantidad: $";
 			std::cin >> aumentoActualStr;
 
 			/* validacion de cantidad */
-			aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), limite, 1, (limite.value() - (aumentoTotal * ((DebeOHaber) ? 1 : -1)) ) ); //se asegura de que la cantidad sea valida
+			aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), limite, 1, (limite.value() - abs(aumentoTotal) ) ); //se asegura de que la cantidad sea valida
 			
 			if (aumentoActual != 0)
 			{
 				/// cantidad valida!
-				/* verificacion caso apertura */
-				if (!apertura)
+				
+				/* ajusta el signo de la modificacion */
+				if (tipoPartida == Apertura)
 				{
-					///es partida normal
-					aumentoTotal += aumentoActual * ((DebeOHaber) ? 1 : -1) ;
-
-					operacionActual->nuevaLinea(cuentaActual, aumentoActual, DebeOHaber); //agrega Linea a la Operacion actual
-					cuentaActual->modifDiaCuenta(fecha, aumentoActual, DebeOHaber); //aumenta el valor de Cuenta
+					aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
 				} else {
-					///es apertura
-					// si es pasivo, se acredita (modif negativa). sino, se debita (modif positiva).
-					aumentoTotal += aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
-
-					operacionActual->nuevaLinea(cuentaActual, aumentoActual, ((cuentaActual->tipo == Cuenta::PASIVO) ? false : true)); //agrega Linea a la Operacion actual
-					cuentaActual->modifDiaCuenta(fecha, aumentoActual, ((cuentaActual->tipo == Cuenta::PASIVO) ? false : true)); //aumenta el valor de Cuenta
+					aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
 				}
+
+				aumentoTotal += aumentoActual;
+				modificarCuenta(cuentaActual, aumentoActual);
 			
 			} else {
 				/// cantidad invalida
@@ -415,10 +431,10 @@ float aumentarPartida(Cuenta::Tipo t, bool DebeOHaber, bool apertura, std::strin
 			system("CLS");
 
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, mensaje, DebeOHaber);
+			cuentaActual = elegirCuenta(t, mensaje, tipoPartida);
 
 			/* seleccion de cantidad */
-			std::cout << "\n\nTotal actual: $" << aumentoTotal * ((DebeOHaber) ? 1 : -1);
+			std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
 			std::cout << "\n\nSeleccione la cantidad: $";
 			std::cin >> aumentoActualStr;
 
@@ -427,23 +443,18 @@ float aumentarPartida(Cuenta::Tipo t, bool DebeOHaber, bool apertura, std::strin
 			if (aumentoActual != 0)
 			{
 				/// cantidad valida!
-				/* verificacion caso apertura */
-				if (!apertura)
+				
+				/* ajusta el signo de la modificacion */
+				if (tipoPartida == Apertura)
 				{
-					///es partida normal
-					aumentoTotal += aumentoActual * ((DebeOHaber) ? 1 : -1);
-
-					operacionActual->nuevaLinea(cuentaActual, aumentoActual, DebeOHaber); //agrega Linea a la Operacion actual
-					cuentaActual->modifDiaCuenta(fecha, aumentoActual, DebeOHaber); //aumenta el valor de Cuenta
+					aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
 				}
 				else {
-					///es apertura
-					// si es pasivo, se acredita (modif negativa). sino, se debita (modif positiva).
-					aumentoTotal += aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
-
-					operacionActual->nuevaLinea(cuentaActual, aumentoActual, ((cuentaActual->tipo == Cuenta::PASIVO) ? false : true)); //agrega Linea a la Operacion actual
-					cuentaActual->modifDiaCuenta(fecha, aumentoActual, ((cuentaActual->tipo == Cuenta::PASIVO) ? false : true)); //aumenta el valor de Cuenta
+					aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
 				}
+
+				aumentoTotal += aumentoActual;
+				modificarCuenta(cuentaActual, aumentoActual);
 
 				/* permitir finalizar */
 				system("CLS");
@@ -495,11 +506,10 @@ void OP_Capital()
 	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
 
 	//aumenta operaciones hasta que el usuario decida
-	float totalAumentado = aumentarPartida(Cuenta::F_OPER, true, true, "Elija la cuenta usada en el inicio de operaciones", {});
+	float totalAumentado = aumentarPartida(Cuenta::F_OPER, Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
 
 	/* iguala cuentas con Capital(PN+) */
-	operacionActual->nuevaLinea(buscarCuenta("Capital"), totalAumentado, false);
-	buscarCuenta("Capital")->modifDiaCuenta(fecha, totalAumentado, false);
+	modificarCuenta(buscarCuenta("Capital"), totalAumentado * -1);
 
 	/* finaliza operacion*/
 	operacionActual->documento = "Apertura";
@@ -532,7 +542,7 @@ int main()
 
 	// -------- APERTURA --------
 	std::cout << "=============== PROYECTO SIC ===============";
-	std::cout << "\n\n¿Iniciar con apertura?\n1. Si\n2. No\n";
+	std::cout << "\n\nIniciar con apertura?\n1. Si\n2. No\n";
 	std::cin >> opString;
 	if (validarInt(opString) == 1)
 	{

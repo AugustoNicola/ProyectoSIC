@@ -34,11 +34,10 @@ public:
 	 * 
 	 * @param cuenta: cuenta que se anota en la linea
 	 * @param modificacion: valor que se debita (positivo) o acredita (negativo)
-	 * @param DebeOHaber: booleano especificando la columna
 	*/
-	void nuevaLinea(Cuenta *cuenta, float modificacion, bool DebeOHaber)
+	void nuevaLinea(Cuenta *cuenta, float modificacion)
 	{
-		lineas.push_back(Linea(cuenta, modificacion * ((DebeOHaber) ? 1 : -1)));
+		lineas.push_back(Linea(cuenta, modificacion));
 	}
 
 	Operacion(std::string doc) : documento(doc) { };
