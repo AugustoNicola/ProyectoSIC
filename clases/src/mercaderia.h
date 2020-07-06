@@ -15,7 +15,7 @@ struct DiaMerca
 	std::string dia;
 	int delta;
 	unsigned int cantidad;
-	DiaMerca(std::string d, unsigned int cantAnterior, int delt) : dia(d), cantidad(cantAnterior), delta(delt) { cantAnterior += delt;  }
+	DiaMerca(std::string d, unsigned int cantAnterior, int delt) : dia(d), cantidad(cantAnterior), delta(delt) { cantidad += delt;  }
 };
 
 /**
@@ -29,6 +29,12 @@ struct PrecioMerca
 	float precio;
 	std::vector<DiaMerca> dias;
 
+	void nuevoDiaPrecioMerca(std::string fecha, int modificacion)
+	{
+		/* verifica que haya dias previos */
+		dias.push_back(DiaMerca(fecha, ((!dias.empty()) ? dias.back().cantidad : 0), modificacion));
+	}
+
 	PrecioMerca(float p) : precio(p) { dias = {}; };
 };
 
@@ -40,9 +46,8 @@ struct PrecioMerca
  */
 class Mercaderia
 {
-private:
-	std::string nombre;
 public:
+	std::string nombre;
 	std::vector<PrecioMerca> precios;
 
 	/**

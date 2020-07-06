@@ -11,7 +11,7 @@
 #include "presets.h" //vector CUENTAS
 
 std::vector<DiaOperaciones> DIAS = {}; //lista de todas las operaciones que deben exportarse, en orden cronologico
-std::vector<Mercaderia*> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
+std::vector<Mercaderia> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
 std::vector<Cuenta*> ACTIVOS, PASIVOS, R_NEGS;
 
@@ -279,6 +279,14 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
 			/// filtro: mostrar Activos, Pasivos y Resultado Negativo
 
 			std::cout << "-------- ACTIVOS --------";
+			/* agrega mercaderia */
+			if (tipoPart == Apertura)
+			{
+				std::cout << "\n" << cont << ". " << "Mercaderias (A+)"; //output
+				pos.push_back(buscarCuenta("Mercaderias"));
+				cont++;
+			}
+
 			modificador = (tipoPart == Haber) ? " (A-)" : " (A+)";
 			for (int i = 0; i < ACTIVOS.size(); i++)
 			{
@@ -362,6 +370,156 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
 	return {};
 }
 
+
+/**
+ * @brief Funcion utilizada para adquirir mercaderia, eligiendo la mercaderia, su precio y su cantidad.
+ *  Permite crear tanto mercaderias como precios de compra nuevos.
+ * 
+ * @return float con el valor en pesos de la mercaderia adquirida
+ */
+float adquirirMercaderia()
+{
+	std::string opStr;
+	int op;
+	std::vector<Mercaderia*> posMerc;
+
+	/* ----- Bucle validacion mercaderia ----- */
+	do
+	{
+		posMerc = {}; //vector que asocia cada posicion con su mercaderia
+		int cont = 1; //contador para el output
+
+		system("CLS");
+
+		/* Iteracion de mercaderias */
+		std::cout << "=============== MENU DE MERCADERIAS ===============\n";
+		for (int i = 0; i < MERCADERIAS.size(); i++)
+		{
+			std::cout << "\n" << cont << ". " << MERCADERIAS[i].nombre;
+			posMerc.push_back((Mercaderia*)&MERCADERIAS[i]); //guarda lugar de memoria de mercaderia actual en vector
+			cont++;
+		}
+		std::cout << "\n" << cont << ". " << "Nueva mercaderia";
+
+		/* Input */
+
+		std::cout << "\n\n" << "Elija una opcion: ";
+		std::cin >> opStr;
+
+		/* Validacion/return */
+		op = validarInt(opStr, {}, {}, 1, posMerc.size() + 1);
+		if (op == 0)
+		{
+			/// valor no valido
+			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+			_getch();
+		}
+	} while (op == 0);
+	
+	/* crear/encontrar mercaderia */
+	system("CLS");
+	Mercaderia* mercaElegida;
+	if (op == posMerc.size() + 1)
+	{
+		/// crear mercaderia
+		std::cout << "=============== NUEVA MERCADERIA ===============";
+		std::cout << "\n\nIngrese el nombre de la nueva mercaderia: ";
+		std::cin >> opStr;
+
+		MERCADERIAS.push_back(Mercaderia(opStr)); //crea la nueva mercaderia
+		mercaElegida = &(MERCADERIAS.back());
+	}
+	else {
+		/// encontrar mercaderia
+		mercaElegida = posMerc[op - 1];
+	}
+
+	/* ----- Bucle validacion precio ----- */
+	std::vector<PrecioMerca*> posPrecio;
+	do 
+	{
+		posPrecio = {}; //vector que asocia cada posicion con su precio-mercaderia
+		int cont = 1; //contador para el output
+
+		system("CLS");
+		std::cout << "=============== " << mercaElegida->nombre << ": PRECIOS UNITARIOS ===============\n";
+
+		/* Iteracion de precios */
+		for (int i = 0; i < mercaElegida->precios.size(); i++)
+		{
+			std::cout << "\n"<< cont << ". " << mercaElegida->nombre << " ($" << mercaElegida->precios[i].precio << ")";
+			posPrecio.push_back((PrecioMerca*)&mercaElegida->precios[i]); //guarda lugar de memoria del precio-mercaderia actual en vector
+			cont++;
+		}
+		std::cout << "\n" << cont << ". " << "Nuevo precio unitario";
+
+
+		/* Input */
+
+		std::cout << "\n\n" << "Elija una opcion: ";
+		std::cin >> opStr;
+
+		/* Validacion/return */
+		op = validarInt(opStr, 1, posPrecio.size() + 1);
+		if (op == 0)
+		{
+			/// valor no valido
+			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+			_getch();
+		}
+	} while (op == 0);
+
+	/* crear/encontrar mercaderia */
+	system("CLS");
+	PrecioMerca* precioElegido;
+	if (op == posPrecio.size() + 1)
+	{
+		/// crear precio-mercaderia
+		do
+		{
+			std::cout << "=============== " << mercaElegida->nombre << ": NUEVO PRECIO UNITARIO ===============";
+			std::cout << "\n\nIngrese el nuevo precio de compra: $";
+			std::cin >> opStr;
+
+			op = validarFloat(opStr, {}, {}, 1);
+			if (op == 0)
+			{
+				std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
+				_getch();
+				system("CLS");
+			}
+		} while (op == 0);
+
+		mercaElegida->precios.push_back(PrecioMerca(op)); //crea el nuevo precio-mercaderia
+		precioElegido = &(mercaElegida->precios.back()); //guarda el puntero al precio-mercaderia
+	}
+	else {
+		/// encontrar mercaderia
+		precioElegido = &(mercaElegida->precios[op]);
+	}
+
+	/* en este punto ya tenemos una mercaElegida y un precioElegido!! */
+	/* ----- Bucle validacion compra ----- */
+	do
+	{
+		system("CLS");
+		std::cout << "=============== " << mercaElegida->nombre << " ($" << precioElegido->precio << " c/u) ===============";
+		std::cout << "\n\nElija la cantidad de mercaderia que se compra: ";
+		std::cin >> opStr;
+		op = validarInt(opStr, {}, {}, 1);
+		if (op == 0)
+		{
+			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
+			_getch();
+			system("CLS");
+		}
+	} while (op == 0);
+
+	precioElegido->nuevoDiaPrecioMerca(fecha, op);
+	float valorAumentado = precioElegido->precio * op;
+	return valorAumentado;
+}
+
 /**
  * @brief Le pide al usuario realizar operaciones con las cuentas permitidas en el sentido dictado hasta que
  *  se alcance un limite (de haberlo), o se decida parar.
@@ -391,36 +549,52 @@ float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensa
 			/* seleccion de cuenta */
 			cuentaActual = elegirCuenta(t, mensaje, tipoPartida);
 
-			/* seleccion de cantidad */
-			std::cout << "\n\nCuenta elegida: " << cuentaActual->nombre << " (valor: $" << cuentaActual->valorActual() << ")";
-			std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
-			std::cout << "\nLimite: $" << limite.value();
-			std::cout << "\n\nSeleccione la cantidad: $";
-			std::cin >> aumentoActualStr;
-
-			/* validacion de cantidad */
-			aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), limite, 1, (limite.value() - abs(aumentoTotal) ) ); //se asegura de que la cantidad sea valida
-			
-			if (aumentoActual != 0)
+			/* verificacion mercaderias*/
+			if (cuentaActual != buscarCuenta("Mercaderias"))
 			{
-				/// cantidad valida!
+				/// hay mercaderias!
 				
-				/* ajusta el signo de la modificacion */
-				if (tipoPartida == Apertura)
-				{
-					aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
-				} else {
-					aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
-				}
+				aumentoActual = adquirirMercaderia();
 
 				aumentoTotal += aumentoActual;
-				modificarCuenta(cuentaActual, aumentoActual);
-			
+				modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
 			} else {
-				/// cantidad invalida
-				std::cout << "\n\nCantidad invalida, presione cualquier tecla para intentarlo nuevamente";
-				_getch();
+				/// no hay mercaderias
+				
+				/* seleccion de cantidad */
+				std::cout << "\n\nCuenta elegida: " << cuentaActual->nombre << " (valor: $" << cuentaActual->valorActual() << ")";
+				std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
+				std::cout << "\nLimite: $" << limite.value();
+				std::cout << "\n\nSeleccione la cantidad: $";
+				std::cin >> aumentoActualStr;
+
+				/* validacion de cantidad */
+				aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), limite, 1, (limite.value() - abs(aumentoTotal))); //se asegura de que la cantidad sea valida
+
+				if (aumentoActual != 0)
+				{
+					/// cantidad valida!
+
+					/* ajusta el signo de la modificacion */
+					if (tipoPartida == Apertura)
+					{
+						aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
+					}
+					else {
+						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
+					}
+
+					aumentoTotal += aumentoActual;
+					modificarCuenta(cuentaActual, aumentoActual);
+
+				}
+				else {
+					/// cantidad invalida
+					std::cout << "\n\nCantidad invalida, presione cualquier tecla para intentarlo nuevamente";
+					_getch();
+				}
 			}
+			
 		}
 	} else {
 		/* ----- aumentos hasta que el usuario decida parar ----- */
@@ -433,39 +607,60 @@ float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensa
 			/* seleccion de cuenta */
 			cuentaActual = elegirCuenta(t, mensaje, tipoPartida);
 
-			/* seleccion de cantidad */
-			std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
-			std::cout << "\n\nSeleccione la cantidad: $";
-			std::cin >> aumentoActualStr;
-
-			/* validacion de cantidad */
-			aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), {}, 1); //se asegura de que la cantidad sea valida
-			if (aumentoActual != 0)
+			/* verificacion mercaderias*/
+			if (cuentaActual->nombre == "Mercaderias")
 			{
-				/// cantidad valida!
-				
-				/* ajusta el signo de la modificacion */
-				if (tipoPartida == Apertura)
-				{
-					aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
-				}
-				else {
-					aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
-				}
+				/// hay mercaderias!
+
+				aumentoActual = adquirirMercaderia();
 
 				aumentoTotal += aumentoActual;
-				modificarCuenta(cuentaActual, aumentoActual);
+				modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
 
 				/* permitir finalizar */
 				system("CLS");
 				std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
 				std::cin >> aumentoActualStr; //reusado de variables!!
 				satisfecho = (validarInt(aumentoActualStr, 1, 2) == 2) ? true : false;
-			}
-			else {
-				/// cantidad invalida
-				std::cout << "\n\nCantidad invalida, presione cualquier tecla para intentarlo nuevamente";
-				_getch();
+
+			} else {
+
+				/// no hay mercaderias
+				
+				/* seleccion de cantidad */
+				std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
+				std::cout << "\n\nSeleccione la cantidad: $";
+				std::cin >> aumentoActualStr;
+
+				/* validacion de cantidad */
+				aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), {}, 1); //se asegura de que la cantidad sea valida
+				if (aumentoActual != 0)
+				{
+					/// cantidad valida!
+
+					/* ajusta el signo de la modificacion */
+					if (tipoPartida == Apertura)
+					{
+						aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
+					}
+					else {
+						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
+					}
+
+					aumentoTotal += aumentoActual;
+					modificarCuenta(cuentaActual, aumentoActual);
+
+					/* permitir finalizar */
+					system("CLS");
+					std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
+					std::cin >> aumentoActualStr; //reusado de variables!!
+					satisfecho = (validarInt(aumentoActualStr, 1, 2) == 2) ? true : false;
+
+				} else {
+					/// cantidad invalida
+					std::cout << "\n\nCantidad invalida, presione cualquier tecla para intentarlo nuevamente";
+					_getch();
+				}
 			}
 		}
 	}
@@ -529,6 +724,13 @@ const std::vector<Opcion> OPCIONES = {
 
 int main()
 {
+	MERCADERIAS.push_back(Mercaderia("Producto A"));
+	MERCADERIAS.back().precios.push_back(PrecioMerca(15));
+	MERCADERIAS.back().precios.push_back(PrecioMerca(28));
+	MERCADERIAS.push_back(Mercaderia("Producto B"));
+	MERCADERIAS.back().precios.push_back(PrecioMerca(365));
+	MERCADERIAS.back().precios.push_back(PrecioMerca(446));
+	MERCADERIAS.push_back(Mercaderia("Producto B"));
 	/* division de vectores de Cuentas */
 	for (int i = 0; i < CUENTAS.size(); i++)
 	{

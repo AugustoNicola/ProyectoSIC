@@ -1,6 +1,1 @@
-﻿  cuenta.h
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(75,22): warning C4018: '<': no coinciden signed/unsigned
-  operacion.h
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(75,22): warning C4018: '<': no coinciden signed/unsigned
-  Generando código...
-  clases.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\clases.lib
+﻿  clases.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\clases.lib
