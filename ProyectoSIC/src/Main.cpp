@@ -15,10 +15,8 @@ std::vector<Mercaderia> MERCADERIAS = {}; //lista de todos los tipos de mercader
 std::vector<MesIVA> IVA = {}; //registro mensual del IVA
 std::vector<Cuenta*> ACTIVOS, PASIVOS, R_NEGS;
 
-/**
-   enum usado para definir si las operaciones de una funcion son en el Debe, en el Haber,
-   o un caso especial como Apertura.
- */
+/* enum usado para definir si las operaciones de una funcion son en el Debe, en el Haber,
+   o un caso especial como Apertura.*/
 enum tipoPartida
 {
 	Debe, Haber, Apertura
@@ -372,34 +370,59 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
 
 
 /**
- * @brief Funcion utilizada para adquirir mercaderia, eligiendo la mercaderia, su precio y su cantidad.
- *  Permite crear tanto mercaderias como precios de compra nuevos.
+ * @brief Funcion utilizada para adquirir/vender mercaderia, eligiendo la mercaderia, su precio y su cantidad.
+ *  Permite crear tanto mercaderias como precios de compra nuevos en el caso de una compra.
  * 
- * @return float con el valor en pesos de la mercaderia adquirida
+ * @param compra: Booleano: compra(true) / venta(false)
+ * 
+ * @return puntero al dia de la mercaderia adquirida/vendida
  */
-float adquirirMercaderia()
+float seleccionarMercaderia(bool compra)
 {
 	std::string opStr;
 	int op;
 	std::vector<Mercaderia*> posMerc;
+	unsigned int offSet; // offset para diferenciar valores validos en caso de compra o venta
+	bool hayOpcion; //booleano para determinar si una operacion de venta es valida
+	int cont; //contador para el output
 
 	/* ----- Bucle validacion mercaderia ----- */
 	do
 	{
+		cont = 1; //contador para el output
+		offSet = 0;
+		hayOpcion = false;
 		posMerc = {}; //vector que asocia cada posicion con su mercaderia
-		int cont = 1; //contador para el output
 
 		system("CLS");
 
 		/* Iteracion de mercaderias */
-		std::cout << "=============== MENU DE MERCADERIAS ===============\n";
+		std::cout << "=============== " << ((compra) ? "COMPRA" : "VENTA") << " DE MERCADERIAS ===============\n";
 		for (int i = 0; i < MERCADERIAS.size(); i++)
 		{
-			std::cout << "\n" << cont << ". " << MERCADERIAS[i].nombre;
-			posMerc.push_back((Mercaderia*)&MERCADERIAS[i]); //guarda lugar de memoria de mercaderia actual en vector
-			cont++;
+			// si es venta, comprueba que haya existencias de al menos un precio
+			if (compra || MERCADERIAS[i].hayExistencias())
+			{
+				std::cout << "\n" << cont << ". " << MERCADERIAS[i].nombre;
+				posMerc.push_back((Mercaderia*)&MERCADERIAS[i]); //guarda lugar de memoria de mercaderia actual en vector
+				cont++;
+				hayOpcion = true;
+			}
 		}
-		std::cout << "\n" << cont << ". " << "Nueva mercaderia";
+		//opcion crear mercaderia
+		if(compra)
+		{
+			std::cout << "\n" << cont << ". " << "Nueva mercaderia";
+			offSet = 1;
+		}
+		
+		// no hay opciones posibles
+		if (!hayOpcion)
+		{
+			std::cout << "\nNo hay mercaderias disponibles!\n\nPresione cualquier tecla para cancelar";
+			_getch();
+			return 0;
+		}
 
 		/* Input */
 
@@ -407,7 +430,7 @@ float adquirirMercaderia()
 		std::cin >> opStr;
 
 		/* Validacion/return */
-		op = validarInt(opStr, {}, {}, 1, posMerc.size() + 1);
+		op = validarInt(opStr, {}, {}, 1, posMerc.size() + offSet);
 		if (op == 0)
 		{
 			/// valor no valido
@@ -439,7 +462,8 @@ float adquirirMercaderia()
 	do 
 	{
 		posPrecio = {}; //vector que asocia cada posicion con su precio-mercaderia
-		int cont = 1; //contador para el output
+		cont = 1; //contador para el output
+		offSet = 0;
 
 		system("CLS");
 		std::cout << "=============== " << mercaElegida->nombre << ": PRECIOS UNITARIOS ===============\n";
@@ -447,12 +471,22 @@ float adquirirMercaderia()
 		/* Iteracion de precios */
 		for (int i = 0; i < mercaElegida->precios.size(); i++)
 		{
-			std::cout << "\n"<< cont << ". " << mercaElegida->nombre << " ($" << mercaElegida->precios[i].precio << ")";
-			posPrecio.push_back((PrecioMerca*)&mercaElegida->precios[i]); //guarda lugar de memoria del precio-mercaderia actual en vector
-			cont++;
-		}
-		std::cout << "\n" << cont << ". " << "Nuevo precio unitario";
+			/* no es necesario verificar que al menos un precio tenga existencias, esta asegurado */
 
+			// si es venta, comprueba que haya existencias para filtrar opciones
+			if (compra || mercaElegida->precios[i].hayExistencias())
+			{
+				std::cout << "\n" << cont << ". " << mercaElegida->nombre << " ($" << mercaElegida->precios[i].precio << ")";
+				posPrecio.push_back((PrecioMerca*)&mercaElegida->precios[i]); //guarda lugar de memoria del precio-mercaderia actual en vector
+				cont++;
+			}
+		}
+
+		if (compra)
+		{
+			std::cout << "\n" << cont << ". " << "Nuevo precio unitario";
+			offSet = 1;
+		}
 
 		/* Input */
 
@@ -460,7 +494,7 @@ float adquirirMercaderia()
 		std::cin >> opStr;
 
 		/* Validacion/return */
-		op = validarInt(opStr, 1, posPrecio.size() + 1);
+		op = validarInt(opStr, {}, {}, 1, posPrecio.size() + offSet);
 		if (op == 0)
 		{
 			/// valor no valido
@@ -495,7 +529,7 @@ float adquirirMercaderia()
 	}
 	else {
 		/// encontrar mercaderia
-		precioElegido = &(mercaElegida->precios[op]);
+		precioElegido = &(mercaElegida->precios[op - 1]);
 	}
 
 	/* en este punto ya tenemos una mercaElegida y un precioElegido!! */
@@ -504,9 +538,11 @@ float adquirirMercaderia()
 	{
 		system("CLS");
 		std::cout << "=============== " << mercaElegida->nombre << " ($" << precioElegido->precio << " c/u) ===============";
-		std::cout << "\n\nElija la cantidad de mercaderia que se compra: ";
+		std::cout << "\n\nExistencias: " << ((precioElegido->hayExistencias()) ? precioElegido->dias.back().cantidad : 0) << " unidades"; //para compra, puede ser 0
+		std::cout << "\n\nElija la cantidad de mercaderia que se " << ((compra) ? "compra" : "vende" ) << ": ";
 		std::cin >> opStr;
-		op = validarInt(opStr, {}, {}, 1);
+		//si es compra, no hay maximo; si es venta, es la cantidad de existencias actuales (que no puede ser 0)
+		op = validarInt(opStr, {}, {}, 1, ((!compra) ? precioElegido->dias.back().cantidad : INT_MAX));
 		if (op == 0)
 		{
 			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
@@ -515,9 +551,9 @@ float adquirirMercaderia()
 		}
 	} while (op == 0);
 
-	precioElegido->nuevoDiaPrecioMerca(fecha, op);
-	float valorAumentado = precioElegido->precio * op;
-	return valorAumentado;
+	precioElegido->nuevoDiaPrecioMerca(fecha, ( op * ((compra) ? 1 : -1 ) )); //efectua la compra/venta
+	return precioElegido->precio * op; //devuelve el valor de esta (siempre positivo)
+	
 }
 
 /**
@@ -538,6 +574,7 @@ float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensa
 	std::string aumentoActualStr;
 	float aumentoActual;
 	float aumentoTotal = 0;
+	DiaMerca* mercaModif; //usado en caso de mercaderias
 
 	if (limite)
 	{
@@ -554,10 +591,14 @@ float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensa
 			{
 				/// hay mercaderias!
 				
-				aumentoActual = adquirirMercaderia();
+				aumentoActual = seleccionarMercaderia(true);
 
-				aumentoTotal += aumentoActual;
-				modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
+				if (aumentoActual > 0)
+				{
+					aumentoTotal += aumentoActual;
+					modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);	
+				}
+
 			} else {
 				/// no hay mercaderias
 				
@@ -612,16 +653,19 @@ float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensa
 			{
 				/// hay mercaderias!
 
-				aumentoActual = adquirirMercaderia();
+				aumentoActual = seleccionarMercaderia(true);
 
-				aumentoTotal += aumentoActual;
-				modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
+				if (aumentoActual > 0)
+				{
+					aumentoTotal += aumentoActual;
+					modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
 
-				/* permitir finalizar */
-				system("CLS");
-				std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
-				std::cin >> aumentoActualStr; //reusado de variables!!
-				satisfecho = (validarInt(aumentoActualStr, 1, 2) == 2) ? true : false;
+					/* permitir finalizar */
+					system("CLS");
+					std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
+					std::cin >> aumentoActualStr; //reusado de variables!!
+					satisfecho = (validarInt(aumentoActualStr, 1, 2) == 2) ? true : false;	
+				}
 
 			} else {
 
@@ -726,11 +770,21 @@ int main()
 {
 	MERCADERIAS.push_back(Mercaderia("Producto A"));
 	MERCADERIAS.back().precios.push_back(PrecioMerca(15));
+	MERCADERIAS.back().precios.back().nuevoDiaPrecioMerca("1/1", 3);
+
 	MERCADERIAS.back().precios.push_back(PrecioMerca(28));
+	MERCADERIAS.back().precios.back().nuevoDiaPrecioMerca("1/1", 5);
+	MERCADERIAS.back().precios.back().nuevoDiaPrecioMerca("1/1", 1);
+
+
 	MERCADERIAS.push_back(Mercaderia("Producto B"));
 	MERCADERIAS.back().precios.push_back(PrecioMerca(365));
+	MERCADERIAS.back().precios.back().nuevoDiaPrecioMerca("2/2", 15);
+
 	MERCADERIAS.back().precios.push_back(PrecioMerca(446));
-	MERCADERIAS.push_back(Mercaderia("Producto B"));
+
+
+	MERCADERIAS.push_back(Mercaderia("Producto C"));
 	/* division de vectores de Cuentas */
 	for (int i = 0; i < CUENTAS.size(); i++)
 	{

@@ -29,6 +29,17 @@ struct PrecioMerca
 	float precio;
 	std::vector<DiaMerca> dias;
 
+	/* Comprueba si hay existencias en este momento */
+	bool hayExistencias()
+	{
+		if (!dias.empty())
+		{
+			/// hay dias
+			if (dias.back().cantidad > 0) { return true; }
+		}
+		return false;
+	}
+
 	void nuevoDiaPrecioMerca(std::string fecha, int modificacion)
 	{
 		/* verifica que haya dias previos */
@@ -49,6 +60,25 @@ class Mercaderia
 public:
 	std::string nombre;
 	std::vector<PrecioMerca> precios;
+
+	/* Comprueba si en el momento actual hay existencias en al menos uno de los precios de la mercaderia */
+	bool hayExistencias()
+	{
+		if (!precios.empty())
+		{
+			/// hay precios
+			/* recorre precios */
+			for (unsigned int i = 0; i < precios.size(); i++)
+			{
+				if (!precios[i].dias.empty())
+				{
+					// si hay existencias, devolver true
+					if (precios[i].dias.back().cantidad > 0) { return true; }
+				}
+			}
+		}
+		return false; // no se encontraron existencias en toda la busqueda
+	}
 
 	/**
 	 * @brief Agrega un nuevo dia a la lista de la mercaderia al precio indicado.
