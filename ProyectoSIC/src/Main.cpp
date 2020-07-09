@@ -1,7 +1,6 @@
 #include <iostream> //I/O basico
 #include <conio.h> // _getch()
 #include <climits> //INT_MIN, INT_MAX
-#include <cfloat> //FLT_MIN, FLT_MAX
 #include <cmath> //abs()
 #include <regex> //regular expressions
 #include <vector> //arrays dinamicos
@@ -68,14 +67,14 @@ int validarInt(std::string str, std::optional<int> valorC = {}, std::optional<in
 	bool match = std::regex_match(str, smatch, reg);
 
 
-	if (match)
+	if (smatch[2].matched)
 	{
 		/// es numero!
 
 		int n = std::stoi(smatch[2].str());
 
 		/* verifica valor relativo o absoluto */
-		if (smatch[3].matched && !smatch[1].matched && 100 >= n > 0)
+		if (smatch[3].matched && 100 >= n > 0)
 		{
 			/// usar valor relativo
 
@@ -99,7 +98,7 @@ int validarInt(std::string str, std::optional<int> valorC = {}, std::optional<in
 			/// valor absoluto
 
 			//verifica negativo
-			n *= (smatch[1].matched) ? -1 : 1;
+			n *= ((smatch[1].matched) ? -1 : 1);
 
 			return (max >= n >= min) ? n : 0;
 		}
@@ -108,84 +107,6 @@ int validarInt(std::string str, std::optional<int> valorC = {}, std::optional<in
 	else {
 		/// no es numero
 		return 0;
-	}
-}
-
-/**
- * @brief Verifica si un string es un float, y esta dentro del rango permitido. Ademas, acepta porcentajes de los valores especificados
- *
- * @param str: string a comprobar
- * @param valorC/valorT: valores de los cuales sacar porcentajes relativos (de querer permitir)
- * @param min/max: valor minimo y maximo (respectivamente e inclusive) que se permiten
- * @return Si str es un float, lo devuelve. Sino, devuelve 0.0f
- */
-double validarFloat(std::string str, std::optional<float> valorC = {}, std::optional<float> valorT = {}, std::optional<float> min = FLT_MIN, std::optional<float> max = FLT_MAX)
-{
-	std::cin.clear();
-	std::cin.ignore(1000, '\n');
-
-	/* uso de regex */
-
-	std::basic_regex reg("^[ ]*(-)?([0-9]+)(?:\.?([0-9]+))?(%[c|t])?[ ]*$"); // cubrir posibilidad de valor relativo
-	std::smatch smatch;
-	bool match = std::regex_match(str, smatch, reg);
-
-
-	if (smatch[2].matched)
-	{
-		/// es numero!
-		
-		int numero[2];
-		numero[0] = std::stoi(smatch[2].str());
-		numero[1] = (smatch[3].matched) ? std::stoi(smatch[3].str()) : 0;
-
-		if (numero[1] != 0 && numero[1] >= 100)
-		{
-			int decimal = numero[1];
-			int digitos = 1;
-			while (decimal /= 10) { digitos++; }
-			numero[1] = (int)round(numero[1] / (pow(10, (digitos - 2))));
-		}
-
-		/* crea un string con las partes del numero y lo lee como float */
-		std::string numStr;
-		numStr.append(std::to_string(numero[0]));
-		numStr.append(".");
-		numStr.append(std::to_string(numero[1]));
-		double n = std::stod(numStr);
-
-		/* verifica valor relativo o absoluto */
-		if (smatch[4].matched && !smatch[1].matched && 100 >= n > 0)
-		{
-			/// usar valor relativo
-			
-			/* verificar si el tipo usado esta disponible */
-			if (smatch[4] == "%c" && valorC)
-			{
-				/// usar valorC
-				return valorC.value() * n / 100;
-			}
-			else if (smatch[4] == "%t" && valorT)
-			{
-				/// usar valorT
-				return valorT.value() * n / 100;
-			} else {
-				/// valor relativo imposible
-				return 0.0;
-			}
-		} else {
-			/// valor absoluto
-			
-			//verifica negativo
-			n *= (smatch[1].matched) ? -1 : 1;
-
-			return (max >= n >= min) ? n : 0.0;
-		}
-
-	}
-	else {
-		/// no es numero
-		return 0.0;
 	}
 }
 
@@ -251,7 +172,7 @@ bool validarFecha(std::string str)
  * @param cuenta: Puntero a la cuenta que se esta modificando
  * @param modificacion: cantidad (positiva/negativa) de modificacion
  */
-void modificarCuenta(Cuenta* cuenta, float modificacion)
+void modificarCuenta(Cuenta* cuenta, int modificacion)
 {
 	operacionActual->nuevaLinea(cuenta, modificacion); //agrega Linea a la Operacion actual
 	cuenta->modifDiaCuenta(fecha, modificacion); //aumenta el valor de Cuenta
@@ -383,9 +304,9 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
  * 
  * @param compra: Booleano: compra(true) / venta(false)
  * 
- * @return puntero al dia de la mercaderia adquirida/vendida
+ * @return integer con el valor total de la venta/compra
  */
-float seleccionarMercaderia(bool compra)
+int seleccionarMercaderia(bool compra)
 {
 	std::string opStr;
 	int op;
@@ -422,6 +343,7 @@ float seleccionarMercaderia(bool compra)
 		{
 			std::cout << "\n" << cont << ". " << "Nueva mercaderia";
 			offSet = 1;
+			hayOpcion = true;
 		}
 		
 		// no hay opciones posibles
@@ -523,7 +445,7 @@ float seleccionarMercaderia(bool compra)
 			std::cout << "\n\nIngrese el nuevo precio de compra: $";
 			std::cin >> opStr;
 
-			op = validarFloat(opStr, {}, {}, 1);
+			op = validarInt(opStr, {}, {}, 1);
 			if (op == 0)
 			{
 				std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
@@ -571,17 +493,17 @@ float seleccionarMercaderia(bool compra)
  * @param t: enum del tipo de cuenta o filtro permitido para realizar operaciones
  * @param tipoPartida: enum representando si se estan sumando valores al debe, al haber, o si es el caso de una apertura
  * @param mensaje: string con el mensaje que acompania la seleccion de Cuenta
- * @param [limite]: float hasta el cual se deben hacer operaciones (siempre positivo)
+ * @param [limite]: int hasta el cual se deben hacer operaciones (siempre positivo)
  * 
- * @return float con la cantidad total que se sumo
+ * @return int con la cantidad total que se sumo
  */
 
-float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje, std::optional<float> limite)
+int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje, std::optional<int> limite)
 {
 	Cuenta* cuentaActual;
 	std::string aumentoActualStr;
-	float aumentoActual;
-	float aumentoTotal = 0;
+	int aumentoActual;
+	int aumentoTotal = 0;
 	DiaMerca* mercaModif; //usado en caso de mercaderias
 
 	if (limite)
@@ -618,7 +540,7 @@ float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensa
 				std::cin >> aumentoActualStr;
 
 				/* validacion de cantidad */
-				aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), limite, 1, (limite.value() - abs(aumentoTotal))); //se asegura de que la cantidad sea valida
+				aumentoActual = validarInt(aumentoActualStr, cuentaActual->valorActual(), limite, 1, (limite.value() - abs(aumentoTotal))); //se asegura de que la cantidad sea valida
 
 				if (aumentoActual != 0)
 				{
@@ -685,7 +607,7 @@ float aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensa
 				std::cin >> aumentoActualStr;
 
 				/* validacion de cantidad */
-				aumentoActual = validarFloat(aumentoActualStr, cuentaActual->valorActual(), {}, 1); //se asegura de que la cantidad sea valida
+				aumentoActual = validarInt(aumentoActualStr, cuentaActual->valorActual(), {}, 1); //se asegura de que la cantidad sea valida
 				if (aumentoActual != 0)
 				{
 					/// cantidad valida!
@@ -753,7 +675,7 @@ void OP_Capital()
 	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
 
 	//aumenta operaciones hasta que el usuario decida
-	float totalAumentado = aumentarPartida(Cuenta::F_OPER, Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+	int totalAumentado = aumentarPartida(Cuenta::F_OPER, Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
 
 	/* iguala cuentas con Capital(PN+) */
 	modificarCuenta(buscarCuenta("Capital"), totalAumentado * -1);
@@ -776,14 +698,52 @@ const std::vector<Opcion> OPCIONES = {
 
 int main()
 {
-	int i; double d; std::string str;
-
-	while (true)
+	/* division de vectores de Cuentas */
+	for (int i = 0; i < CUENTAS.size(); i++)
 	{
-		std::cin >> str;
-		i = validarInt(str, 1000, 2000);
-		std::cout << i << "\n";
+		if (CUENTAS[i].tipo == Cuenta::ACTIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].tipo == Cuenta::PASIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].tipo == Cuenta::R_NEG) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
 	}
+
+	bool loop = true; //Controla la ejecucion del programa
+	std::string opString;
+
+	std::cout << "=============== PROYECTO SIC ===============";
+	std::cout << "\n\nIniciar con apertura?\n1. Si\n2. No\n";
+	std::cin >> opString;
+	if (validarInt(opString) == 1)
+	{
+		OP_Capital();
+	}
+	// -------- LOOP PRINCIPAL --------
+	do
+	{
+		/* Display de opciones y ingreso de input */
+		system("CLS");
+		std::cout << "Seleccione una opcion:\n";
+		for (int i = 0; i < OPCIONES.size(); i++)
+		{
+			std::cout << i + 1 << ". " << OPCIONES[i].nombre << "\n";
+		}
+		std::cin >> opString;
+
+		/* Validacion */
+		int op = validarInt(opString, 1, OPCIONES.size());
+		if (op != 0)
+		{
+			/// input valido!
+			OPCIONES[op - 1].pFuncion();
+			_getch();
+
+			loop = false; //provisorio
+		}
+		else {
+			///input invalido
+			std::cout << "Valor no valido, presione cualquier tecla para volver a intentarlo: ";
+			_getch();
+		}
+	} while (loop);
 
 	return 0;
 }

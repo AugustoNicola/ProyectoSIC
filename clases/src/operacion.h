@@ -13,8 +13,8 @@
 struct Linea
 {
 	const Cuenta *cuenta;
-	float modificacion;
-	Linea(Cuenta *c, float modif) : cuenta(c), modificacion(modif) {};
+	int modificacion;
+	Linea(Cuenta *c, int modif) : cuenta(c), modificacion(modif) {};
 };
 
 /**
@@ -35,7 +35,7 @@ public:
 	 * @param cuenta: cuenta que se anota en la linea
 	 * @param modificacion: valor que se debita (positivo) o acredita (negativo)
 	*/
-	void nuevaLinea(Cuenta *cuenta, float modificacion)
+	void nuevaLinea(Cuenta *cuenta, int modificacion)
 	{
 		lineas.push_back(Linea(cuenta, modificacion));
 	}

@@ -12,8 +12,8 @@
 struct DiaCuenta
 {
 	std::string dia;
-	float valorActual;
-	float delta;
+	int valorActual;
+	int delta;
 
 	/**
 	 * @brief Aumenta el delta y el valor actual del dia segun el valor ingresado.
@@ -21,13 +21,13 @@ struct DiaCuenta
 	 * @param aum: numero a aumentar (puede ser negativo)
 	 * 
 	 */
-	void aumentar(float aum)
+	void aumentar(int aum)
 	{
 		delta += aum;
 		valorActual += aum;
 	};
 
-	DiaCuenta(std::string d, float vAnterior, float delt) : dia(d), valorActual(vAnterior), delta(delt) { valorActual += delt; };
+	DiaCuenta(std::string d, int vAnterior, int delt) : dia(d), valorActual(vAnterior), delta(delt) { valorActual += delt; };
 };
 
 /**
@@ -57,7 +57,7 @@ public:
 	std::vector<DiaCuenta> dias;
 
 	/** @brief Devuelve el valor actual de la cuenta. */
-	float valorActual() { return (!dias.empty()) ? dias.back().valorActual : 0.0f ; }
+	int valorActual() { return (!dias.empty()) ? dias.back().valorActual : 0.0f ; }
 
 	/**
 	 * @brief Agrega un nuevo valor de dia a la cuenta.
@@ -65,7 +65,7 @@ public:
 	 * @param fecha: fecha del dia (DD/MM)
 	 * @param delta: modificacion a la cuenta (positiva o negativa)
 	 */
-	void modifDiaCuenta(std::string fecha, float delta)
+	void modifDiaCuenta(std::string fecha, int delta)
 	{
 		/* verifica si ya hay dias */
 		if (!dias.empty())

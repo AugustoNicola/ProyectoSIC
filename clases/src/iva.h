@@ -12,8 +12,8 @@
 struct MesIVA
 {
 	std::string mes;
-	float valor;
+	int valor;
 
-	MesIVA(std::string m, float v) : mes(m), valor(v) {};
+	MesIVA(std::string m, int v) : mes(m), valor(v) {};
 };
 

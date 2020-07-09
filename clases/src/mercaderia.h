@@ -26,7 +26,7 @@ struct DiaMerca
  */
 struct PrecioMerca
 {
-	float precio;
+	int precio;
 	std::vector<DiaMerca> dias;
 
 	/* Comprueba si hay existencias en este momento */
@@ -46,7 +46,7 @@ struct PrecioMerca
 		dias.push_back(DiaMerca(fecha, ((!dias.empty()) ? dias.back().cantidad : 0), modificacion));
 	}
 
-	PrecioMerca(float p) : precio(p) { dias = {}; };
+	PrecioMerca(int p) : precio(p) { dias = {}; };
 };
 
 /**
@@ -87,7 +87,7 @@ public:
 	 * @param precio: precio al que esta el producto en la lista que se debe ampliar
 	 * @param delta: modificacion de existencias
 	 */
-	void nuevoDiaMercaderia(std::string dia, float precio, int delta)
+	void nuevoDiaMercaderia(std::string dia, int precio, int delta)
 	{
 		/* Verifica si ya hay precios */
 		if (!precios.empty())
