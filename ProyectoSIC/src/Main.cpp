@@ -215,6 +215,7 @@ Operacion* pedirNombreDocx(Operacion *op)
 	std::string nombre;
 	do
 	{
+		system("CLS");
 		std::cout << "Ingrese el nombre del documento de esta operacion: ";
 		std::getline(std::cin, nombre);
 		std::cin.clear();
@@ -225,7 +226,6 @@ Operacion* pedirNombreDocx(Operacion *op)
 			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente.";
 			_getch();
 		}
-		system("CLS");
 	} while (nombre.empty());
 	op->documento = nombre;
 	return op;
@@ -819,9 +819,26 @@ void OP_VentaMercaderias()
 	
 }
 
+void OP_CompraMercaderias()
+{
+	/* compra de mercaderias */
+	operMercaderia compra = seleccionarMercaderia(true);
+	int totalPerdido = compra.cantidad * compra.precioUnitario; //siempre positivo
+
+	/* amortizacion en Haber */
+	modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido); // Mercaderias (A+)
+	aumentarPartida(Cuenta::F_OPER, Haber, "Elija las cuentas con las que se amortiza la compra", totalPerdido);
+
+	/* guarda operacion */
+	operacionActual = pedirNombreDocx(operacionActual);
+	commitOperacion(operacionActual);
+}
+
+
 const std::vector<Opcion> OPCIONES = {
 	Opcion("Transaccion de cuentas", &OP_Transaccion),
-	Opcion("Venta de Mercaderias", &OP_VentaMercaderias)
+	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
+	Opcion("Compra de Mercaderias", &OP_CompraMercaderias)
 };
 
 
