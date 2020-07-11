@@ -759,6 +759,9 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 /// ################################         OPCIONES         ########$#########################
 /// ############################################################################################
 
+/* Llama a la funcion para crear una nueva fecha en el vector. */
+void OP_NuevaFecha() { pedirNuevaFecha(); }
+
 /**
  * @brief Operacion que le pide al usuario la primera fecha, y con ella inicializa la primera operacion.
  *  luego invoca a la funcion aumentarPartida sin limite para que el usuario pueda ingresar cuentas hasta
@@ -779,8 +782,12 @@ void OP_Capital()
 	/* finaliza operacion*/
 	operacionActual->documento = "Apertura";
 	commitOperacion(operacionActual);
+
+	pedirNuevaFecha("Ingrese la primera fecha de operaciones"); //una vez finalizada apertura, crea nuevo dia
 }
 
+/* Pide valores en el Haber hasta que el usuario decida; luego pide valores en el debe hasta saciar el haber;
+	por ultimo guarda la operacion */
 void OP_Transaccion()
 {
 	/* ingreso de cuentas */
@@ -792,6 +799,8 @@ void OP_Transaccion()
 	commitOperacion(operacionActual);
 }
 
+/* Pide llevar a cabo una operacion de venta. Si es posible, llena las cuentas necesarias con los datos de la venta, y pide al usuario saciar los ingresos del debe;
+	por ultimo guarda la operacion. */
 void OP_VentaMercaderias()
 {
 	operMercaderia venta = seleccionarMercaderia(false);
@@ -814,11 +823,11 @@ void OP_VentaMercaderias()
 		/* guarda operacion */
 		operacionActual = pedirNombreDocx(operacionActual);
 		commitOperacion(operacionActual);
-
 	}
-	
 }
 
+/* Pide llevar a cabo una operacion de compra. LLena las cuentas necesarios con los datos de la compra, pide saciar las perdidas en el Haber.
+	Por ultimo, guuarda la operacion*/
 void OP_CompraMercaderias()
 {
 	/* compra de mercaderias */
@@ -836,7 +845,8 @@ void OP_CompraMercaderias()
 
 
 const std::vector<Opcion> OPCIONES = {
-	Opcion("Transaccion de cuentas", &OP_Transaccion),
+	Opcion("Nueva Fecha", &OP_NuevaFecha),
+	Opcion("Transaccion de Cuentas", &OP_Transaccion),
 	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias)
 };
@@ -862,10 +872,7 @@ int main()
 	std::cout << "=============== PROYECTO SIC ===============";
 	std::cout << "\n\nIniciar con apertura?\n1. Si\n2. No\n";
 	std::cin >> opString;
-	if (validarInt(opString) == 1)
-	{
-		OP_Capital();
-	}
+	if (validarInt(opString) == 1) { OP_Capital(); }
 	// -------- LOOP PRINCIPAL --------
 	do
 	{
@@ -885,7 +892,7 @@ int main()
 			/// input valido!
 			OPCIONES[op - 1].pFuncion();
 
-			loop = false; //provisorio
+			//loop = false; //provisorio
 		}
 		else {
 			///input invalido
