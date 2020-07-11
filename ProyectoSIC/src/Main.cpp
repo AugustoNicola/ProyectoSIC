@@ -176,7 +176,7 @@ void pedirNuevaFecha(std::optional<std::string> mensaje = "Ingrese la nueva fech
 	do
 	{
 		system("CLS");
-		std::cout << mensaje.value();
+		std::cout << mensaje.value() << ": ";
 		std::cin >> fechaStr;
 		if (validarFecha(fechaStr))
 		{
@@ -370,6 +370,11 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, tipoPartida tipoPart, std::string mensaje)
 	return {};
 }
 
+
+struct operMercaderia
+{
+	int cantidad; int precioUnitario; int precioVenta;
+};
 /**
  * @brief Funcion utilizada para adquirir/vender mercaderia, eligiendo la mercaderia, su precio y su cantidad.
  *  Permite crear tanto mercaderias como precios de compra nuevos en el caso de una compra.
@@ -378,7 +383,7 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, tipoPartida tipoPart, std::string mensaje)
  * 
  * @return integer con el valor total de la venta/compra
  */
-int seleccionarMercaderia(bool compra)
+operMercaderia seleccionarMercaderia(bool compra)
 {
 	std::string opStr;
 	int op;
@@ -423,7 +428,7 @@ int seleccionarMercaderia(bool compra)
 		{
 			std::cout << "\nNo hay mercaderias disponibles!\n\nPresione cualquier tecla para cancelar";
 			_getch();
-			return 0;
+			return {};
 		}
 
 		/* Input */
@@ -535,9 +540,12 @@ int seleccionarMercaderia(bool compra)
 	}
 
 	/* en este punto ya tenemos una mercaElegida y un precioElegido!! */
-	/* ----- Bucle validacion compra ----- */
+	/* ----- Bucle validacion compra/venta ----- */
+	int cantidad = 0; unsigned int precioVenta = 0;
 	do
 	{
+		/* validar cantidad */
+
 		system("CLS");
 		std::cout << "=============== " << mercaElegida->nombre << " ($" << precioElegido->precio << " c/u) ===============";
 		std::cout << "\n\nExistencias: " << ((precioElegido->hayExistencias()) ? precioElegido->dias.back().cantidad : 0) << " unidades"; //para compra, puede ser 0
@@ -547,14 +555,45 @@ int seleccionarMercaderia(bool compra)
 		op = validarInt(opStr, {}, {}, 1, ((!compra) ? precioElegido->dias.back().cantidad : INT_MAX));
 		if (op == 0)
 		{
+			/// cantidad no valida
 			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
 			_getch();
 			system("CLS");
-		}
-	} while (op == 0);
+		} else {
+			///cantidad valida!
+			
+			cantidad = op; //set cantidad
 
-	precioElegido->nuevoDiaPrecioMerca(fecha, ( op * ((compra) ? 1 : -1 ) )); //efectua la compra/venta
-	return precioElegido->precio * op; //devuelve el valor de esta (siempre positivo)
+			if (!compra)
+			{
+				/// necesidad de validar precio venta
+				do
+				{
+					std::cout << "\n\nIngrese el precio unitario al cual se vende la mercaderia: $";
+					std::cin >> opStr;
+					op = validarInt(opStr, {}, {}, 1);
+					if (op == 0)
+					{
+						/// precio venta no valido
+						std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
+						_getch();
+					} else {
+						/// precio venta valido!
+						
+						precioVenta = op; // set precioVenta (solo en caso de venta)
+					}
+				} while (precioVenta == 0);
+			}
+		}
+	} while (cantidad == 0);
+
+	// carga la respuesta del struct
+	operMercaderia resp;
+	resp.cantidad = cantidad * ((compra) ? 1 : -1); resp.precioUnitario = precioElegido->precio; resp.precioVenta = precioVenta;
+
+	precioElegido->nuevoDiaPrecioMerca(fecha, resp.cantidad); //efectua la modificacion de existencias
+
+	return resp;
 	
 }
 
@@ -593,7 +632,8 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 			{
 				/// hay mercaderias!
 				
-				aumentoActual = seleccionarMercaderia(true);
+				operMercaderia operMerca = seleccionarMercaderia(true);
+				aumentoActual = operMerca.cantidad * operMerca.precioUnitario;
 
 				if (aumentoActual > 0)
 				{
@@ -655,7 +695,8 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 			{
 				/// hay mercaderias!
 
-				aumentoActual = seleccionarMercaderia(true);
+				operMercaderia operMerca = seleccionarMercaderia(true);
+				aumentoActual = operMerca.cantidad * operMerca.precioUnitario;
 
 				if (aumentoActual > 0)
 				{
@@ -751,8 +792,36 @@ void OP_Transaccion()
 	commitOperacion(operacionActual);
 }
 
+void OP_VentaMercaderias()
+{
+	operMercaderia venta = seleccionarMercaderia(false);
+	/* validacion posibilidad de venta */
+	if (venta.cantidad != 0)
+	{
+		/// venta posible!
+		
+		int totalGanado = abs(venta.cantidad * venta.precioVenta); // valor absoluto para mayor comodidad
+		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1); // Ventas (R+)
+
+		aumentarPartida(Cuenta::F_OPER, Debe, "Elija las cuentas de ganancia de la venta", totalGanado); // iguala con debe
+
+		/* anotar cmv y mercaderias */
+		int totalPerdido = abs(venta.cantidad * venta.precioUnitario); // valor absoluto para mayor comodidad
+
+		modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido * -1); // Mercaderias (A-)
+		modificarCuenta(buscarCuenta("CMV"), totalPerdido); // CMV (R-)
+
+		/* guarda operacion */
+		operacionActual = pedirNombreDocx(operacionActual);
+		commitOperacion(operacionActual);
+
+	}
+	
+}
+
 const std::vector<Opcion> OPCIONES = {
-	Opcion("Transaccion de cuentas", &OP_Transaccion)
+	Opcion("Transaccion de cuentas", &OP_Transaccion),
+	Opcion("Venta de Mercaderias", &OP_VentaMercaderias)
 };
 
 
@@ -798,7 +867,6 @@ int main()
 		{
 			/// input valido!
 			OPCIONES[op - 1].pFuncion();
-			_getch();
 
 			loop = false; //provisorio
 		}
