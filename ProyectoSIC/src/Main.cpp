@@ -166,6 +166,32 @@ bool validarFecha(std::string str)
 }
 
 /**
+ * @brief Crea un nuevo dia en el array con la fecha que se pide.
+ * 
+ * @param mensaje: String personalizable para mostrar al pedir el input.
+ */
+void pedirNuevaFecha(std::optional<std::string> mensaje = "Ingrese la nueva fecha")
+{
+	std::string fechaStr;
+	do
+	{
+		system("CLS");
+		std::cout << mensaje.value();
+		std::cin >> fechaStr;
+		if (validarFecha(fechaStr))
+		{
+			break;
+		}
+		else {
+			std::cout << "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
+			_getch();
+		}
+	} while (true);
+
+	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
+}
+
+/**
  * @brief Crea una Linea en la operacion actual y realiza la modificacion corresponiente en la Cuenta
  *  con la informacion recibida.
  * 
@@ -179,18 +205,67 @@ void modificarCuenta(Cuenta* cuenta, int modificacion)
 }
 
 /**
+ * @brief Funcion simple que pide un nombre para ponerle a la operacion ingresada.
+ * 
+ * @param op: Puntero con la operacion a modificar
+ * @return Puntero con la operacion modificada
+ */
+Operacion* pedirNombreDocx(Operacion *op)
+{
+	std::string nombre;
+	do
+	{
+		std::cout << "Ingrese el nombre del documento de esta operacion: ";
+		std::getline(std::cin, nombre);
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		
+		if (nombre.empty())
+		{
+			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente.";
+			_getch();
+		}
+		system("CLS");
+	} while (nombre.empty());
+	op->documento = nombre;
+	return op;
+}
+
+/* Pushea la operacion al ultimo dia */
+void commitOperacion(Operacion* op)
+{
+	DIAS.back().nuevaOperacion(*operacionActual);
+	oper = Operacion();
+}
+
+/**
  * @brief Muestra todas las cuentas del tipo/filtro determinado, en orden numerico. Pide elegir una
  *  y devuelve un puntero a ella.
  * 
  * @param t: el valor del enum de la clase Cuenta que deben tener las clases para mostrarse/filtro
+ * @param tipoPart: el valor del enum del tipo de operacion que se busca
  * @param mensaje: el mensaje que se muestra acompaniando el menu de seleccion
- * @param DebeOHaber: usado para marcar si se realizara un aumento o disminucion a la cuenta (+/-)
  */
-Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
+Cuenta* elegirCuenta(Cuenta::Tipo t, tipoPartida tipoPart, std::string mensaje)
 {
 	std::string opStr;
 	int op;
-	std::string modificador; //para mostrar (+/-)
+
+	/* ajuste de modificaciones */
+	std::string mActivo, mPasivo, mResult;
+	switch (tipoPart)
+	{
+	case Debe:
+		mActivo = " (A+)"; mPasivo = " (P-)"; mResult = " (R-)";
+		break;
+	case Haber:
+		mActivo = " (A-)"; mPasivo = " (P+)"; mResult = " ((R-)+)";
+		break;
+	case Apertura:
+		mActivo = " (A+)"; mPasivo = " (P+)"; mResult = " (R-)";
+		break;
+	}
+
 	/* Bucle validacion */
 	do
 	{
@@ -214,28 +289,25 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
 				cont++;
 			}
 
-			modificador = (tipoPart == Haber) ? " (A-)" : " (A+)";
 			for (int i = 0; i < ACTIVOS.size(); i++)
 			{
-				std::cout << "\n" << cont << ". " << ACTIVOS[i]->nombre << modificador; //output
+				std::cout << "\n" << cont << ". " << ACTIVOS[i]->nombre << mActivo; //output
 				pos.push_back(ACTIVOS[i]);
 				cont++;
 			}
 
 			std::cout << "\n\n-------- PASIVOS --------";
-			modificador = (tipoPart == Debe) ? " (P-)" : " (P+)";
 			for (int i = 0; i < PASIVOS.size(); i++)
 			{
-				std::cout << "\n" << cont << ". " << PASIVOS[i]->nombre << modificador; //output
+				std::cout << "\n" << cont << ". " << PASIVOS[i]->nombre << mPasivo; //output
 				pos.push_back(PASIVOS[i]);
 				cont++;
 			}
 
 			std::cout << "\n\n-------- RESULTADOS --------";
-			modificador = (tipoPart == Haber) ? " ((R-)+)" : " (R-)";
 			for (int i = 0; i < R_NEGS.size(); i++)
 			{
-				std::cout << "\n" << cont << ". " << R_NEGS[i]->nombre << modificador; //output
+				std::cout << "\n" << cont << ". " << R_NEGS[i]->nombre << mResult; //output
 				pos.push_back(R_NEGS[i]);
 				cont++;
 			}
@@ -245,18 +317,19 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
 
 			/* set los modificadores */
 			std::string titulo;
+			std::string modificador;
 			switch (t)
 			{
 			case Cuenta::ACTIVO:
-				modificador = (tipoPart == Haber) ? " (A-)" : " (A+)";
+				modificador = mActivo;
 				titulo = "-------- ACTIVOS --------";
 				break;
 			case Cuenta::PASIVO:
-				modificador = (tipoPart == Debe) ? " (P-)" : " (P+)";
+				modificador = mPasivo;
 				titulo = "-------- PASIVOS --------";
 				break;
 			case Cuenta::R_NEG:
-				modificador = (tipoPart == Haber) ? " ((R-)+)" : "(R-)";
+				modificador = mResult;
 				titulo = "-------- RESULTADOS --------";
 				break;
 			}
@@ -296,7 +369,6 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, std::string mensaje, tipoPartida tipoPart)
 	} while (op == 0);
 	return {};
 }
-
 
 /**
  * @brief Funcion utilizada para adquirir/vender mercaderia, eligiendo la mercaderia, su precio y su cantidad.
@@ -514,10 +586,10 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 			system("CLS");
 			
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, mensaje, tipoPartida);
+			cuentaActual = elegirCuenta(t, tipoPartida, mensaje);
 
 			/* verificacion mercaderias*/
-			if (cuentaActual != buscarCuenta("Mercaderias"))
+			if (cuentaActual == buscarCuenta("Mercaderias"))
 			{
 				/// hay mercaderias!
 				
@@ -576,7 +648,7 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 			system("CLS");
 
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, mensaje, tipoPartida);
+			cuentaActual = elegirCuenta(t, tipoPartida, mensaje);
 
 			/* verificacion mercaderias*/
 			if (cuentaActual->nombre == "Mercaderias")
@@ -655,24 +727,7 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
  */
 void OP_Capital()
 {
-	/* ingreso fecha */
-	std::string fechaStr;
-	do
-	{
-		system("CLS");
-		std::cout << "Ingrese la fecha de apertura: ";
-		std::cin >> fechaStr;
-		if (validarFecha(fechaStr))
-		{
-			break;
-		}
-		else {
-			std::cout << "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
-			_getch();
-		}
-	} while (true);
-
-	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
+	pedirNuevaFecha("Ingrese la fecha de apertura");
 
 	//aumenta operaciones hasta que el usuario decida
 	int totalAumentado = aumentarPartida(Cuenta::F_OPER, Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
@@ -682,13 +737,22 @@ void OP_Capital()
 
 	/* finaliza operacion*/
 	operacionActual->documento = "Apertura";
-	DIAS.back().nuevaOperacion(*operacionActual);
-	oper = Operacion();
+	commitOperacion(operacionActual);
 }
 
+void OP_Transaccion()
+{
+	/* ingreso de cuentas */
+	int perdida = abs(aumentarPartida(Cuenta::F_OPER, tipoPartida::Haber, "Elija las cuentas del haber", {})); //le quita el signo negativo
+	aumentarPartida(Cuenta::F_OPER, tipoPartida::Debe, "Elija las cuentas del debe", perdida);
+
+	/* commit de operacion */
+	operacionActual = pedirNombreDocx(operacionActual);
+	commitOperacion(operacionActual);
+}
 
 const std::vector<Opcion> OPCIONES = {
-	
+	Opcion("Transaccion de cuentas", &OP_Transaccion)
 };
 
 
