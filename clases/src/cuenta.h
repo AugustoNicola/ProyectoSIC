@@ -49,9 +49,8 @@ public:
 		ACTIVO, PASIVO, R_NEG, OTRO,
 		F_OPER
 	};
-private:
-	bool modoDebito;
 public:
+	bool modoDebito;
 	std::string nombre;
 	Cuenta::Tipo tipo;
 	std::vector<DiaCuenta> dias;
@@ -79,11 +78,11 @@ public:
 					/// fecha encontrada, sumar valor actual al previo
 					// verifica si se debe aumentar positivo (debe) o negativo (haber)
 					dias[i].aumentar(delta);
-					break;
+					return;
 				}
-				///fecha no encontrada, crear
-				dias.push_back(DiaCuenta(fecha, dias.back().valorActual, delta));
 			}
+			///fecha no encontrada, crear
+			dias.push_back(DiaCuenta(fecha, dias.back().valorActual, delta));
 		} else {
 			/// no hay ningun dia, crear primero
 			dias.push_back(DiaCuenta(fecha, 0, delta));

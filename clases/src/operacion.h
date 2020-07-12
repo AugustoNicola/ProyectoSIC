@@ -12,7 +12,7 @@
  */
 struct Linea
 {
-	const Cuenta *cuenta;
+	Cuenta *cuenta;
 	int modificacion;
 	Linea(Cuenta *c, int modif) : cuenta(c), modificacion(modif) {};
 };
@@ -38,6 +38,16 @@ public:
 	void nuevaLinea(Cuenta *cuenta, int modificacion)
 	{
 		lineas.push_back(Linea(cuenta, modificacion));
+	}
+
+	/* Verifica si la operacion es de compra/venta de mercaderias*/
+	bool involucraMercaderias()
+	{
+		for (unsigned int l = 0; l < lineas.size(); l++)
+		{
+			if (lineas[l].cuenta->nombre == "Mercaderias") { return true; }
+		}
+		return false;
 	}
 
 	Operacion(std::string doc) : documento(doc) { };

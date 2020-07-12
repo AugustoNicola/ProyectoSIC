@@ -754,6 +754,139 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 	return aumentoTotal;
 }
 
+void NotaDC(bool credito)
+{
+	std::string opStr;
+	int op;
+	int modificacion;
+	Operacion* operacionModif = nullptr;
+	Linea* lineaModif = nullptr;
+	tipoPartida tipo;
+
+	/* elegir operacion valida */
+	unsigned int cont;
+	std::vector<Operacion*> posOper;
+	do
+	{
+		cont = 1;
+		posOper = {};
+		system("CLS");
+
+		for (unsigned int d = 0; d < DIAS.size(); d++) //recorre dias
+		{
+			for (unsigned int o = 0; o < DIAS[d].operaciones.size(); o++) //recorre operaciones
+			{
+				std::cout << "\n" << cont << ". " << DIAS[d].operaciones[o].documento << " (" << DIAS[d].fecha << ")";
+				posOper.push_back(&(DIAS[d].operaciones[o]));
+				cont++;
+			}
+		}
+		std::cout << "\n\nElija la operacion a la que se refiere la nota: ";
+		std::cin >> opStr;
+
+		/* Validacion/return */
+		op = validarInt(opStr, 1, posOper.size());
+		if (op == 0)
+		{
+			/// valor no valido
+			std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
+			_getch();
+		}
+		else {
+			/// opcion elegida valida!
+			operacionModif = posOper[op - 1];
+		}
+	} while (op == 0);
+
+	/* verificacion mercaderias */
+	if (operacionModif->involucraMercaderias())
+	{
+		/// es compra-venta!
+	}
+	else {
+		/// no es compra-venta!
+
+		/* elegir linea de la modificacion */
+		std::vector<Linea*> posLinea;
+		do
+		{
+			cont = 1;
+			posLinea = {};
+			system("CLS");
+
+			for (unsigned int c = 0; c < operacionModif->lineas.size(); c++) //recorre lineas
+			{
+				std::cout << "\n" << cont << ". " << operacionModif->lineas[c].cuenta->nombre << " (" << operacionModif->lineas[c].modificacion << ")";
+				posLinea.push_back(&(operacionModif->lineas[c]));
+				cont++;
+			}
+
+			std::cout << "\n\nElija la cuenta que " << ((!credito) ? "aumenta" : "disminuye") <<  " en la nota: ";
+			std::cin >> opStr;
+
+			/* Validacion/return */
+			op = validarInt(opStr, 1, posLinea.size());
+			if (op == 0)
+			{
+				/// valor no valido
+				std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
+				_getch();
+			}
+			else {
+				/// opcion elegida valida!
+				lineaModif = posLinea[op - 1];
+			}
+		} while (op == 0);
+
+		/* ingresar modificacion */
+		do
+		{
+			system("CLS");
+
+			std::cout << "\n\n Ingrese el valor " << ((!credito) ? "del aumento" : "de la disminucion") << " de la cuenta: $";
+			std::cin >> opStr;
+
+			/* Validacion/return */
+			op = validarInt(opStr, {}, {}, 1);
+			if (op == 0)
+			{
+				/// valor no valido
+				std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
+				_getch();
+			}
+			else {
+				/// opcion elegida valida, realizar cambios!
+
+				// ajusta signo modificacion y como se salda
+				if (lineaModif->modificacion > 0)
+				{
+					/// La cuenta tenia una modificacion en el debe
+					
+					modificacion = op * ((!credito) ? 1 : -1); //si es debito la aumenta en el debe, sino en el haber
+					tipo = (!credito) ? Haber : Debe; //contrrarestar acorde
+				}
+				else {
+					/// La cuenta tenia una modificacion en el haber
+					modificacion = op * ((!credito) ? -1 : 1); //si es debito la aumenta en el haber, sino en el debe
+					tipo = (!credito) ? Debe : Haber; //contrarrestar acorde
+				}
+
+				modificarCuenta(lineaModif->cuenta, modificacion); //realiza modificacion
+
+				/* realizar aumentoPartida para saciarlo */
+				std::string mensaje = "Elija las cuentas que saldan el "; mensaje.append(((credito) ? "credito" : "debito"));
+				aumentarPartida(Cuenta::F_OPER, tipo, mensaje, abs(modificacion));
+
+				operacionActual = pedirNombreDocx(operacionActual);
+				commitOperacion(operacionActual);
+			}
+		} while (op == 0);
+	}
+
+	/* cerrar operacion*/
+
+}
+
 
 /// ############################################################################################
 /// ################################         OPCIONES         ########$#########################
@@ -843,12 +976,18 @@ void OP_CompraMercaderias()
 	commitOperacion(operacionActual);
 }
 
+/* Notas de Credito y Debito*/
+
+void OP_NCred() { NotaDC(true); }
+void OP_NDeb() { NotaDC(false); }
 
 const std::vector<Opcion> OPCIONES = {
 	Opcion("Nueva Fecha", &OP_NuevaFecha),
 	Opcion("Transaccion de Cuentas", &OP_Transaccion),
 	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
-	Opcion("Compra de Mercaderias", &OP_CompraMercaderias)
+	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
+	Opcion("Nota de Credito", &OP_NCred),
+	Opcion("Nota de Debito", &OP_NDeb)
 };
 
 
