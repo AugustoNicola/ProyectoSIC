@@ -42,14 +42,14 @@ class Cuenta
 {
 public:
 	/**
-	 * @brief usado para limitar las apariciones de la cuenta (Activo, Pasivo, Resultado Negativo, Otro).
+	 * @brief usado para limitar las apariciones de la cuenta (Activo, Pasivo, Resultado Negativo, etc).
 	 *  y tambien filtros (Operacionales)
 	 */
 	enum Tipo {
-		ACTIVO, PASIVO, R_NEG, OTRO,
+		ACTIVO_OPER, PASIVO_OPER, R_NEG_OPER, ACTIVO, PASIVO, R_POS, R_NEG,
 		F_OPER
 	};
-public:
+	
 	bool modoDebito;
 	std::string nombre;
 	Cuenta::Tipo tipo;

@@ -1,4 +1,5 @@
 #include <iostream> //I/O basico
+#include <fstream> //I/O de archivos .csv
 #include <conio.h> // _getch()
 #include <climits> //INT_MIN, INT_MAX
 #include <cmath> //abs()
@@ -45,6 +46,13 @@ Cuenta* buscarCuenta(std::string nombre)
 		}
 	}
 	return nullptr;
+}
+
+/* Aniade comillas simples en los bordes del string */
+std::string formatear(std::string texto)
+{
+	texto.insert(0, "'"); texto.append("'");
+	return texto;
 }
 
 /**
@@ -320,15 +328,15 @@ Cuenta* elegirCuenta(Cuenta::Tipo t, tipoPartida tipoPart, std::string mensaje)
 			std::string modificador;
 			switch (t)
 			{
-			case Cuenta::ACTIVO:
+			case Cuenta::ACTIVO_OPER:
 				modificador = mActivo;
 				titulo = "-------- ACTIVOS --------";
 				break;
-			case Cuenta::PASIVO:
+			case Cuenta::PASIVO_OPER:
 				modificador = mPasivo;
 				titulo = "-------- PASIVOS --------";
 				break;
-			case Cuenta::R_NEG:
+			case Cuenta::R_NEG_OPER:
 				modificador = mResult;
 				titulo = "-------- RESULTADOS --------";
 				break;
@@ -661,7 +669,7 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 					/* ajusta el signo de la modificacion */
 					if (tipoPartida == Apertura)
 					{
-						aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
+						aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO_OPER) ? -1 : 1);
 					}
 					else {
 						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
@@ -728,7 +736,7 @@ int aumentarPartida(Cuenta::Tipo t, tipoPartida tipoPartida, std::string mensaje
 					/* ajusta el signo de la modificacion */
 					if (tipoPartida == Apertura)
 					{
-						aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO) ? -1 : 1);
+						aumentoActual = aumentoActual * ((cuentaActual->tipo == Cuenta::PASIVO_OPER) ? -1 : 1);
 					}
 					else {
 						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
@@ -887,9 +895,83 @@ void NotaDC(bool credito)
 
 }
 
+/* Imprime las operaciones en un archivo LibroDiario.csv */
+void EXP_LibroDiario()
+{
+	//inicializa archivo
+	std::ofstream LibroDiario; LibroDiario.open("LibroDiario.csv");
+
+	LibroDiario << "'';Cuenta;Modif;Debe;Haber" << std::endl << std::endl;
+
+	DiaOperaciones* diaAct;
+	Operacion* opAct;
+	Linea* linAct;
+
+	std::string nombreCuenta;
+	std::string modif;
+	int debe; int haber;
+
+	///recorre dias
+	for (int d = 0; d < DIAS.size(); d++)
+	{
+		diaAct = &DIAS[d];
+		LibroDiario << "'" << diaAct->fecha << "'" << std::endl; // "'01/01'"
+
+		/// recorre operaciones
+		for (int o = 0; o < diaAct->operaciones.size(); o++)
+		{
+			opAct = &diaAct->operaciones[o];
+
+			///recorre lineas
+			for (int l = 0; l < opAct->lineas.size(); l++)
+			{
+				linAct = &opAct->lineas[l];
+
+				/* calcula valores */
+
+				nombreCuenta = linAct->cuenta->nombre;
+				
+				//columnas debe y haber
+				int delta = linAct->modificacion;
+				debe = ((delta > 0) ? delta : 0);
+				haber = ((delta < 0) ? abs(delta) : 0);
+
+				// modificador
+				switch (linAct->cuenta->tipo)
+				{
+				case Cuenta::ACTIVO_OPER:
+				case Cuenta::ACTIVO:
+					modif = ((debe != 0) ? "A+" : "A+");
+					break;
+				case Cuenta::PASIVO_OPER:
+				case Cuenta::PASIVO:
+					modif = ((haber != 0) ? "P+" : "P-");
+					break;
+				case Cuenta::R_NEG_OPER:
+				case Cuenta::R_POS:
+					modif = ((haber != 0) ? "R+" : "R-");
+					break;
+				}
+
+				/* imprime linea! */
+
+				LibroDiario << "'';"
+							<< (nombreCuenta) << ";"
+							<< (modif) << ";" 
+							<< formatear(std::to_string(debe)) << ";"
+							<< formatear(std::to_string(haber)) << std::endl;
+
+			} //lineas
+
+			LibroDiario << "'';segun " << opAct->documento << std::endl << std::endl; //imprime documento
+		} //operaciones
+
+	} //dias
+	LibroDiario.close();
+}
 
 /// ############################################################################################
-/// ################################         OPCIONES         ########$#########################
+/// ################################         OPCIONES         ##################################
 /// ############################################################################################
 
 /* Llama a la funcion para crear una nueva fecha en el vector. */
@@ -987,7 +1069,8 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
 	Opcion("Nota de Credito", &OP_NCred),
-	Opcion("Nota de Debito", &OP_NDeb)
+	Opcion("Nota de Debito", &OP_NDeb),
+	Opcion("Finalizar", &EXP_LibroDiario)
 };
 
 
@@ -1000,9 +1083,9 @@ int main()
 	/* division de vectores de Cuentas */
 	for (int i = 0; i < CUENTAS.size(); i++)
 	{
-		if (CUENTAS[i].tipo == Cuenta::ACTIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].tipo == Cuenta::PASIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].tipo == Cuenta::R_NEG) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
+		if (CUENTAS[i].tipo == Cuenta::ACTIVO_OPER) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].tipo == Cuenta::PASIVO_OPER) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].tipo == Cuenta::R_NEG_OPER) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
 	}
 
 	bool loop = true; //Controla la ejecucion del programa
