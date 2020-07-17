@@ -1,17 +1,22 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/03'
-'';Caja;A+;'7000';'0'
-'';Bco. Cuenta Corriente;A+;'300';'0'
-'';Capital;R+;'0';'7300'
-'';'segun Apertura'
+'05/08'
+'';Ventas;R+;'0';'4000'
+'';Ventas;R-;'1000';'0'
+'';CMV;R-;'1000';'0'
+'';Sueldos;R-;'1200';'0'
+'';Caja;A+;'50000';'0'
+'';Capital;R+;'0';'50000'
+'';segun Apertura
 
-'24/03'
-'';Caja;A+;'0';'500'
-'';Gastos de Publicidad;R-;'500';'0'
-'';'segun Fc. Original 1'
+'09/09'
+'';Mercaderias;A+;'4000';'0'
+'';Caja;A+;'0';'4000'
+'';segun compras
 
-'';Mercaderias;A+;'120';'0'
-'';Caja;A+;'0';'120'
-'';'segun Fc. Original Mercaderias'
+'';Ventas;R+;'0';'5000'
+'';Maquinarias;A+;'5000';'0'
+'';Mercaderias;A+;'0';'4000'
+'';CMV;A+;'4000';'0'
+'';segun venta
 

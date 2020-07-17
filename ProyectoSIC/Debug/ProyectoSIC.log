@@ -16,8 +16,8 @@ C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(642,12): warning C4101: 'merc
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(931,20): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(937,21): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(942,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1183,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1203,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1210,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1239,21): warning C4018: '<': no coinciden signed/unsigned
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\include\optional(599,1): warning C4804: '>=': uso no seguro del tipo 'bool' en la operación
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(127): message : Vea la referencia a la creación de una instancia de la función plantilla "bool std::operator >=<bool,int,0>(const _Ty1 &,const std::optional<int> &)" que se está compilando
           with

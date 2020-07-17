@@ -1068,6 +1068,32 @@ void EXP_LibroMayor()
 	LibroMayor.close();
 }
 
+/* Imprime el estado de resultados conformado por todas las cuentas de R */
+void EXP_EstadoResultados()
+{
+	std::ofstream EstadoResultados; EstadoResultados.open("EstadoResultados.csv");
+	int utilidad = (buscarCuenta("Ventas")->valorActual() + buscarCuenta("CMV")->valorActual()) * -1;
+
+	/* Imprime Utilidad Bruta */
+	EstadoResultados << "Ventas;" << buscarCuenta("Ventas")->valorActual() * -1 << std::endl;
+	EstadoResultados << "CMV;" << buscarCuenta("CMV")->valorActual() * -1 << std::endl << std::endl;
+	EstadoResultados << "Utilidad Bruta;" << utilidad << std::endl << std::endl;
+
+	/* Imprime Utilidad Neto*/
+
+	for (unsigned int c = 0; c < R_NEGS.size(); c++)
+	{
+		if (R_NEGS[c]->valorActual() != 0)
+		{
+			EstadoResultados << R_NEGS[c]->nombre << ";" << R_NEGS[c]->valorActual() * -1 << std::endl;
+			utilidad -= R_NEGS[c]->valorActual();
+		}
+	}
+
+	EstadoResultados << std::endl << "Utilidad Neto;$" << utilidad;
+	EstadoResultados.close();
+}
+
 /// ############################################################################################
 /// ################################         OPCIONES         ##################################
 /// ############################################################################################
@@ -1169,7 +1195,8 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Nota de Credito", &OP_NCred),
 	Opcion("Nota de Debito", &OP_NDeb),
 	Opcion("Exportar L. Diario", &EXP_LibroDiario),
-	Opcion("Exportar L. Mayor", &EXP_LibroMayor)
+	Opcion("Exportar L. Mayor", &EXP_LibroMayor),
+	Opcion("Exportar Estado de Resultados", &EXP_EstadoResultados)
 };
 
 
