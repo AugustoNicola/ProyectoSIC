@@ -1,0 +1,22 @@
+Caja
+Debe;Haber
+'5000';''
+'400';''
+'240';''
+Saldo deudor: $5640
+
+Bco. Cuenta Corriente
+Debe;Haber
+'400';'400'
+Cuenta saldada: $0
+
+Proovedores
+Debe;Haber
+'';'240'
+Saldo acreedor: $240
+
+Capital
+Debe;Haber
+'';'5400'
+Saldo acreedor: $5400
+

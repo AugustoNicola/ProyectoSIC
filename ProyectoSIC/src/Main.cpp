@@ -55,6 +55,22 @@ std::string formatear(std::string texto)
 	return texto;
 }
 
+/* Imprime todos los valores de un vector en la respectiva columna del LibroMayor, dependiendo de su signo */
+void imprimeValoresColumnaLibroMayor(std::ofstream &LibroMayor, std::vector<int> valores, unsigned int pos)
+{
+
+	for (unsigned int i = pos; i < valores.size(); i++)
+	{
+		if (valores[i] > 0)
+		{
+			LibroMayor << formatear(std::to_string(abs(valores[i]))) << ";''" << std::endl;
+		} else {
+			LibroMayor << "'';" << formatear(std::to_string(abs(valores[i]))) << std::endl;
+		}
+	}
+	
+}
+
 /**
  * @brief Verifica si un string es un integer, y esta dentro del rango permitido. Ademas, acepta porcentajes de los valores especificados
  * 
@@ -970,6 +986,88 @@ void EXP_LibroDiario()
 	LibroDiario.close();
 }
 
+/* Imprime el libro mayor de todas las cuentas usadas */
+void EXP_LibroMayor()
+{
+	//inicializa archivo
+	std::ofstream LibroMayor; LibroMayor.open("LibroMayor.csv");
+
+	Cuenta* cuentaAct;
+	std::vector<int> debes; std::vector<int> haberes;
+	int saldo;
+	bool salir;
+
+	for (unsigned int c = 0; c < CUENTAS.size(); c++)
+	{
+		cuentaAct = (Cuenta*)&CUENTAS[c];
+		debes.clear(); haberes.clear();
+
+		if (!cuentaAct->dias.empty())
+		{
+			/// hay dias en la cuenta
+			LibroMayor << cuentaAct->nombre << std::endl << "Debe;Haber" << std::endl;
+
+			saldo = 0; salir = false;
+			/* separa los deltas en positivos y negativos */
+			for (unsigned int dC = 0; dC < cuentaAct->dias.size(); dC++)
+			{
+				if (cuentaAct->dias[dC].delta > 0)
+				{
+					debes.push_back(cuentaAct->dias[dC].delta);
+				} else if (cuentaAct->dias[dC].delta < 0)
+				{
+					haberes.push_back(cuentaAct->dias[dC].delta);
+				}
+
+				saldo += cuentaAct->dias[dC].delta;
+			}
+
+			/* comienza a imprimir los valores */
+			if (!debes.empty() && !haberes.empty())
+			{
+				for (unsigned int deb = 0; deb < debes.size(); deb++)
+				{
+					for (unsigned int hab = 0; hab < haberes.size(); hab++)
+					{
+						if (!salir)
+						{
+							/// imprime debe y haber en misma columna!
+							LibroMayor << formatear(std::to_string(debes[deb])) << ";" << formatear(std::to_string(abs(haberes[hab]))) << std::endl;
+
+							if (debes[deb] == debes.back() && haberes[hab] != haberes.back())
+							{
+								/// ultimo debe pero quedan haberes, imprime solo haberes
+								imprimeValoresColumnaLibroMayor(LibroMayor, haberes, hab+1);
+								salir = true;
+							}
+							else if (haberes[hab] == haberes.back() && debes[deb] != debes.back())
+							{
+								/// ultimo haber pero quedan debes, imprime solo debes
+								imprimeValoresColumnaLibroMayor(LibroMayor, debes, deb+1);
+								salir = true;
+							}
+						}
+					}
+				}
+			}
+			else if (debes.empty() || haberes.empty())
+			{
+				///imprime solo una de las dos columnas
+				imprimeValoresColumnaLibroMayor(LibroMayor, ((!debes.empty()) ? debes : haberes ), 0);
+			}
+
+			if (saldo != 0)
+			{
+				LibroMayor << ((saldo > 0) ? "Saldo deudor: $" : "Saldo acreedor: $") << abs(saldo) << std::endl << std::endl;
+			} else {
+				LibroMayor << "Cuenta saldada: $0" << std::endl << std::endl;
+			}
+		}
+	}
+
+	LibroMayor.close();
+}
+
 /// ############################################################################################
 /// ################################         OPCIONES         ##################################
 /// ############################################################################################
@@ -1070,7 +1168,8 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
 	Opcion("Nota de Credito", &OP_NCred),
 	Opcion("Nota de Debito", &OP_NDeb),
-	Opcion("Finalizar", &EXP_LibroDiario)
+	Opcion("Exportar L. Diario", &EXP_LibroDiario),
+	Opcion("Exportar L. Mayor", &EXP_LibroMayor)
 };
 
 
