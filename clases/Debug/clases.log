@@ -1,9 +1,1 @@
-﻿  cuenta.h
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(59,30): warning C4244: 'return': conversión de 'float' a 'int'; posible pérdida de datos
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(74,22): warning C4018: '<': no coinciden signed/unsigned
-  opcion.h
-  operacion.h
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(59,30): warning C4244: 'return': conversión de 'float' a 'int'; posible pérdida de datos
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(74,22): warning C4018: '<': no coinciden signed/unsigned
-  Generando código...
-  clases.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\clases.lib
+﻿

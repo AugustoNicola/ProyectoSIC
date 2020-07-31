@@ -15,6 +15,13 @@ struct DiaMerca
 	std::string dia;
 	int delta;
 	unsigned int cantidad;
+
+	void aumentar(int delt)
+	{
+		delta += delt;
+		cantidad += delt;
+	}
+
 	DiaMerca(std::string d, unsigned int cantAnterior, int delt) : dia(d), cantidad(cantAnterior), delta(delt) { cantidad += delt;  }
 };
 
@@ -42,6 +49,25 @@ struct PrecioMerca
 
 	void nuevoDiaPrecioMerca(std::string fecha, int modificacion)
 	{
+		if (!dias.empty())
+		{
+			/// hay fechas
+			for (int i = 0; i < dias.size(); i++)
+			{
+				if (fecha == dias[i].dia)
+				{
+					/// fecha encontrada, sumar valor actual al previo
+					// verifica si se debe aumentar positivo (debe) o negativo (haber)
+					dias[i].aumentar(modificacion);
+					return;
+				}
+			}
+			///fecha no encontrada, crear
+			dias.push_back(DiaMerca(fecha, dias.back().cantidad, modificacion));
+		} else {
+			/// no hay fechas, crear primera
+			dias.push_back(DiaMerca(fecha, 0, modificacion));
+		}
 		/* verifica que haya dias previos */
 		dias.push_back(DiaMerca(fecha, ((!dias.empty()) ? dias.back().cantidad : 0), modificacion));
 	}
@@ -99,8 +125,8 @@ public:
 				if(precio == precios[i].precio)
 				{
 					/// precio encontrado, detener loop
-					precios[i].dias.push_back(DiaMerca(dia, precios[i].dias.back().cantidad, delta)); // agregar dia al precio
-					break;
+					precios[i].nuevoDiaPrecioMerca(dia, delta); // agregar dia al precio
+					return;
 				}
 				/// precio no encontrado, listar
 				precios.push_back(PrecioMerca(precio)); //lista el precio

@@ -1,2 +1,0 @@
-C:\dev\GitHub\ProyectoSIC\Debug\presets.pdb
-C:\dev\GitHub\ProyectoSIC\presets\Debug\presets.pdb
