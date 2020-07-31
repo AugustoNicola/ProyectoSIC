@@ -8,8 +8,6 @@
 #define PCH_H
 
 // agregue aquí los encabezados que desea precompilar
-#include <vector>
-#include "../clases/src/clases.h"
-#include "../ProyectoSIC/src/Main.h"
+
 
 #endif //PCH_H

@@ -1,0 +1,2 @@
+C:\dev\GitHub\ProyectoSIC\Debug\clases.pdb
+C:\dev\GitHub\ProyectoSIC\clases\Debug\clases.pdb
