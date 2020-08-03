@@ -45,7 +45,7 @@ public:
 	{
 		for (unsigned int l = 0; l < lineas.size(); l++)
 		{
-			if (lineas[l].cuenta->nombre == "Mercaderias") { return true; }
+			if (lineas[l].cuenta->getNombre() == "Mercaderias") { return true; }
 		}
 		return false;
 	}

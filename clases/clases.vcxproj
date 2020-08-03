@@ -24,7 +24,6 @@
     <ClCompile Include="src\operacion.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\iva.h" />
     <ClInclude Include="src\clases.h" />
     <ClInclude Include="src\mercaderia.h" />
   </ItemGroup>

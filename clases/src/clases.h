@@ -5,6 +5,5 @@
 #include "operacion.h"
 #include "opcion.h"
 #include "mercaderia.h"
-#include "iva.h"
 
 #endif

@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PruebasUnitarias.cpp">
+    <ClCompile Include="pch.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="Clases.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

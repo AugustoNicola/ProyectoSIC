@@ -1,93 +1,97 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <utility>
 
-/**
- * @brief Representa cada dia en el que la cuenta es modificada.
- *
- * @param dia: string con el dia actual (DD/MM)
- * @param valorActual: valor de la cuenta al final del dia (positivo debe, negativo haber)
- * @param delta: variacion de la cuenta al final del dia
- */
+
 struct DiaCuenta
 {
-	std::string dia;
+	std::string fecha;
 	int valorActual;
 	int delta;
 
-	/**
-	 * @brief Aumenta el delta y el valor actual del dia segun el valor ingresado.
-	 * 
-	 * @param aum: numero a aumentar (puede ser negativo)
-	 * 
-	 */
-	void aumentar(int aum)
+	void modificar(int modificacion)
 	{
-		delta += aum;
-		valorActual += aum;
+		delta += modificacion;
+		valorActual += modificacion;
 	};
 
-	DiaCuenta(std::string d, int vAnterior, int delt) : dia(d), valorActual(vAnterior), delta(delt) { valorActual += delt; };
+	DiaCuenta& operator=(const DiaCuenta& otro)
+	{
+		fecha = std::string(otro.fecha);
+		delta = otro.delta;
+		valorActual = otro.valorActual;
+		return *this;
+	}
+
+	DiaCuenta(std::string _fecha, int _valorAnterior, int _delta) : fecha(_fecha), valorActual(_valorAnterior), delta(_delta) { valorActual += _delta; };
 };
 
-/**
- * @brief Representa una cuenta individual con sus datos de cada cuenta, así como una lista de los dias en los que fue modificada.
- * 
- * @param nombre: nombre de la cuenta
- * @param modoDebito: define si se debita cuando es positivo (true) o cuando es negativo (false).
- * @param dias: Lista de cada dia en los que se ha modificado la cuenta de tipo DiaCuenta.
- * @param tipo: enum para limitar las aplicaciones de la cuenta a situaciones coherentes.
- */
 class Cuenta
 {
 public:
-	/**
-	 * @brief usado para limitar las apariciones de la cuenta (Activo, Pasivo, Resultado Negativo, etc).
-	 *  y tambien filtros (Operacionales)
-	 */
-	enum Tipo {
-		ACTIVO_OPER, PASIVO_OPER, R_NEG_OPER, ACTIVO, PASIVO, R_POS, R_NEG,
+	static enum TipoCuenta {
+		ACTIVO_OPERATIVO, PASIVO_OPERATIVO, GASTO_OPERATIVO,
+		ACTIVO_NO_OPERATIVO, PASIVO_NO_OPERATIVO, GASTO_NO_OPERATIVO, GANANCIA,
 		F_OPER
 	};
-	
-	bool modoDebito;
-	std::string nombre;
-	Cuenta::Tipo tipo;
+
+private:
+	std::string Nombre;
+	bool ModoDebitado;
 	std::vector<DiaCuenta> dias;
+	Cuenta::TipoCuenta Tipo;
 
-	/** @brief Devuelve el valor actual de la cuenta. */
-	int valorActual() { return (!dias.empty()) ? dias.back().valorActual : 0.0f ; }
-
-	/**
-	 * @brief Agrega un nuevo valor de dia a la cuenta.
-	 * 
-	 * @param fecha: fecha del dia (DD/MM)
-	 * @param delta: modificacion a la cuenta (positiva o negativa)
-	 */
-	void modifDiaCuenta(std::string fecha, int delta)
+public:
+	void registrarModificacion(std::string fecha, int delta)
 	{
-		/* verifica si ya hay dias */
-		if (!dias.empty())
+		if (hayDias() && fechaExiste(fecha))
 		{
-			/// hay al menos un dia
-			/* verifica si ese dia ya se listo*/
-			for (int i = 0; i < dias.size(); i++)
-			{
-				if (fecha == dias[i].dia)
-				{
-					/// fecha encontrada, sumar valor actual al previo
-					// verifica si se debe aumentar positivo (debe) o negativo (haber)
-					dias[i].aumentar(delta);
-					return;
-				}
-			}
-			///fecha no encontrada, crear
-			dias.push_back(DiaCuenta(fecha, dias.back().valorActual, delta));
-		} else {
-			/// no hay ningun dia, crear primero
-			dias.push_back(DiaCuenta(fecha, 0, delta));
+			getDiaPorFecha(fecha)->modificar(delta);
 		}
+		else {
+			crearNuevoDia(fecha, delta);
+		}	
 	}
 
-	Cuenta(std::string nom, bool mD, Tipo t) : nombre(nom), modoDebito(mD), tipo(t) { dias = {}; };
+	bool hayDias() const { return !dias.empty();  }
+	bool fechaExiste(std::string fecha) const
+	{
+		for (int i = 0; i < dias.size(); i++)
+		{
+			if (fecha == dias[i].fecha)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+private:
+	void crearNuevoDia(std::string fecha, int delta)
+	{
+		dias.push_back(DiaCuenta(fecha, getSaldoActual(), delta));
+	}
+
+public:
+	/* Getters y Constructor */
+	int getSaldoActual() const { return (!dias.empty()) ? dias.back().valorActual : 0 ; }
+	Cuenta::TipoCuenta getTipo() const { return Tipo; }
+	std::string getNombre() const { return Nombre; }
+	bool getModoDebitado() const { return ModoDebitado; }
+	
+	DiaCuenta* getDiaPorPosicion(unsigned int posicion) 
+	{
+		return ((posicion < dias.size()) ? &dias[posicion] : nullptr);
+	}
+	DiaCuenta* getDiaPorFecha(std::string fechaBuscada) 
+	{
+		for (int i = 0; i < dias.size(); i++)
+		{
+			if (dias[i].fecha == fechaBuscada) { return &dias[i]; }
+		}
+		return nullptr;
+	}
+	
+	Cuenta(std::string _Nombre, bool _ModoDebitado, Cuenta::TipoCuenta _Tipo) : Nombre(_Nombre), ModoDebitado(_ModoDebitado), Tipo(_Tipo) { dias = {}; };
+
 };
