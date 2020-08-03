@@ -1,7 +1,8 @@
 ﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(37): warning C4091: 'static ': se ha omitido a la izquierda de 'Cuenta::TipoCuenta' cuando no hay ninguna variable declarada
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(60,21): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(88,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(30): warning C4091: 'static ': se ha omitido a la izquierda de 'Cuenta::TipoCuenta' cuando no hay ninguna variable declarada
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(53,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(65,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(90,21): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(55,22): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(122,22): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(40,20): warning C4018: '<': no coinciden signed/unsigned
@@ -27,9 +28,10 @@ C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(126): message : Vea la refere
               _Ty1=bool
           ]
   presets.cpp
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(37): warning C4091: 'static ': se ha omitido a la izquierda de 'Cuenta::TipoCuenta' cuando no hay ninguna variable declarada
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(60,21): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(88,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(30): warning C4091: 'static ': se ha omitido a la izquierda de 'Cuenta::TipoCuenta' cuando no hay ninguna variable declarada
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(53,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(65,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(90,21): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(55,22): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(122,22): warning C4018: '<': no coinciden signed/unsigned
   Generando código...

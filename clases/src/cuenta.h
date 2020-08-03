@@ -10,29 +10,22 @@ struct DiaCuenta
 	int valorActual;
 	int delta;
 
-	void modificar(int modificacion)
+	void modificarDiaExistente(int modificacion)
 	{
 		delta += modificacion;
 		valorActual += modificacion;
 	};
-
-	DiaCuenta& operator=(const DiaCuenta& otro)
-	{
-		fecha = std::string(otro.fecha);
-		delta = otro.delta;
-		valorActual = otro.valorActual;
-		return *this;
-	}
-
+	
 	DiaCuenta(std::string _fecha, int _valorAnterior, int _delta) : fecha(_fecha), valorActual(_valorAnterior), delta(_delta) { valorActual += _delta; };
 };
 
 class Cuenta
 {
 public:
-	static enum TipoCuenta {
+	static enum class TipoCuenta {
 		ACTIVO_OPERATIVO, PASIVO_OPERATIVO, GASTO_OPERATIVO,
-		ACTIVO_NO_OPERATIVO, PASIVO_NO_OPERATIVO, GASTO_NO_OPERATIVO, GANANCIA,
+		ACTIVO_NO_OPERATIVO, PASIVO_NO_OPERATIVO, GASTO_NO_OPERATIVO,
+		GANANCIA, PATRIMONIO_NETO, OTRO,
 		F_OPER
 	};
 
@@ -47,7 +40,7 @@ public:
 	{
 		if (hayDias() && fechaExiste(fecha))
 		{
-			getDiaPorFecha(fecha)->modificar(delta);
+			getDiaPorFechaParaModificar(fecha)->modificarDiaExistente(delta);
 		}
 		else {
 			crearNuevoDia(fecha, delta);
@@ -67,6 +60,15 @@ public:
 		return false;
 	}
 private:
+	DiaCuenta* getDiaPorFechaParaModificar(std::string fechaBuscada)
+	{
+		for (int i = 0; i < dias.size(); i++)
+		{
+			if (dias[i].fecha == fechaBuscada) { return &dias[i]; }
+		}
+		return nullptr;
+	}
+
 	void crearNuevoDia(std::string fecha, int delta)
 	{
 		dias.push_back(DiaCuenta(fecha, getSaldoActual(), delta));
@@ -79,17 +81,36 @@ public:
 	std::string getNombre() const { return Nombre; }
 	bool getModoDebitado() const { return ModoDebitado; }
 	
-	DiaCuenta* getDiaPorPosicion(unsigned int posicion) 
+	const DiaCuenta* getDiaPorPosicion(unsigned int posicion) const
 	{
 		return ((posicion < dias.size()) ? &dias[posicion] : nullptr);
 	}
-	DiaCuenta* getDiaPorFecha(std::string fechaBuscada) 
+	const DiaCuenta* getDiaPorFecha(std::string fechaBuscada) const
 	{
 		for (int i = 0; i < dias.size(); i++)
 		{
 			if (dias[i].fecha == fechaBuscada) { return &dias[i]; }
 		}
 		return nullptr;
+	}
+
+	const std::vector<DiaCuenta> getDias()
+	{
+		std::vector<DiaCuenta> vectorRespuesta;
+
+		if (hayDias())
+		{
+			for (unsigned int i = 0; i < dias.size(); i++)
+			{
+				vectorRespuesta.push_back(dias[i]);
+			}
+		}
+		return static_cast<const std::vector<DiaCuenta>>(vectorRespuesta);
+	}
+
+	bool operator==(std::string nombreBuscado)
+	{
+		return (Nombre == nombreBuscado);
 	}
 	
 	Cuenta(std::string _Nombre, bool _ModoDebitado, Cuenta::TipoCuenta _Tipo) : Nombre(_Nombre), ModoDebitado(_ModoDebitado), Tipo(_Tipo) { dias = {}; };

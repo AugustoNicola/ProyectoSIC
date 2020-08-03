@@ -10,9 +10,8 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<Cuenta>(const Cuenta& cuenta) {	return L"Cuenta."; }
 template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<Cuenta::TipoCuenta>(const Cuenta::TipoCuenta &tipoCuenta) { return L"TipoCuenta."; }
 
-namespace ClaseCuenta
+namespace Clase_Cuenta
 {
-	
 	TEST_CLASS(Constructor)
 	{
 	public:
@@ -60,6 +59,40 @@ namespace ClaseCuenta
 			Assert::IsTrue(cuenta.hayDias());
 		}
 	};
+
+	TEST_CLASS(Metodo_registrarModificacion)
+	{
+	public:
+		Cuenta cuenta;
+		Metodo_registrarModificacion() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+
+		TEST_METHOD(Suma_UnDia)
+		{
+			cuenta.registrarModificacion("01/01", 100);
+			Assert::IsTrue(cuenta.hayDias());
+			Assert::AreEqual(100, cuenta.getSaldoActual());
+		}
+		TEST_METHOD(Resta_UnDia)
+		{
+			cuenta.registrarModificacion("01/01", -100);
+			Assert::IsTrue(cuenta.hayDias());
+			Assert::AreEqual(-100, cuenta.getSaldoActual());
+		}
+		TEST_METHOD(Suma_MultiplesDias)
+		{
+			cuenta.registrarModificacion("01/01", 100);
+			cuenta.registrarModificacion("02/02", 250);
+			Assert::IsTrue(cuenta.hayDias());
+			Assert::AreEqual(350, cuenta.getSaldoActual());
+		}
+		TEST_METHOD(Resta_MultiplesDias)
+		{
+			cuenta.registrarModificacion("01/01", 250);
+			cuenta.registrarModificacion("02/02", -100);
+			Assert::IsTrue(cuenta.hayDias());
+			Assert::AreEqual(150, cuenta.getSaldoActual());
+		}
+	};
 	
 	TEST_CLASS(Metodo_fechaExiste)
 	{
@@ -100,40 +133,6 @@ namespace ClaseCuenta
 		}
 	};
 	
-	TEST_CLASS(Metodo_registrarModificacion)
-	{
-	public:
-		Cuenta cuenta;
-		Metodo_registrarModificacion() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
-
-		TEST_METHOD(Suma_UnDia)
-		{
-			cuenta.registrarModificacion("01/01", 100);
-			Assert::IsTrue(cuenta.hayDias());
-			Assert::AreEqual(100, cuenta.getSaldoActual());
-		}
-		TEST_METHOD(Resta_UnDia)
-		{
-			cuenta.registrarModificacion("01/01", -100);
-			Assert::IsTrue(cuenta.hayDias());
-			Assert::AreEqual(-100, cuenta.getSaldoActual());
-		}
-		TEST_METHOD(Suma_MultiplesDias)
-		{
-			cuenta.registrarModificacion("01/01", 100);
-			cuenta.registrarModificacion("02/02", 250);
-			Assert::IsTrue(cuenta.hayDias());
-			Assert::AreEqual(350, cuenta.getSaldoActual());
-		}
-		TEST_METHOD(Resta_MultiplesDias)
-		{
-			cuenta.registrarModificacion("01/01", 250);
-			cuenta.registrarModificacion("02/02", -100);
-			Assert::IsTrue(cuenta.hayDias());
-			Assert::AreEqual(150, cuenta.getSaldoActual());
-		}
-	};
-	
 	TEST_CLASS(Metodo_getDiaPorFecha)
 	{
 	public:
@@ -142,13 +141,14 @@ namespace ClaseCuenta
 
 		TEST_METHOD(SinDias)
 		{
-			Assert::IsNull(cuenta.getDiaPorFecha("01/01"));
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("01/01");
+			Assert::IsNull(diaCuenta);
 		}
 
 		TEST_METHOD(DiaExistente_UnDia)
 		{
 			cuenta.registrarModificacion("01/01", 100);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("01/01");
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("01/01");
 			Assert::IsNotNull(diaCuenta);
 			Assert::AreEqual(100, diaCuenta->delta);
 			Assert::AreEqual(100, diaCuenta->valorActual);
@@ -157,7 +157,7 @@ namespace ClaseCuenta
 		TEST_METHOD(DiaInexistente_UnDia)
 		{
 			cuenta.registrarModificacion("01/01", 100);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("02/01");
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("02/01");
 			Assert::IsNull(diaCuenta);
 		}
 
@@ -165,7 +165,7 @@ namespace ClaseCuenta
 		{
 			cuenta.registrarModificacion("01/01", 100);
 			cuenta.registrarModificacion("02/02", 200);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("02/02");
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("02/02");
 			Assert::IsNotNull(diaCuenta);
 			Assert::AreEqual(200, diaCuenta->delta);
 			Assert::AreEqual(300, diaCuenta->valorActual);
@@ -175,7 +175,7 @@ namespace ClaseCuenta
 		{
 			cuenta.registrarModificacion("01/01", 100);
 			cuenta.registrarModificacion("02/02", 200);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("07/08");
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorFecha("07/08");
 			Assert::IsNull(diaCuenta);
 		}
 	};
@@ -194,7 +194,7 @@ namespace ClaseCuenta
 		TEST_METHOD(DiaExistente_UnDia)
 		{
 			cuenta.registrarModificacion("01/01", 100);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(0);
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(0);
 			Assert::IsNotNull(diaCuenta);
 			Assert::AreEqual(100, diaCuenta->delta);
 			Assert::AreEqual(100, diaCuenta->valorActual);
@@ -203,7 +203,7 @@ namespace ClaseCuenta
 		TEST_METHOD(DiaInexistente_UnDia)
 		{
 			cuenta.registrarModificacion("01/01", 100);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(2);
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(2);
 			Assert::IsNull(diaCuenta);
 		}
 
@@ -211,7 +211,7 @@ namespace ClaseCuenta
 		{
 			cuenta.registrarModificacion("01/01", 100);
 			cuenta.registrarModificacion("02/02", 200);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(1);
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(1);
 			Assert::IsNotNull(diaCuenta);
 			Assert::AreEqual(200, diaCuenta->delta);
 			Assert::AreEqual(300, diaCuenta->valorActual);
@@ -221,9 +221,63 @@ namespace ClaseCuenta
 		{
 			cuenta.registrarModificacion("01/01", 100);
 			cuenta.registrarModificacion("02/02", 200);
-			DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(5);
+			const DiaCuenta* diaCuenta = cuenta.getDiaPorPosicion(5);
 			Assert::IsNull(diaCuenta);
 		}
 	};
 	
+	TEST_CLASS(Metodo_getDias)
+	{
+	public:
+		Cuenta cuenta;
+		Metodo_getDias() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+
+		TEST_METHOD(SinDias)
+		{
+			const std::vector<DiaCuenta> dias = cuenta.getDias();
+
+			Assert::IsTrue(dias.empty());
+		}
+
+		TEST_METHOD(UnDia)
+		{
+			cuenta.registrarModificacion("01/01", 300);
+			const std::vector<DiaCuenta> dias = cuenta.getDias();
+
+			Assert::AreEqual(static_cast<std::string>("01/01"), dias[0].fecha);
+			Assert::AreEqual(300, dias[0].delta);
+			Assert::AreEqual(300, dias[0].valorActual);
+		}
+
+		TEST_METHOD(MultiplesDias)
+		{
+			cuenta.registrarModificacion("01/01", 300);
+			cuenta.registrarModificacion("02/02", 200);
+			const std::vector<DiaCuenta> dias = cuenta.getDias();
+
+			Assert::AreEqual(static_cast<std::string>("01/01"), dias[0].fecha);
+			Assert::AreEqual(300, dias[0].delta);
+			Assert::AreEqual(300, dias[0].valorActual);
+			Assert::AreEqual(static_cast<std::string>("02/02"), dias[1].fecha);
+			Assert::AreEqual(200, dias[1].delta);
+			Assert::AreEqual(500, dias[1].valorActual);
+		}
+	};
+
+	TEST_CLASS(Operador_Comparacion)
+	{
+	public:
+		Cuenta cuenta;
+		Operador_Comparacion() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+
+		TEST_METHOD(InputValido)
+		{
+			Assert::IsTrue(cuenta == "MiCuenta");
+		}
+		TEST_METHOD(InputInvalido)
+		{
+			Assert::IsFalse(cuenta == "ABC");
+			Assert::IsFalse(cuenta == "");
+		}
+	};
 }

@@ -299,7 +299,7 @@ Cuenta* elegirCuenta(Cuenta::TipoCuenta t, tipoPartida tipoPart, std::string men
 		/* Iteracion de cuentas */
 
 		//verifica si se busca solo un tipo o un filtro
-		if(t == Cuenta::F_OPER)
+		if(t == Cuenta::TipoCuenta::F_OPER)
 		{
 			/// filtro: mostrar Activos, Pasivos y Resultado Negativo
 
@@ -343,15 +343,15 @@ Cuenta* elegirCuenta(Cuenta::TipoCuenta t, tipoPartida tipoPart, std::string men
 			std::string modificador;
 			switch (t)
 			{
-			case Cuenta::ACTIVO_OPERATIVO:
+			case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
 				modificador = mActivo;
 				titulo = "-------- ACTIVOS --------";
 				break;
-			case Cuenta::PASIVO_OPERATIVO:
+			case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
 				modificador = mPasivo;
 				titulo = "-------- PASIVOS --------";
 				break;
-			case Cuenta::GASTO_OPERATIVO:
+			case Cuenta::TipoCuenta::GASTO_OPERATIVO:
 				modificador = mResult;
 				titulo = "-------- RESULTADOS --------";
 				break;
@@ -684,7 +684,7 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 					/* ajusta el signo de la modificacion */
 					if (tipoPartida == Apertura)
 					{
-						aumentoActual = aumentoActual * ((cuentaActual->getTipo() == Cuenta::PASIVO_OPERATIVO) ? -1 : 1);
+						aumentoActual = aumentoActual * ((cuentaActual->getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) ? -1 : 1);
 					}
 					else {
 						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
@@ -751,7 +751,7 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 					/* ajusta el signo de la modificacion */
 					if (tipoPartida == Apertura)
 					{
-						aumentoActual = aumentoActual * ((cuentaActual->getTipo() == Cuenta::PASIVO_OPERATIVO) ? -1 : 1);
+						aumentoActual = aumentoActual * ((cuentaActual->getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) ? -1 : 1);
 					}
 					else {
 						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
@@ -898,7 +898,7 @@ void NotaDC(bool credito)
 
 				/* realizar aumentoPartida para saciarlo */
 				std::string mensaje = "Elija las cuentas que saldan el "; mensaje.append(((credito) ? "credito" : "debito"));
-				aumentarPartida(Cuenta::F_OPER, tipo, mensaje, abs(modificacion));
+				aumentarPartida(Cuenta::TipoCuenta::F_OPER, tipo, mensaje, abs(modificacion));
 
 				operacionActual = pedirNombreDocx(operacionActual);
 				commitOperacion(operacionActual);
@@ -954,16 +954,16 @@ void EXP_LibroDiario()
 				// modificador
 				switch (linAct->cuenta->getTipo())
 				{
-				case Cuenta::ACTIVO_OPERATIVO:
-				case Cuenta::ACTIVO_NO_OPERATIVO:
+				case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
+				case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
 					modif = ((debe != 0) ? "A+" : "A+");
 					break;
-				case Cuenta::PASIVO_OPERATIVO:
-				case Cuenta::PASIVO_NO_OPERATIVO:
+				case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
+				case Cuenta::TipoCuenta::PASIVO_NO_OPERATIVO:
 					modif = ((haber != 0) ? "P+" : "P-");
 					break;
-				case Cuenta::GASTO_OPERATIVO:
-				case Cuenta::GANANCIA:
+				case Cuenta::TipoCuenta::GASTO_OPERATIVO:
+				case Cuenta::TipoCuenta::GANANCIA:
 					modif = ((haber != 0) ? "R+" : "R-");
 					break;
 				}
@@ -985,8 +985,8 @@ void EXP_LibroDiario()
 	LibroDiario.close();
 }
 
-/*
-/ Imprime el libro mayor de todas las cuentas usadas 
+
+/* Imprime el libro mayor de todas las cuentas usadas */
 void EXP_LibroMayor()
 {
 	//inicializa archivo
@@ -1008,21 +1008,21 @@ void EXP_LibroMayor()
 			LibroMayor << cuentaAct->getNombre() << std::endl << "Debe;Haber" << std::endl;
 
 			saldo = 0; salir = false;
-			/* separa los deltas en positivos y negativos /
-			for (unsigned int dC = 0; dC < cuentaAct->dias.size(); dC++)
+			/* separa los deltas en positivos y negativos */
+			for (DiaCuenta dia : cuentaAct->getDias())
 			{
-				if (cuentaAct->dias[dC].delta > 0)
+				if (dia.delta > 0)
 				{
-					debes.push_back(cuentaAct->dias[dC].delta);
-				} else if (cuentaAct->dias[dC].delta < 0)
+					debes.push_back(dia.delta);
+				} else if (dia.delta < 0)
 				{
-					haberes.push_back(cuentaAct->dias[dC].delta);
+					haberes.push_back(dia.delta);
 				}
 
-				saldo += cuentaAct->dias[dC].delta;
+				saldo += dia.delta;
 			}
 
-			/* comienza a imprimir los valores /
+			/* comienza a imprimir los valores */
 			if (!debes.empty() && !haberes.empty())
 			{
 				for (unsigned int deb = 0; deb < debes.size(); deb++)
@@ -1067,34 +1067,34 @@ void EXP_LibroMayor()
 
 	LibroMayor.close();
 }
-*/
 
-/* Imprime el estado de resultados conformado por todas las cuentas de R /
+
+/* Imprime el estado de resultados conformado por todas las cuentas de R */
 void EXP_EstadoResultados()
 {
 	std::ofstream EstadoResultados; EstadoResultados.open("EstadoResultados.csv");
-	int utilidad = (buscarCuenta("Ventas")->valorActual() + buscarCuenta("CMV")->valorActual()) * -1;
+	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
 
-	/* Imprime Utilidad Bruta /
-	EstadoResultados << "Ventas;" << buscarCuenta("Ventas")->valorActual() * -1 << std::endl;
-	EstadoResultados << "CMV;" << buscarCuenta("CMV")->valorActual() * -1 << std::endl << std::endl;
+	/* Imprime Utilidad Bruta */
+	EstadoResultados << "Ventas;" << buscarCuenta("Ventas")->getSaldoActual() * -1 << std::endl;
+	EstadoResultados << "CMV;" << buscarCuenta("CMV")->getSaldoActual() * -1 << std::endl << std::endl;
 	EstadoResultados << "Utilidad Bruta;" << utilidad << std::endl << std::endl;
 
-	/* Imprime Utilidad Neto/
+	/* Imprime Utilidad Neto */
 
 	for (unsigned int c = 0; c < R_NEGS.size(); c++)
 	{
-		if (R_NEGS[c]->valorActual() != 0)
+		if (R_NEGS[c]->getSaldoActual() != 0)
 		{
-			EstadoResultados << R_NEGS[c]->nombre << ";" << R_NEGS[c]->valorActual() * -1 << std::endl;
-			utilidad -= R_NEGS[c]->valorActual();
+			EstadoResultados << R_NEGS[c]->getNombre() << ";" << R_NEGS[c]->getSaldoActual() * -1 << std::endl;
+			utilidad -= R_NEGS[c]->getSaldoActual();
 		}
 	}
 
 	EstadoResultados << std::endl << "Utilidad Neto;$" << utilidad;
 	EstadoResultados.close();
 }
-*/
+
 
 
 /// ############################################################################################
@@ -1116,7 +1116,7 @@ void OP_Capital()
 	pedirNuevaFecha("Ingrese la fecha de apertura");
 
 	//aumenta operaciones hasta que el usuario decida
-	int totalAumentado = aumentarPartida(Cuenta::F_OPER, Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+	int totalAumentado = aumentarPartida(Cuenta::TipoCuenta::F_OPER, Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
 
 	/* iguala cuentas con Capital(PN+) */
 	modificarCuenta(buscarCuenta("Capital"), totalAumentado * -1);
@@ -1133,8 +1133,8 @@ void OP_Capital()
 void OP_Transaccion()
 {
 	/* ingreso de cuentas */
-	int perdida = abs(aumentarPartida(Cuenta::F_OPER, tipoPartida::Haber, "Elija las cuentas del haber", {})); //le quita el signo negativo
-	aumentarPartida(Cuenta::F_OPER, tipoPartida::Debe, "Elija las cuentas del debe", perdida);
+	int perdida = abs(aumentarPartida(Cuenta::TipoCuenta::F_OPER, tipoPartida::Haber, "Elija las cuentas del haber", {})); //le quita el signo negativo
+	aumentarPartida(Cuenta::TipoCuenta::F_OPER, tipoPartida::Debe, "Elija las cuentas del debe", perdida);
 
 	/* commit de operacion */
 	operacionActual = pedirNombreDocx(operacionActual);
@@ -1154,7 +1154,7 @@ void OP_VentaMercaderias()
 		int totalGanado = abs(venta.cantidad * venta.precioVenta); // valor absoluto para mayor comodidad
 		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1); // Ventas (R+)
 
-		aumentarPartida(Cuenta::F_OPER, Debe, "Elija las cuentas de ganancia de la venta", totalGanado); // iguala con debe
+		aumentarPartida(Cuenta::TipoCuenta::F_OPER, Debe, "Elija las cuentas de ganancia de la venta", totalGanado); // iguala con debe
 
 		/* anotar cmv y mercaderias */
 		int totalPerdido = abs(venta.cantidad * venta.precioUnitario); // valor absoluto para mayor comodidad
@@ -1178,7 +1178,7 @@ void OP_CompraMercaderias()
 
 	/* amortizacion en Haber */
 	modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido); // Mercaderias (A+)
-	aumentarPartida(Cuenta::F_OPER, Haber, "Elija las cuentas con las que se amortiza la compra", totalPerdido);
+	aumentarPartida(Cuenta::TipoCuenta::F_OPER, Haber, "Elija las cuentas con las que se amortiza la compra", totalPerdido);
 
 	/* guarda operacion */
 	operacionActual = pedirNombreDocx(operacionActual);
@@ -1212,9 +1212,9 @@ int main()
 	/* division de vectores de Cuentas */
 	for (int i = 0; i < CUENTAS.size(); i++)
 	{
-		if (CUENTAS[i].getTipo() == Cuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::GASTO_OPERATIVO) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
+		if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
 	}
 
 	bool loop = true; //Controla la ejecucion del programa
