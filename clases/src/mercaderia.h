@@ -3,13 +3,7 @@
 #include <string>
 #include <vector>
 
-/**
- * @brief Estructura que almacena el estado de un producto a determinado precio segun los dias.
- * 
- * @param dia: string que guarda la fecha "DD/MM"
- * @param delta: variacion del stock respecto a la fecha anterior
- * @param cantidad: cantidad de productos en el dia
- */
+
 struct DiaMerca
 {
 	std::string dia;
@@ -25,18 +19,12 @@ struct DiaMerca
 	DiaMerca(std::string d, unsigned int cantAnterior, int delt) : dia(d), cantidad(cantAnterior), delta(delt) { cantidad += delt;  }
 };
 
-/**
- * @brief Estructura individual de un producto a cierto precio. Contiene un vector con el stock por dias.
- * 
- * @param precio: precio diferenciativo de esta subclase.
- * @param dias: vector con la situacion por dia del producto.
- */
+
 struct PrecioMerca
 {
 	int precio;
 	std::vector<DiaMerca> dias;
 
-	/* Comprueba si hay existencias en este momento */
 	bool hayExistencias()
 	{
 		if (!dias.empty())
@@ -75,19 +63,12 @@ struct PrecioMerca
 	PrecioMerca(int p) : precio(p) { dias = {}; };
 };
 
-/**
- * @brief Clase con la informacion de un tipo de producto, asi como un registro de su stock, por precio.
- * 
- * @param nombre: string con el nombre diferenciativo del producto.
- * @param precios: vector con una lista de todos los precios unitarios a los que se adquirio el producto.
- */
 class Mercaderia
 {
 public:
 	std::string nombre;
 	std::vector<PrecioMerca> precios;
 
-	/* Comprueba si en el momento actual hay existencias en al menos uno de los precios de la mercaderia */
 	bool hayExistencias()
 	{
 		if (!precios.empty())
@@ -106,13 +87,6 @@ public:
 		return false; // no se encontraron existencias en toda la busqueda
 	}
 
-	/**
-	 * @brief Agrega un nuevo dia a la lista de la mercaderia al precio indicado.
-	 * 
-	 * @param dia: fecha del dia (DD/MM)
-	 * @param precio: precio al que esta el producto en la lista que se debe ampliar
-	 * @param delta: modificacion de existencias
-	 */
 	void nuevoDiaMercaderia(std::string dia, int precio, int delta)
 	{
 		/* Verifica si ya hay precios */

@@ -25,7 +25,7 @@ public:
 	static enum class TipoCuenta {
 		ACTIVO_OPERATIVO, PASIVO_OPERATIVO, GASTO_OPERATIVO,
 		ACTIVO_NO_OPERATIVO, PASIVO_NO_OPERATIVO, GASTO_NO_OPERATIVO,
-		GANANCIA, PATRIMONIO_NETO, OTRO,
+		GANANCIA, PATRIMONIO_NETO,
 		F_OPER
 	};
 
@@ -94,7 +94,7 @@ public:
 		return nullptr;
 	}
 
-	const std::vector<DiaCuenta> getDias()
+	std::vector<DiaCuenta> getDias()
 	{
 		std::vector<DiaCuenta> vectorRespuesta;
 
@@ -105,7 +105,7 @@ public:
 				vectorRespuesta.push_back(dias[i]);
 			}
 		}
-		return static_cast<const std::vector<DiaCuenta>>(vectorRespuesta);
+		return vectorRespuesta;
 	}
 
 	bool operator==(std::string nombreBuscado)

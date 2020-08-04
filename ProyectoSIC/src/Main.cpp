@@ -963,8 +963,12 @@ void EXP_LibroDiario()
 					modif = ((haber != 0) ? "P+" : "P-");
 					break;
 				case Cuenta::TipoCuenta::GASTO_OPERATIVO:
+				case Cuenta::TipoCuenta::GASTO_NO_OPERATIVO:
 				case Cuenta::TipoCuenta::GANANCIA:
 					modif = ((haber != 0) ? "R+" : "R-");
+					break;
+				case Cuenta::TipoCuenta::PATRIMONIO_NETO:
+					modif = ((haber != 0) ? "PN+" : "PN-");
 					break;
 				}
 
