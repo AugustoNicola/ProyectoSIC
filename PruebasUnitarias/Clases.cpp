@@ -10,6 +10,8 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<Cuenta>(const Cuenta& cuenta) {	return L"Cuenta."; }
 template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<Cuenta::TipoCuenta>(const Cuenta::TipoCuenta &tipoCuenta) { return L"TipoCuenta."; }
 
+template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DiaMercaderia>(const DiaMercaderia& mercaderia) {	return L"DiaMercaderia."; }
+template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<RegistroPrecio>(const RegistroPrecio& mercaderia) {	return L"RegistroPrecio."; }
 namespace Clase_Cuenta
 {
 	TEST_CLASS(Constructor)
@@ -292,7 +294,7 @@ namespace Clase_Mercaderia
 
 		TEST_METHOD(Nombre)
 		{
-			Assert::AreEqual("Producto", mercaderia.getNombre());
+			Assert::AreEqual(static_cast<std::string>("Producto"), mercaderia.getNombre());
 		}
 		TEST_METHOD(Metodo_hayExistencias)
 		{
@@ -310,28 +312,30 @@ namespace Clase_Mercaderia
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
 
-			Assert::AreEqual(4, mercaderia.getExistenciasTotales());
+			Assert::AreEqual(static_cast<unsigned int>(4), mercaderia.getExistenciasTotales());
 		}
 		TEST_METHOD(Suma_UnPrecio)
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
 			mercaderia.registrarCompra("01/01", 200, 2);
 
-			Assert::AreEqual(6, mercaderia.getExistenciasTotales());
+			Assert::AreEqual(static_cast<unsigned int>(6), mercaderia.getExistenciasTotales());
 		}
 		TEST_METHOD(Resta_UnPrecio)
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
-			mercaderia.registrarCompra("02/02", 200, -1);
+			mercaderia.registrarCompra("02/02", 200, -3);
 
-			Assert::AreEqual(3, mercaderia.getExistenciasTotales());
+			Assert::AreEqual((unsigned int)200, mercaderia.getPreciosActuales()[0]);
+			Assert::AreEqual((size_t)2, mercaderia.getDias().size());
+			Assert::AreEqual(static_cast<unsigned int>(1), mercaderia.getExistenciasTotales());
 		}
 		TEST_METHOD(ExcesoResta_UnPrecio)
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
 			mercaderia.registrarCompra("01/01", 200, -5);
 
-			Assert::AreEqual(4, mercaderia.getExistenciasTotales());
+			Assert::AreEqual(static_cast<unsigned int>(4), mercaderia.getExistenciasTotales());
 		}
 
 		TEST_METHOD(UnDia_MultiplesPrecios)
@@ -339,9 +343,9 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("01/01", 200, 4);
 			mercaderia.registrarCompra("01/01", 300, 2);
 
-			Assert::AreEqual(6, mercaderia.getExistenciasTotales());
-			Assert::AreEqual(4, mercaderia.getExistenciasPrecio(200));
-			Assert::AreEqual(2, mercaderia.getExistenciasPrecio(300));
+			Assert::AreEqual(static_cast<unsigned int>(6), mercaderia.getExistenciasTotales());
+			Assert::AreEqual(static_cast<unsigned int>(4), mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(2), mercaderia.getExistenciasPrecio(300));
 		}
 		TEST_METHOD(Suma_MultiplesDias_MultiplesPrecios)
 		{
@@ -349,8 +353,8 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("02/02", 200, 3);
 			mercaderia.registrarCompra("03/03", 300, 2);
 
-			Assert::AreEqual(7, mercaderia.getExistenciasPrecio(200));
-			Assert::AreEqual(2, mercaderia.getExistenciasPrecio(300));
+			Assert::AreEqual(static_cast<unsigned int>(7), mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(2), mercaderia.getExistenciasPrecio(300));
 		}
 		TEST_METHOD(Resta_MultiplesDias_MultiplesPrecios)
 		{
@@ -358,8 +362,8 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("02/02", 300, 2);
 			mercaderia.registrarCompra("03/04", 200, -3);
 
-			Assert::AreEqual(1, mercaderia.getExistenciasPrecio(200));
-			Assert::AreEqual(2, mercaderia.getExistenciasPrecio(300));
+			Assert::AreEqual(static_cast<unsigned int>(1), mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(2), mercaderia.getExistenciasPrecio(300));
 		}
 	};
 
@@ -374,7 +378,7 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("01/01", 200, 4);
 			mercaderia.registrarVenta("02/02", 1);
 
-			Assert::AreEqual(3, mercaderia.getExistenciasTotales());
+			Assert::AreEqual(static_cast<unsigned int>(3), mercaderia.getExistenciasTotales());
 		}
 		TEST_METHOD(Suma_UnPrecio)
 		{
@@ -382,7 +386,7 @@ namespace Clase_Mercaderia
 			mercaderia.registrarVenta("02/02", 1);
 			mercaderia.registrarVenta("02/02", 3);
 
-			Assert::AreEqual(0, mercaderia.getExistenciasTotales());
+			Assert::AreEqual(static_cast<unsigned int>(0), mercaderia.getExistenciasTotales());
 		}
 		TEST_METHOD(MultiplesPrecios)
 		{
@@ -390,27 +394,27 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("01/01", 300, 5);
 			mercaderia.registrarVenta("02/02", 3);
 
-			Assert::AreEqual(1, mercaderia.getExistenciasPrecio(200));
-			Assert::AreEqual(5, mercaderia.getExistenciasPrecio(300));
+			Assert::AreEqual(static_cast<unsigned int>(1), mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(5), mercaderia.getExistenciasPrecio(300));
 
 
 			mercaderia.registrarVenta("02/02", 4);
 
-			Assert::AreEqual(0, mercaderia.getExistenciasPrecio(200));
-			Assert::AreEqual(2, mercaderia.getExistenciasPrecio(300));
+			Assert::AreEqual(static_cast<unsigned int>(0), mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(2), mercaderia.getExistenciasPrecio(300));
 		}
 		TEST_METHOD(ExcesoDeVentas_SinPrecios)
 		{
 			mercaderia.registrarVenta("01/01", 1);
 
-			Assert::AreEqual(0, mercaderia.getExistenciasTotales());
+			Assert::AreEqual(static_cast<unsigned int>(0), mercaderia.getExistenciasTotales());
 		}
 		TEST_METHOD(ExcesoDeVentas_UnPrecio)
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
 			mercaderia.registrarVenta("02/02", 7);
 
-			Assert::AreEqual(4, mercaderia.getExistenciasPrecio(200)); //no deberia vender nada
+			Assert::AreEqual(static_cast<unsigned int>(4), mercaderia.getExistenciasPrecio(200)); //no deberia vender nada
 		}
 		TEST_METHOD(ExcesoDeVentas_MultiplesPrecios)
 		{
@@ -418,13 +422,13 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("01/01", 200, 4);
 			
 			mercaderia.registrarVenta("02/02", 7);
-			Assert::AreEqual(2, mercaderia.getExistenciasPrecio(300));
-			Assert::AreEqual(4, mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(2), mercaderia.getExistenciasPrecio(300));
+			Assert::AreEqual(static_cast<unsigned int>(4), mercaderia.getExistenciasPrecio(200));
 
 			mercaderia.registrarVenta("03/03", 3);
 			mercaderia.registrarVenta("03/03", 5);
-			Assert::AreEqual(0, mercaderia.getExistenciasPrecio(300));
-			Assert::AreEqual(3, mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(2), mercaderia.getExistenciasPrecio(300));
+			Assert::AreEqual(static_cast<unsigned int>(1), mercaderia.getExistenciasPrecio(200));
 		}
 	};
 
@@ -443,7 +447,7 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("01/01", 200, 3);
 
 			Assert::IsFalse(mercaderia.getPreciosActuales().empty());
-			Assert::AreEqual(200, mercaderia.getPreciosActuales()[0]);
+			Assert::AreEqual(static_cast<unsigned int>(200), mercaderia.getPreciosActuales()[0]);
 		}
 		TEST_METHOD(MultiplesPrecios_SinBorrado)
 		{
@@ -451,66 +455,76 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("02/02", 400, 7);
 
 			Assert::IsFalse(mercaderia.getPreciosActuales().empty());
-			Assert::AreEqual(200, mercaderia.getPreciosActuales()[0]);
-			Assert::AreEqual(400, mercaderia.getPreciosActuales()[1]);
+			Assert::AreEqual(static_cast<unsigned int>(200), mercaderia.getPreciosActuales()[0]);
+			Assert::AreEqual(static_cast<unsigned int>(400), mercaderia.getPreciosActuales()[1]);
 		}
 		TEST_METHOD(MultiplesPrecios_ConBorrado)
 		{
 			mercaderia.registrarCompra("01/01", 200, 3);
 			mercaderia.registrarCompra("02/02", 400, 7);
+
+			Assert::AreEqual((size_t)2, mercaderia.getPreciosActuales().size());
+			Assert::AreEqual(static_cast<unsigned int>(200), mercaderia.getPreciosActuales()[0]);
+			Assert::AreEqual(static_cast<unsigned int>(3), mercaderia.getExistenciasPrecio(200));
+
+			Assert::AreEqual(static_cast<unsigned int>(400), mercaderia.getPreciosActuales()[1]);
+			Assert::AreEqual(static_cast<unsigned int>(7), mercaderia.getExistenciasPrecio(400));
+
+
+
 			mercaderia.registrarVenta("03/03", 4);
 
-			Assert::IsFalse(mercaderia.getPreciosActuales().empty());
-			Assert::AreEqual(400, mercaderia.getPreciosActuales()[0]);
+			Assert::AreEqual(static_cast<unsigned int>(0), mercaderia.getExistenciasPrecio(200));
+			Assert::AreEqual(static_cast<unsigned int>(400), mercaderia.getPreciosActuales()[0]);
 		}
 	};
 
-	TEST_CLASS(Metodo_buscarDiaPorFecha)
+	TEST_CLASS(Metodo_getDiaPorFecha)
 	{
 	public:
 		Mercaderia mercaderia;
 
-		Metodo_buscarDiaPorFecha() : mercaderia("Producto") {}
+		Metodo_getDiaPorFecha() : mercaderia("Producto") {}
 
 		TEST_METHOD(SinFechas)
 		{
-			Assert::IsNull(mercaderia.buscarDiaPorFecha("01/01"));
+			Assert::IsNull(mercaderia.getDiaPorFecha("01/01"));
 		}
 		TEST_METHOD(UnaFecha_UnPrecio)
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
 
-			auto fecha = mercaderia.buscarDiaPorFecha("01/01");
+			const DiaMercaderia* fecha = mercaderia.getDiaPorFecha("01/01");
 			Assert::IsNotNull(fecha);
-			Assert::AreEqual(200, fecha[0]->precio);
-			Assert::AreEqual(4, fecha[0]->delta);
-			Assert::AreEqual(4, fecha[0]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(200), fecha->registros[0].precio);
+			Assert::AreEqual(4, fecha->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(4), fecha->registros[0].existenciasActuales);
 		}
 		TEST_METHOD(UnaFecha_MultiplesPrecios)
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
 			mercaderia.registrarCompra("01/01", 500, 3);
 
-			auto fecha = mercaderia.buscarDiaPorFecha("01/01");
+			const DiaMercaderia* fecha = mercaderia.getDiaPorFecha("01/01");
 			Assert::IsNotNull(fecha);
-			Assert::AreEqual(200, fecha[0]->precio);
-			Assert::AreEqual(4, fecha[0]->delta);
-			Assert::AreEqual(4, fecha[0]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(200), fecha->registros[0].precio);
+			Assert::AreEqual(4, fecha->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(4), fecha->registros[0].existenciasActuales);
 
-			Assert::AreEqual(500, fecha[1]->precio);
-			Assert::AreEqual(3, fecha[1]->delta);
-			Assert::AreEqual(3, fecha[1]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(500), fecha->registros[1].precio);
+			Assert::AreEqual(3, fecha->registros[1].delta);
+			Assert::AreEqual(static_cast<unsigned int>(3), fecha->registros[1].existenciasActuales);
 		}
 		TEST_METHOD(MultiplesFechas_UnPrecio)
 		{
 			mercaderia.registrarCompra("01/01", 200, 4);
 			mercaderia.registrarCompra("02/02", 200, 6);
 
-			auto fecha = mercaderia.buscarDiaPorFecha("02/02");
+			const DiaMercaderia* fecha = mercaderia.getDiaPorFecha("02/02");
 			Assert::IsNotNull(fecha);
-			Assert::AreEqual(200, fecha[0]->precio);
-			Assert::AreEqual(6, fecha[0]->delta);
-			Assert::AreEqual(10, fecha[0]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(200), fecha->registros[0].precio);
+			Assert::AreEqual(6, fecha->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(10), fecha->registros[0].existenciasActuales);
 		}
 		TEST_METHOD(MultiplesFechas_MultiplesPrecios)
 		{
@@ -519,35 +533,35 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("02/02", 200, 6);
 			mercaderia.registrarCompra("02/02", 500, 1);
 
-			auto fecha1 = mercaderia.buscarDiaPorFecha("01/01");
+			const DiaMercaderia* fecha1 = mercaderia.getDiaPorFecha("01/01");
 			Assert::IsNotNull(fecha1);
-			Assert::AreEqual(200, fecha1[0]->precio);
-			Assert::AreEqual(4, fecha1[0]->delta);
-			Assert::AreEqual(4, fecha1[0]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(200), fecha1->registros[0].precio);
+			Assert::AreEqual(4, fecha1->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(4), fecha1->registros[0].existenciasActuales);
 
-			Assert::AreEqual(500, fecha1[1]->precio);
-			Assert::AreEqual(2, fecha1[1]->delta);
-			Assert::AreEqual(2, fecha1[1]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(500), fecha1->registros[1].precio);
+			Assert::AreEqual(2, fecha1->registros[1].delta);
+			Assert::AreEqual(static_cast<unsigned int>(2), fecha1->registros[1].existenciasActuales);
 
 
-			auto fecha1 = mercaderia.buscarDiaPorFecha("02/02");
-			Assert::IsNotNull(fecha1);
-			Assert::AreEqual(200, fecha1[0]->precio);
-			Assert::AreEqual(6, fecha1[0]->delta);
-			Assert::AreEqual(10, fecha1[0]->valorActual);
+			const DiaMercaderia* fecha2 = mercaderia.getDiaPorFecha("02/02");
+			Assert::IsNotNull(fecha2);
+			Assert::AreEqual(static_cast<unsigned int>(200), fecha2->registros[0].precio);
+			Assert::AreEqual(6, fecha2->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(10), fecha2->registros[0].existenciasActuales);
 
-			Assert::AreEqual(500, fecha1[1]->precio);
-			Assert::AreEqual(1, fecha1[1]->delta);
-			Assert::AreEqual(3, fecha1[1]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(500), fecha2->registros[1].precio);
+			Assert::AreEqual(1, fecha2->registros[1].delta);
+			Assert::AreEqual(static_cast<unsigned int>(3), fecha2->registros[1].existenciasActuales);
 		}
 	};
 
-	TEST_CLASS(Metodo_getFechas)
+	TEST_CLASS(Metodo_getDias)
 	{
 	public:
 		Mercaderia mercaderia;
 
-		Metodo_getFechas() : mercaderia("Producto") {}
+		Metodo_getDias() : mercaderia("Producto") {}
 
 		TEST_METHOD(SinFechas)
 		{
@@ -559,20 +573,23 @@ namespace Clase_Mercaderia
 			mercaderia.registrarCompra("02/02", 200, 3);
 			mercaderia.registrarVenta("03/03", 2);
 
-			auto fechas = mercaderia.getDias();
-			Assert::IsFalse(fechas.empty());
+			std::vector<const DiaMercaderia*> fechas = mercaderia.getDias();
+			Assert::AreEqual(static_cast<size_t>(3), fechas.size());
 
-			Assert::AreEqual(200, fechas[0][0]->precio);
-			Assert::AreEqual(4, fechas[0][0]->delta);
-			Assert::AreEqual(4, fechas[0][0]->valorActual);
+			Assert::AreEqual(static_cast<std::string>("01/01"), fechas[0]->fecha);
+			Assert::AreEqual(static_cast<unsigned int>(200), fechas[0]->registros[0].precio);
+			Assert::AreEqual(4, fechas[0]->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(4), fechas[0]->registros[0].existenciasActuales);
 
-			Assert::AreEqual(200, fechas[1][0]->precio);
-			Assert::AreEqual(3, fechas[1][0]->delta);
-			Assert::AreEqual(7, fechas[1][0]->valorActual);
+			Assert::AreEqual(static_cast<std::string>("02/02"), fechas[1]->fecha);
+			Assert::AreEqual(static_cast<unsigned int>(200), fechas[1]->registros[0].precio);
+			Assert::AreEqual(3, fechas[1]->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(7), fechas[1]->registros[0].existenciasActuales);
 
-			Assert::AreEqual(200, fechas[2][0]->precio);
-			Assert::AreEqual(-2, fechas[2][0]->delta);
-			Assert::AreEqual(5, fechas[2][0]->valorActual);
+			Assert::AreEqual(static_cast<std::string>("03/03"), fechas[2]->fecha);
+			Assert::AreEqual(static_cast<unsigned int>(200), fechas[2]->registros[0].precio);
+			Assert::AreEqual(-2, fechas[2]->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(5), fechas[2]->registros[0].existenciasActuales);
 		}
 		TEST_METHOD(ConFechas_MultiplesPrecios)
 		{
@@ -582,30 +599,30 @@ namespace Clase_Mercaderia
 			mercaderia.registrarVenta("03/03", 6);
 			mercaderia.registrarVenta("03/03", 2);
 
-			auto fechas = mercaderia.getDias();
+			std::vector<const DiaMercaderia*> fechas = mercaderia.getDias();
 			Assert::IsFalse(fechas.empty());
 
-			Assert::AreEqual(200, fechas[0][0]->precio);
-			Assert::AreEqual(4, fechas[0][0]->delta);
-			Assert::AreEqual(4, fechas[0][0]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(200), fechas[0]->registros[0].precio);
+			Assert::AreEqual(4, fechas[0]->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(4), fechas[0]->registros[0].existenciasActuales);
 
-			Assert::AreEqual(500, fechas[0][1]->precio);
-			Assert::AreEqual(2, fechas[0][1]->delta);
-			Assert::AreEqual(2, fechas[0][1]->valorActual);
-
-
-			Assert::AreEqual(200, fechas[1][0]->precio);
-			Assert::AreEqual(3, fechas[1][0]->delta);
-			Assert::AreEqual(7, fechas[1][0]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(500), fechas[0]->registros[1].precio);
+			Assert::AreEqual(2, fechas[0]->registros[1].delta);
+			Assert::AreEqual(static_cast<unsigned int>(2), fechas[0]->registros[1].existenciasActuales);
 
 
-			Assert::AreEqual(200, fechas[2][0]->precio);
-			Assert::AreEqual(-6, fechas[2][0]->delta);
-			Assert::AreEqual(1, fechas[2][0]->valorActual);
+			Assert::AreEqual(static_cast<unsigned int>(200), fechas[1]->registros[0].precio);
+			Assert::AreEqual(3, fechas[1]->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(7), fechas[1]->registros[0].existenciasActuales);
 
-			Assert::AreEqual(500, fechas[2][1]->precio);
-			Assert::AreEqual(-2, fechas[2][1]->delta);
-			Assert::AreEqual(0, fechas[2][1]->valorActual);
+
+			Assert::AreEqual(static_cast<unsigned int>(200), fechas[2]->registros[0].precio);
+			Assert::AreEqual(-6, fechas[2]->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(1), fechas[2]->registros[0].existenciasActuales);
+
+			Assert::AreEqual(static_cast<unsigned int>(500), fechas[2]->registros[1].precio);
+			Assert::AreEqual(-2, fechas[2]->registros[1].delta);
+			Assert::AreEqual(static_cast<unsigned int>(0), fechas[2]->registros[1].existenciasActuales);
 		}
 	};
 }

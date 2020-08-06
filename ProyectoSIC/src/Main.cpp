@@ -432,7 +432,7 @@ operMercaderia seleccionarMercaderia(bool compra)
 			// si es venta, comprueba que haya existencias de al menos un precio
 			if (compra || MERCADERIAS[i].hayExistencias())
 			{
-				std::cout << "\n" << cont << ". " << MERCADERIAS[i].nombre;
+				std::cout << "\n" << cont << ". " << MERCADERIAS[i].getNombre();
 				posMerc.push_back((Mercaderia*)&MERCADERIAS[i]); //guarda lugar de memoria de mercaderia actual en vector
 				cont++;
 				hayOpcion = true;
@@ -496,7 +496,7 @@ operMercaderia seleccionarMercaderia(bool compra)
 		offSet = 0;
 
 		system("CLS");
-		std::cout << "=============== " << mercaElegida->nombre << ": PRECIOS UNITARIOS ===============\n";
+		std::cout << "=============== " << mercaElegida->getNombre() << ": PRECIOS UNITARIOS ===============\n";
 
 		/* Iteracion de precios */
 		for (int i = 0; i < mercaElegida->precios.size(); i++)
@@ -506,7 +506,7 @@ operMercaderia seleccionarMercaderia(bool compra)
 			// si es venta, comprueba que haya existencias para filtrar opciones
 			if (compra || mercaElegida->precios[i].hayExistencias())
 			{
-				std::cout << "\n" << cont << ". " << mercaElegida->nombre << " ($" << mercaElegida->precios[i].precio << ")";
+				std::cout << "\n" << cont << ". " << mercaElegida->getNombre() << " ($" << mercaElegida->precios[i].precio << ")";
 				posPrecio.push_back((PrecioMerca*)&mercaElegida->precios[i]); //guarda lugar de memoria del precio-mercaderia actual en vector
 				cont++;
 			}
@@ -541,7 +541,7 @@ operMercaderia seleccionarMercaderia(bool compra)
 		/// crear precio-mercaderia
 		do
 		{
-			std::cout << "=============== " << mercaElegida->nombre << ": NUEVO PRECIO UNITARIO ===============";
+			std::cout << "=============== " << mercaElegida->getNombre() << ": NUEVO PRECIO UNITARIO ===============";
 			std::cout << "\n\nIngrese el nuevo precio de compra: $";
 			std::cin >> opStr;
 
@@ -570,7 +570,7 @@ operMercaderia seleccionarMercaderia(bool compra)
 		/* validar cantidad */
 
 		system("CLS");
-		std::cout << "=============== " << mercaElegida->nombre << " ($" << precioElegido->precio << " c/u) ===============";
+		std::cout << "=============== " << mercaElegida->getNombre() << " ($" << precioElegido->precio << " c/u) ===============";
 		std::cout << "\n\nExistencias: " << ((precioElegido->hayExistencias()) ? precioElegido->dias.back().cantidad : 0) << " unidades"; //para compra, puede ser 0
 		std::cout << "\n\nElija la cantidad de mercaderia que se " << ((compra) ? "compra" : "vende" ) << ": ";
 		std::cin >> opStr;

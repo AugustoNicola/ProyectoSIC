@@ -175,9 +175,6 @@
     <ProjectReference Include="..\clases\clases.vcxproj">
       <Project>{0773080c-95e0-4748-ab51-883d061d564c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ProyectoSIC\ProyectoSIC.vcxproj">
-      <Project>{c4e03021-7501-442b-b0db-d4fb544e2f07}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\ProyectoSIC\Debug\Main.obj" />
