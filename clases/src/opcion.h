@@ -1,15 +1,11 @@
 #pragma once
 
 #include <string>
-/**
- * @brief Estructura que contiene las caracteristicas de las opciones (o templates) para enlazar a las funciones correspondientes
- * 
- * @param nombre: Nombre que debe aparecer en el menu de opciones.
- * @param pFuncion: puntero a la funcion correspondiente
- */
+#include <functional>
+
 struct Opcion
 {
-	std::string nombre;
-	void (*pFuncion)();
-	Opcion(std::string n, void (*pF)()) : nombre(n), pFuncion(pF) {};
+	std::string Nombre;
+	std::function<void()> Funcion;
+	Opcion(std::string _Nombre, std::function<void()> _Funcion) : Nombre(_Nombre), Funcion(_Funcion) {};
 };

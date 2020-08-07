@@ -1189,18 +1189,13 @@ void OP_CompraMercaderias()
 	commitOperacion(operacionActual);
 }
 
-/* Notas de Credito y Debito*/
-
-void OP_NCred() { NotaDC(true); }
-void OP_NDeb() { NotaDC(false); }
-
 const std::vector<Opcion> OPCIONES = {
 	Opcion("Nueva Fecha", &OP_NuevaFecha),
 	Opcion("Transaccion de Cuentas", &OP_Transaccion),
 	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
-	Opcion("Nota de Credito", &OP_NCred),
-	Opcion("Nota de Debito", &OP_NDeb),
+	Opcion("Nota de Credito", []{NotaDC(true);} ),
+	Opcion("Nota de Debito", []{NotaDC(false);} ),
 	//Opcion("Exportar L. Diario", &EXP_LibroDiario),
 	//Opcion("Exportar L. Mayor", &EXP_LibroMayor),
 	//Opcion("Exportar Estado de Resultados", &EXP_EstadoResultados)

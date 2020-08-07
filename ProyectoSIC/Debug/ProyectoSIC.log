@@ -3,7 +3,7 @@ C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(30): warning C4091: 'static ': se 
 C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(53,21): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(65,21): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(90,21): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(151,40): warning C4018: '>=': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(157,40): warning C4018: '>=': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(40,20): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(100,40): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(149,23): warning C4129: '/': secuencia de escape de carácter no reconocida
@@ -16,24 +16,24 @@ C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(430,21): warning C4018: '<': 
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(491,14): error C2065: 'PrecioMerca': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(491,26): error C2059: error de sintaxis: '>'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(502,44): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(89): message : vea la declaración de 'Mercaderia'
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(507,7): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(89): message : vea la declaración de 'Mercaderia'
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(509,101): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(89): message : vea la declaración de 'Mercaderia'
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(510,26): error C2065: 'PrecioMerca': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(510,38): error C2059: error de sintaxis: ')'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(538,2): error C2065: 'PrecioMerca': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(538,15): error C2065: 'precioElegido': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(557,24): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(89): message : vea la declaración de 'Mercaderia'
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(557,35): error C3861: 'PrecioMerca': no se encontró el identificador
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(558,3): error C2065: 'precioElegido': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(558,42): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(89): message : vea la declaración de 'Mercaderia'
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(562,3): error C2065: 'precioElegido': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(562,42): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(89): message : vea la declaración de 'Mercaderia'
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(573,76): error C2065: 'precioElegido': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(574,41): error C2065: 'precioElegido': identificador no declarado
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(574,76): error C2065: 'precioElegido': identificador no declarado
@@ -47,10 +47,12 @@ C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(936,21): warning C4018: '<': 
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(941,22): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1217,20): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1237,21): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1248,29): error C2039: "pFuncion": no es un miembro de "Opcion"
+C:\dev\GitHub\ProyectoSIC\clases\src\opcion.h(11): message : vea la declaración de 'Opcion'
   presets.cpp
 C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(30): warning C4091: 'static ': se ha omitido a la izquierda de 'Cuenta::TipoCuenta' cuando no hay ninguna variable declarada
 C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(53,21): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(65,21): warning C4018: '<': no coinciden signed/unsigned
 C:\dev\GitHub\ProyectoSIC\clases\src\cuenta.h(90,21): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(151,40): warning C4018: '>=': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(157,40): warning C4018: '>=': no coinciden signed/unsigned
   Generando código...
