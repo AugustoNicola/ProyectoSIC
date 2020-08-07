@@ -3,6 +3,20 @@
 #include <string>
 #include <vector>
 
+struct ExistenciasPrecioMercaderia
+{
+	unsigned int precio;
+	unsigned int existencias;
+
+	void modificar(int delta)
+	{
+		existencias += delta;
+	}
+
+	ExistenciasPrecioMercaderia(unsigned int _precio)
+		: precio(_precio), existencias(0) {};
+};
+
 struct RegistroPrecio
 {
 	unsigned int precio;
@@ -27,7 +41,26 @@ struct DiaMercaderia
 	std::string fecha;
 	std::vector<RegistroPrecio> registros;
 
-	RegistroPrecio* buscarRegistroPrecio(unsigned int precio)
+	void crearRegistro(unsigned int precio, int delta, unsigned int existenciasActuales)
+	{
+		registros.push_back(RegistroPrecio(precio, delta, existenciasActuales));
+	}
+
+	void borrarRegistroPorPrecio(unsigned int precioAEliminar)
+	{
+		if (hayRegistros())
+		{
+			for (unsigned int i = 0; i < registros.size(); i++)
+			{
+				if (registros[i].precio == precioAEliminar)
+				{
+					registros.erase(registros.begin() + i);
+				}
+			}
+		}
+	}
+	
+	RegistroPrecio* getRegistroPrecio(unsigned int precio)
 	{
 		if (hayRegistros())
 		{
@@ -39,57 +72,30 @@ struct DiaMercaderia
 		return nullptr;
 	}
 
-	bool hayRegistros() const { return !registros.empty(); }
-
-	void crearRegistro(unsigned int precio, int delta, unsigned int existenciasActuales)
-	{
-		registros.push_back(RegistroPrecio(precio, delta, existenciasActuales));
-	}
-
-	void borrarRegistroPorPrecio(unsigned int precioAEliminar)
-	{
-		for (unsigned int i = 0; i < registros.size(); i++)
-		{
-			if (registros[i].precio == precioAEliminar)
-			{
-				registros.erase(registros.begin()+i);
-			}
-		}
-	}
-
 	void controlarRegistros()
 	{
-		for (unsigned int i = 0; i < registros.size(); i++)
+		if (hayRegistros())
 		{
-			if (registros[i].delta == 0)
+			for (unsigned int i = 0; i < registros.size(); i++)
 			{
-				registros.erase(registros.begin() + i);
+				if (registros[i].delta == 0)
+				{
+					registros.erase(registros.begin() + i);
+				}
 			}
 		}
 	}
+
+	bool hayRegistros() const { return !registros.empty(); }
 
 	DiaMercaderia(std::string _fecha)
 		: fecha(_fecha) { registros = {}; }
 };
 
-struct ExistenciasPrecioMercaderia
-{
-	unsigned int precio;
-	unsigned int existencias;
-
-	void modificar(int delta)
-	{
-		existencias += delta;
-	}
-
-	ExistenciasPrecioMercaderia(unsigned int _precio)
-		: precio(_precio), existencias(0) {};
-};
-
 class Mercaderia
 {
 private:
-	std::string Nombre;
+	const std::string Nombre;
 	std::vector<DiaMercaderia> Dias;
 	std::vector<ExistenciasPrecioMercaderia> PreciosActuales;
 public:
@@ -128,7 +134,7 @@ public:
 				}
 				// utiliza registrarCompra como venta utilizando un numero negativo
 				// a la vez se encarga de eliminar el precio en caso de estar agotado
-				registrarCompra(fecha, getPrecioMasBajo()->precio, -1 * mercaderiasVendidasEnOperacionActual);
+				registrarCompra(fecha, getPrecioMasBajo()->precio, -mercaderiasVendidasEnOperacionActual);
 			}
 		}
 	}
@@ -167,7 +173,7 @@ private:
 
 	void modificarUltimoDia(unsigned int precio, int delta)
 	{
-		if (RegistroPrecio* registro = Dias.back().buscarRegistroPrecio(precio))
+		if (RegistroPrecio* registro = Dias.back().getRegistroPrecio(precio))
 		{
 			registro->modificar(delta);
 		} else {
@@ -198,31 +204,6 @@ private:
 
 	bool quedanMercaderiasPorVender(unsigned int mercaderiasPorVender) { return (mercaderiasPorVender > 0); }
 
-	
-
-	// controla que el ultimo dia tenga registros y que estos registros tengan delta
-	// tambien controla que no haya precios sin existencias
-	void efectuarControl()
-	{
-		Dias.back().controlarRegistros();
-		
-		if (!Dias.back().hayRegistros())
-		{
-			Dias.erase(Dias.end());
-		}
-
-		for (unsigned int i = 0; i < PreciosActuales.size(); i++)
-		{
-			if (PreciosActuales[i].existencias == 0)
-			{
-				PreciosActuales.erase(PreciosActuales.begin() + i);
-			}
-		}
-
-	}
-
-public:
-
 	ExistenciasPrecioMercaderia* getPrecioMasBajo()
 	{
 		if (hayExistencias())
@@ -242,24 +223,64 @@ public:
 		}
 	}
 
-	bool precioExiste(unsigned int precioBuscado) const
+	// controla que el ultimo dia tenga registros y que estos registros tengan delta
+	// tambien controla que no haya precios sin existencias
+	void efectuarControl()
 	{
+		if (hayDias())
+		{
+			Dias.back().controlarRegistros();
+
+			if (!Dias.back().hayRegistros())
+			{
+				Dias.erase(Dias.end());
+			}
+		}
 		if (hayExistencias())
 		{
 			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
 			{
-				if (PreciosActuales[i].precio == precioBuscado)
+				if (PreciosActuales[i].existencias == 0)
 				{
-					return true;
+					PreciosActuales.erase(PreciosActuales.begin() + i);
 				}
 			}
 		}
-		return false;
 	}
-	bool hayExistencias() const { return (!PreciosActuales.empty()); }
-	bool hayDias() const { return !Dias.empty(); }
+
+public:
 
 	std::string getNombre() const { return Nombre; }
+	
+	bool hayDias() const { return !Dias.empty(); }
+	std::vector<const DiaMercaderia*> getDias() const
+	{
+		std::vector<const DiaMercaderia*> dias;
+		if (hayDias())
+		{
+			for (unsigned int i = 0; i < Dias.size(); i++)
+			{
+				dias.push_back( const_cast<const DiaMercaderia*>(&Dias[i]) );
+			}
+		}
+		return dias;
+	}
+	const DiaMercaderia* getDiaPorFecha(std::string fechaBuscada) const
+	{
+		if (hayDias())
+		{
+			for (unsigned int i = 0; i < Dias.size(); i++)
+			{
+				if (Dias[i].fecha == fechaBuscada)
+				{
+					return const_cast<const DiaMercaderia*>(&Dias[i]);
+				}
+			}
+		}
+		return nullptr;
+	}
+	
+	bool hayExistencias() const { return (!PreciosActuales.empty()); }
 	unsigned int getExistenciasPrecio(unsigned int precioBuscado) const
 	{
 		if (hayExistencias())
@@ -286,7 +307,21 @@ public:
 		}
 		return total;
 	}
-
+	
+	bool precioExiste(unsigned int precioBuscado) const
+	{
+		if (hayExistencias())
+		{
+			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			{
+				if (PreciosActuales[i].precio == precioBuscado)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	std::vector<unsigned int> getPreciosActuales() const
 	{
 		std::vector<unsigned int> preciosActuales = {};
@@ -301,7 +336,7 @@ public:
 	}
 	ExistenciasPrecioMercaderia* getPrecio(unsigned int precioBuscado)
 	{
-		if (!PreciosActuales.empty())
+		if (hayExistencias())
 		{
 			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
 			{
@@ -312,34 +347,7 @@ public:
 			}
 		}
 	}
-
-	const DiaMercaderia* getDiaPorFecha(std::string fechaBuscada) const
-	{
-		if (hayDias())
-		{
-			for (unsigned int i = 0; i < Dias.size(); i++)
-			{
-				if (Dias[i].fecha == fechaBuscada)
-				{
-					return const_cast<const DiaMercaderia*>(&Dias[i]);
-				}
-			}
-		}
-		return nullptr;
-	}
-	std::vector<const DiaMercaderia*> getDias() const
-	{
-		std::vector<const DiaMercaderia*> dias;
-		if (hayDias())
-		{
-			for (unsigned int i = 0; i < Dias.size(); i++)
-			{
-				dias.push_back( const_cast<const DiaMercaderia*>(&Dias[i]) );
-			}
-		}
-		return dias;
-	}
-
+	
 	Mercaderia(std::string nom) : Nombre(nom) { Dias = {}; };
 };
 
