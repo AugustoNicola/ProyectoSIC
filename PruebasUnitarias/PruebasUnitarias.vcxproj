@@ -177,7 +177,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\ProyectoSIC\Debug\Main.obj" />
     <Object Include="..\ProyectoSIC\Debug\presets.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

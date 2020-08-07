@@ -28,7 +28,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\ProyectoSIC\Debug\Main.obj" />
     <Object Include="..\ProyectoSIC\Debug\presets.obj" />
   </ItemGroup>
 </Project>

@@ -119,14 +119,16 @@ public:
 			while (quedanMercaderiasPorVender(delta))
 			{
 				int mercaderiasVendidasEnOperacionActual = 0;
-				while (delta > 0 && getPrecioMasBajo()->existencias > 0)
+				unsigned int existenciasPrecioMasBajoActual = getPrecioMasBajo()->existencias;
+				while (delta > 0 && existenciasPrecioMasBajoActual > 0)
 				{
 					mercaderiasVendidasEnOperacionActual++;
 					delta--;
+					existenciasPrecioMasBajoActual--;
 				}
 				// utiliza registrarCompra como venta utilizando un numero negativo
 				// a la vez se encarga de eliminar el precio en caso de estar agotado
-				registrarCompra(fecha, getPrecioMasBajo()->precio, -mercaderiasVendidasEnOperacionActual);
+				registrarCompra(fecha, getPrecioMasBajo()->precio, -1 * mercaderiasVendidasEnOperacionActual);
 			}
 		}
 	}
@@ -188,32 +190,15 @@ private:
 	}
 
 
-	bool cantidadDeVentaValida(int cantidadIntentada)
+	bool cantidadDeVentaValida(unsigned int cantidadIntentada)
 	{
 		return ( (cantidadIntentada <= getExistenciasTotales()) 
 			  && (cantidadIntentada > 0) );
 	}
 
-	bool quedanMercaderiasPorVender(int mercaderiasPorVender) { return mercaderiasPorVender > 0; }
+	bool quedanMercaderiasPorVender(unsigned int mercaderiasPorVender) { return (mercaderiasPorVender > 0); }
 
-	ExistenciasPrecioMercaderia* getPrecioMasBajo()
-	{
-		if (hayExistencias())
-		{
-			ExistenciasPrecioMercaderia* precioMasBajo = &ExistenciasPrecioMercaderia(99999);
-			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
-			{
-				if (PreciosActuales[i].precio < precioMasBajo->precio)
-				{
-					precioMasBajo = &PreciosActuales[i];
-				}
-			}
-			return precioMasBajo;
-		}
-		else {
-			return nullptr;
-		}
-	}
+	
 
 	// controla que el ultimo dia tenga registros y que estos registros tengan delta
 	// tambien controla que no haya precios sin existencias
@@ -237,6 +222,25 @@ private:
 	}
 
 public:
+
+	ExistenciasPrecioMercaderia* getPrecioMasBajo()
+	{
+		if (hayExistencias())
+		{
+			ExistenciasPrecioMercaderia* precioMasBajo = &ExistenciasPrecioMercaderia(99999);
+			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			{
+				if (PreciosActuales[i].precio < precioMasBajo->precio)
+				{
+					precioMasBajo = &PreciosActuales[i];
+				}
+			}
+			return precioMasBajo;
+		}
+		else {
+			return nullptr;
+		}
+	}
 
 	bool precioExiste(unsigned int precioBuscado) const
 	{

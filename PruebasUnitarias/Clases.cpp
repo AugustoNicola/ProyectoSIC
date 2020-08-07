@@ -397,8 +397,7 @@ namespace Clase_Mercaderia
 			Assert::AreEqual(static_cast<unsigned int>(1), mercaderia.getExistenciasPrecio(200));
 			Assert::AreEqual(static_cast<unsigned int>(5), mercaderia.getExistenciasPrecio(300));
 
-
-			mercaderia.registrarVenta("02/02", 4);
+			mercaderia.registrarVenta("03/03", 4);
 
 			Assert::AreEqual(static_cast<unsigned int>(0), mercaderia.getExistenciasPrecio(200));
 			Assert::AreEqual(static_cast<unsigned int>(2), mercaderia.getExistenciasPrecio(300));
@@ -617,12 +616,12 @@ namespace Clase_Mercaderia
 
 
 			Assert::AreEqual(static_cast<unsigned int>(200), fechas[2]->registros[0].precio);
-			Assert::AreEqual(-6, fechas[2]->registros[0].delta);
-			Assert::AreEqual(static_cast<unsigned int>(1), fechas[2]->registros[0].existenciasActuales);
+			Assert::AreEqual(-7, fechas[2]->registros[0].delta);
+			Assert::AreEqual(static_cast<unsigned int>(0), fechas[2]->registros[0].existenciasActuales);
 
 			Assert::AreEqual(static_cast<unsigned int>(500), fechas[2]->registros[1].precio);
-			Assert::AreEqual(-2, fechas[2]->registros[1].delta);
-			Assert::AreEqual(static_cast<unsigned int>(0), fechas[2]->registros[1].existenciasActuales);
+			Assert::AreEqual(-1, fechas[2]->registros[1].delta);
+			Assert::AreEqual(static_cast<unsigned int>(1), fechas[2]->registros[1].existenciasActuales);
 		}
 	};
 }
