@@ -63,10 +63,43 @@ public:
 
 struct DiaOperaciones
 {
-	std::string fecha;
-	std::vector<Operacion> operaciones;
+private:
+	std::string Fecha;
+	std::vector<Operacion> Operaciones;
 
-	void nuevaOperacion(Operacion oper) { operaciones.push_back(oper); }
+public:
+	void crearOperacion(Operacion oper) { Operaciones.push_back(oper); }
+	bool contieneCuenta(std::string cuentaBuscada)
+	{
+		if (hayOperaciones())
+		{
+			for (unsigned int i = 0; i < Operaciones.size(); i++)
+			{
+				if (Operaciones[i].contieneCuenta(cuentaBuscada))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-	DiaOperaciones(std::string f) : fecha(f) {};
+	bool hayOperaciones() const { return !Operaciones.empty(); }
+	std::vector<const Operacion*> getOperaciones()
+	{
+		std::vector<const Operacion*> operaciones;
+		if (hayOperaciones())
+		{
+			for (unsigned int i = 0; i < Operaciones.size(); i++)
+			{
+				operaciones.push_back( const_cast<const Operacion*>(&Operaciones[i]) );
+			}
+		}
+		return operaciones;
+	}
+
+	std::string getFecha() const { return Fecha; }
+	void setFecha(std::string _Fecha) { Fecha = _Fecha; }
+	
+	DiaOperaciones(std::string _Fecha) : Fecha(_Fecha) {};
 };

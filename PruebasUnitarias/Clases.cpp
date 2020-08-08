@@ -779,10 +779,6 @@ namespace Clase_DiaOperaciones
 
 	TEST_CLASS(Fecha)
 	{
-		TEST_METHOD(SinFecha)
-		{
-			Assert::IsTrue(diaOperaciones.getFecha().empty());
-		}
 		TEST_METHOD(Fecha_Comun)
 		{
 			DiaOperaciones diaOperaciones("MiDiaOper");
@@ -810,8 +806,8 @@ namespace Clase_DiaOperaciones
 			DiaOperaciones diaOperaciones("Mi/Dia");
 			diaOperaciones.setFecha("Nuestro/Dia");
 
-			Assert::IsFalse(diaOperaciones.getDocumento().empty());
-			Assert::AreEqual((std::string)"Nuestro/Dia", operacion.getDocumento());
+			Assert::IsFalse(diaOperaciones.getFecha().empty());
+			Assert::AreEqual((std::string)"Nuestro/Dia", diaOperaciones.getFecha());
 		}
 	};
 
@@ -824,7 +820,7 @@ namespace Clase_DiaOperaciones
 		TEST_METHOD(SinOperaciones)
 		{
 			Assert::IsFalse(diaOperaciones.hayOperaciones());
-			Assert::IsTrue(operacion.getOperaciones().empty());
+			Assert::IsTrue(diaOperaciones.getOperaciones().empty());
 		}
 		TEST_METHOD(UnaOperacion)
 		{
@@ -838,16 +834,16 @@ namespace Clase_DiaOperaciones
 			std::vector<const Operacion*> operaciones = diaOperaciones.getOperaciones();
 			Assert::IsTrue(diaOperaciones.hayOperaciones());
 			Assert::AreEqual(1, (int)operaciones.size());
-			Assert::AreEqual(2, (int)operaciones[0]->lineas.size());
-			Assert::AreEqual((std::string)"Primera", operaciones[0]->nombre);
+			Assert::AreEqual(2, (int)operaciones[0]->getLineas().size());
+			Assert::AreEqual((std::string)"Primera", operaciones[0]->getDocumento());
 
 			// primera linea
-			Assert::AreEqual((std::string)"Caja", operaciones[0]->lineas[0]->cuenta->getNombre());
-			Assert::AreEqual(300, operaciones[0]->lineas[0]->delta);
+			Assert::AreEqual((std::string)"Caja", operaciones[0]->getLineas()[0]->cuenta->getNombre());
+			Assert::AreEqual(300, operaciones[0]->getLineas()[0]->delta);
 
 			// segunda linea
-			Assert::AreEqual((std::string)"Proovedores", operaciones[0]->lineas[1]->cuenta->getNombre());
-			Assert::AreEqual(-100, operaciones[0]->lineas[1]->delta);
+			Assert::AreEqual((std::string)"Proovedores", operaciones[0]->getLineas()[1]->cuenta->getNombre());
+			Assert::AreEqual(-100, operaciones[0]->getLineas()[1]->delta);
 		}
 		TEST_METHOD(MultiplesOperaciones)
 		{
@@ -867,22 +863,96 @@ namespace Clase_DiaOperaciones
 			std::vector<const Operacion*> operaciones = diaOperaciones.getOperaciones();
 			Assert::IsTrue(diaOperaciones.hayOperaciones());
 			Assert::AreEqual(2, (int)operaciones.size());
-			Assert::AreEqual(2, (int)operaciones[0]->lineas.size());
-			Assert::AreEqual(1, (int)operaciones[1]->lineas.size());
+			Assert::AreEqual(2, (int)operaciones[0]->getLineas().size());
+			Assert::AreEqual(1, (int)operaciones[1]->getLineas().size());
 
-			Assert::AreEqual((std::string)"Primera", operaciones[0]->nombre);
+			Assert::AreEqual((std::string)"Primera", operaciones[0]->getDocumento());
 			//primera operacion, primera linea
-			Assert::AreEqual((std::string)"Caja", operaciones[0]->lineas[0]->cuenta->getNombre());
-			Assert::AreEqual(300, operaciones[0]->lineas[0]->delta);
+			Assert::AreEqual((std::string)"Caja", operaciones[0]->getLineas()[0]->cuenta->getNombre());
+			Assert::AreEqual(300, operaciones[0]->getLineas()[0]->delta);
 
 			//primera operacion, segunda linea
-			Assert::AreEqual((std::string)"Proovedores", operaciones[0]->lineas[1]->cuenta->getNombre());
-			Assert::AreEqual(-100, operaciones[0]->lineas[1]->delta);
+			Assert::AreEqual((std::string)"Proovedores", operaciones[0]->getLineas()[1]->cuenta->getNombre());
+			Assert::AreEqual(-100, operaciones[0]->getLineas()[1]->delta);
 
-			Assert::AreEqual((std::string)"Segunda", operaciones[1]->nombre);
+			Assert::AreEqual((std::string)"Segunda", operaciones[1]->getDocumento());
 			//segunda operacion, primera linea
-			Assert::AreEqual((std::string)"Gastos", operaciones[1]->lineas[1]->cuenta->getNombre());
-			Assert::AreEqual(500, operaciones[1]->lineas[1]->delta);
+			Assert::AreEqual((std::string)"Gastos", operaciones[1]->getLineas()[0]->cuenta->getNombre());
+			Assert::AreEqual(500, operaciones[1]->getLineas()[0]->delta);
+		}
+	};
+
+	TEST_CLASS(Metodo_contieneCuenta)
+	{
+	public:
+		DiaOperaciones diaOperaciones;
+		Operacion operacion, operacion2;
+		Metodo_contieneCuenta() : diaOperaciones("01/01"), operacion("MiOperacion") {}
+
+		TEST_METHOD(SinOperaciones)
+		{
+			Assert::IsFalse(diaOperaciones.contieneCuenta("Proovedores"));
+		}
+		TEST_METHOD(UnaOperacion_UnaLinea_CuentaExistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			diaOperaciones.crearOperacion(operacion);
+
+			Assert::IsTrue(diaOperaciones.contieneCuenta("Caja"));
+		}
+		TEST_METHOD(UnaOperacion_UnaLinea_CuentaInexistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			diaOperaciones.crearOperacion(operacion);
+
+			Assert::IsFalse(diaOperaciones.contieneCuenta("Proovedores"));
+		}
+		TEST_METHOD(UnaOperacion_MultiplesLineas_CuentaExistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			operacion.crearLinea(&cuenta_proovedores, -400);
+			operacion.crearLinea(&cuenta_gastos, -100);
+			diaOperaciones.crearOperacion(operacion);
+
+			Assert::IsTrue(diaOperaciones.contieneCuenta("Caja"));
+			Assert::IsTrue(diaOperaciones.contieneCuenta("Gastos"));
+			Assert::IsTrue(diaOperaciones.contieneCuenta("Proovedores"));
+		}
+		TEST_METHOD(UnaOperacion_MultiplesLineas_CuentaInexistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			operacion.crearLinea(&cuenta_proovedores, -400);
+			operacion.crearLinea(&cuenta_gastos, -100);
+			diaOperaciones.crearOperacion(operacion);
+
+			Assert::IsFalse(diaOperaciones.contieneCuenta("Banana"));
+			Assert::IsFalse(diaOperaciones.contieneCuenta("    "));
+			Assert::IsFalse(diaOperaciones.contieneCuenta(""));
+		}
+
+		TEST_METHOD(MultiplesOperacionesas_CuentaExistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			operacion.crearLinea(&cuenta_proovedores, -400);
+			operacion2.crearLinea(&cuenta_gastos, -100);
+			diaOperaciones.crearOperacion(operacion);
+			diaOperaciones.crearOperacion(operacion2);
+
+			Assert::IsTrue(diaOperaciones.contieneCuenta("Caja"));
+			Assert::IsTrue(diaOperaciones.contieneCuenta("Proovedores"));
+			Assert::IsTrue(diaOperaciones.contieneCuenta("Gastos"));
+		}
+		TEST_METHOD(MultiplesOperaciones_CuentaInexistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			operacion2.crearLinea(&cuenta_proovedores, -400);
+			operacion2.crearLinea(&cuenta_gastos, -100);
+			diaOperaciones.crearOperacion(operacion);
+			diaOperaciones.crearOperacion(operacion2);
+
+			Assert::IsFalse(diaOperaciones.contieneCuenta("Banana"));
+			Assert::IsFalse(diaOperaciones.contieneCuenta("    "));
+			Assert::IsFalse(diaOperaciones.contieneCuenta(""));
 		}
 	};
 }
