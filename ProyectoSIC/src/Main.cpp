@@ -795,12 +795,12 @@ void NotaDC(bool credito)
 		posOper = {};
 		system("CLS");
 
-		for (unsigned int d = 0; d < DIAS.size(); d++) //recorre dias
+		for (DiaOperaciones dia : DIAS) //recorre dias
 		{
-			for (unsigned int o = 0; o < DIAS[d].getOperaciones().size(); o++) //recorre operaciones
+			for (const Operacion *operacion : dia.getOperaciones()) //recorre operaciones
 			{
-				std::cout << "\n" << cont << ". " << DIAS[d].getOperaciones()[o]->getDocumento() << " (" << DIAS[d].getFecha() << ")";
-				posOper.push_back(DIAS[d].getOperaciones()[o]);
+				std::cout << "\n" << cont << ". " << operacion->getDocumento() << " (" << dia.getFecha() << ")";
+				posOper.push_back(operacion);
 				cont++;
 			}
 		}
@@ -837,10 +837,10 @@ void NotaDC(bool credito)
 			posLinea = {};
 			system("CLS");
 
-			for (unsigned int c = 0; c < operacionModif->getLineas().size(); c++) //recorre lineas
+			for (const Linea* linea : operacionModif->getLineas()) //recorre lineas
 			{
-				std::cout << "\n" << cont << ". " << operacionModif->getLineas()[c]->cuenta->getNombre() << " (" << operacionModif->getLineas()[c]->delta << ")";
-				posLinea.push_back(operacionModif->getLineas()[c]);
+				std::cout << "\n" << cont << ". " << linea->cuenta->getNombre() << " (" << linea->delta << ")";
+				posLinea.push_back(linea);
 				cont++;
 			}
 
@@ -927,32 +927,29 @@ void EXP_LibroDiario()
 	int debe; int haber;
 
 	///recorre dias
-	for (int d = 0; d < DIAS.size(); d++)
+	for (DiaOperaciones dia : DIAS)
 	{
-		diaAct = &DIAS[d];
-		LibroDiario << "'" << diaAct->getFecha() << "'" << std::endl; // "'01/01'"
+		LibroDiario << "'" << dia.getFecha() << "'" << std::endl; // "'01/01'"
 
 		/// recorre operaciones
-		for (int o = 0; o < diaAct->getOperaciones().size(); o++)
+		for (const Operacion* operacion : dia.getOperaciones())
 		{
-			opAct = diaAct->getOperaciones()[o];
 
 			///recorre lineas
-			for (int l = 0; l < opAct->getLineas().size(); l++)
+			for (const Linea* linea : operacion->getLineas())
 			{
-				linAct = opAct->getLineas()[l];
 
 				/* calcula valores */
 
-				nombreCuenta = linAct->cuenta->getNombre();
+				nombreCuenta = linea->cuenta->getNombre();
 				
 				//columnas debe y haber
-				int delta = linAct->delta;
+				int delta = linea->delta;
 				debe = ((delta > 0) ? delta : 0);
 				haber = ((delta < 0) ? abs(delta) : 0);
 
 				// modificador
-				switch (linAct->cuenta->getTipo())
+				switch (linea->cuenta->getTipo())
 				{
 				case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
 				case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
@@ -982,7 +979,7 @@ void EXP_LibroDiario()
 
 			} //lineas
 
-			LibroDiario << "'';segun " << opAct->getDocumento() << std::endl << std::endl; //imprime documento
+			LibroDiario << "'';segun " << operacion->getDocumento() << std::endl << std::endl; //imprime documento
 		} //operaciones
 
 	} //dias
@@ -996,24 +993,22 @@ void EXP_LibroMayor()
 	//inicializa archivo
 	std::ofstream LibroMayor; LibroMayor.open("LibroMayor.csv");
 
-	Cuenta* cuentaAct;
 	std::vector<int> debes; std::vector<int> haberes;
 	int saldo;
 	bool salir;
 
-	for (unsigned int c = 0; c < CUENTAS.size(); c++)
+	for (Cuenta cuenta : CUENTAS)
 	{
-		cuentaAct = (Cuenta*)&CUENTAS[c];
 		debes.clear(); haberes.clear();
 
-		if (cuentaAct->hayDias())
+		if (cuenta.hayDias())
 		{
 			/// hay dias en la cuenta
-			LibroMayor << cuentaAct->getNombre() << std::endl << "Debe;Haber" << std::endl;
+			LibroMayor << cuenta.getNombre() << std::endl << "Debe;Haber" << std::endl;
 
 			saldo = 0; salir = false;
 			/* separa los deltas en positivos y negativos */
-			for (DiaCuenta dia : cuentaAct->getDias())
+			for (DiaCuenta dia : cuenta.getDias())
 			{
 				if (dia.delta > 0)
 				{
@@ -1086,12 +1081,12 @@ void EXP_EstadoResultados()
 
 	/* Imprime Utilidad Neto */
 
-	for (unsigned int c = 0; c < R_NEGS.size(); c++)
+	for (Cuenta *cuentasGastos : R_NEGS)
 	{
-		if (R_NEGS[c]->getSaldoActual() != 0)
+		if (cuentasGastos->getSaldoActual() != 0)
 		{
-			EstadoResultados << R_NEGS[c]->getNombre() << ";" << R_NEGS[c]->getSaldoActual() * -1 << std::endl;
-			utilidad -= R_NEGS[c]->getSaldoActual();
+			EstadoResultados << cuentasGastos->getNombre() << ";" << cuentasGastos->getSaldoActual() * -1 << std::endl;
+			utilidad -= cuentasGastos->getSaldoActual();
 		}
 	}
 
@@ -1190,15 +1185,15 @@ void OP_CompraMercaderias()
 }
 
 const std::vector<Opcion> OPCIONES = {
-	Opcion("Nueva Fecha", &OP_NuevaFecha),
-	Opcion("Transaccion de Cuentas", &OP_Transaccion),
+	Opcion("Nueva Fecha", []{ pedirNuevaFecha(); } ),
+	Opcion("Transaccion de Cuentas", []{ OP_Transaccion(); }),
 	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
-	Opcion("Nota de Credito", []{NotaDC(true);} ),
-	Opcion("Nota de Debito", []{NotaDC(false);} ),
-	//Opcion("Exportar L. Diario", &EXP_LibroDiario),
-	//Opcion("Exportar L. Mayor", &EXP_LibroMayor),
-	//Opcion("Exportar Estado de Resultados", &EXP_EstadoResultados)
+	Opcion("Nota de Credito", [] { NotaDC(true); } ),
+	Opcion("Nota de Debito", [] { NotaDC(false); } ),
+	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(); }),
+	Opcion("Exportar L. Mayor", [] { EXP_LibroMayor(); }),
+	Opcion("Exportar Estado de Resultados", [] { EXP_EstadoResultados(); })
 };
 
 
@@ -1209,11 +1204,11 @@ const std::vector<Opcion> OPCIONES = {
 int main()
 {
 	/* division de vectores de Cuentas */
-	for (int i = 0; i < CUENTAS.size(); i++)
+	for (Cuenta cuenta : CUENTAS)
 	{
-		if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
+		if (cuenta.getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&cuenta); }
+		else if (cuenta.getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&cuenta); }
+		else if (cuenta.getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { R_NEGS.push_back((Cuenta*)&cuenta); }
 	}
 
 	bool loop = true; //Controla la ejecucion del programa
@@ -1222,7 +1217,10 @@ int main()
 	std::cout << "=============== PROYECTO SIC ===============";
 	std::cout << "\n\nIniciar con apertura?\n1. Si\n2. No\n";
 	std::cin >> opString;
-	if (validarInt(opString) == 1) { OP_Capital(); }
+	if (validarInt(opString) == 1)
+	{
+		OP_Capital();
+	}
 	// -------- LOOP PRINCIPAL --------
 	do
 	{
