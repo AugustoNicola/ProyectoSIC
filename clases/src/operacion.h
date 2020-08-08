@@ -4,71 +4,68 @@
 #include <vector>
 #include "cuenta.h"
 
-/**
- * @brief Elemento con la informacion de una linea del registro
- * 
- * @param cuenta: puntero al tipo de cuenta que es utilizada
- * @param modificacion: numero que se anota en la partida doble; positivo para debe, negativo para haber
- */
+
 struct Linea
 {
 	Cuenta *cuenta;
-	int modificacion;
-	Linea(Cuenta *c, int modif) : cuenta(c), modificacion(modif) {};
+	int delta;
+	Linea(Cuenta *_cuenta, int _delta) : cuenta(_cuenta), delta(_delta) {};
 };
 
-/**
- * @brief Contiene cada una de las lineas que conforman a la operacion, seguida de su documento correspondiente
- *
- * @param documento: string con el nombre del documento
- * @param lineas: vector que contiene a todas las lineas de una operacion
- */
 class Operacion
 {
-public:
-	std::string documento;
-	std::vector<Linea> lineas = {};
+private:
+	std::string Documento;
+	std::vector<Linea> Lineas;
 
-	/**
-	 * @brief Agrega una linea a la operacion, con su cuenta y modificacion.
-	 * 
-	 * @param cuenta: cuenta que se anota en la linea
-	 * @param modificacion: valor que se debita (positivo) o acredita (negativo)
-	*/
-	void nuevaLinea(Cuenta *cuenta, int modificacion)
+public:
+
+	std::string getDocumento() const { return Documento; }
+	void setDocumento(std::string nuevoDocumento) { Documento = nuevoDocumento; }
+
+	void crearLinea(Cuenta *cuenta, int modificacion)
 	{
-		lineas.push_back(Linea(cuenta, modificacion));
+		Lineas.push_back(Linea(cuenta, modificacion));
 	}
 
-	/* Verifica si la operacion es de compra/venta de mercaderias*/
-	bool involucraMercaderias()
+	bool hayLineas() const { return !Lineas.empty(); }
+	std::vector<const Linea*> getLineas() const
 	{
-		for (unsigned int l = 0; l < lineas.size(); l++)
+		std::vector<const Linea*> lineas;
+		if(hayLineas())
 		{
-			if (lineas[l].cuenta->getNombre() == "Mercaderias") { return true; }
+			for (unsigned int i = 0; i < Lineas.size(); i++)
+			{
+				lineas.push_back(const_cast<const Linea*>(&Lineas[i]));
+			}
+		}
+		return lineas;
+	}
+	
+	bool contieneCuenta(std::string cuentaBuscada) const
+	{
+		if (hayLineas())
+		{
+			for (unsigned int i = 0; i < Lineas.size(); i++)
+			{
+				if (Lineas[i].cuenta->getNombre() == cuentaBuscada)
+				{
+					return true;
+				}
+			}
 		}
 		return false;
 	}
 
-	Operacion(std::string doc) : documento(doc) { };
-	Operacion() {};
+	Operacion() { Lineas = {}; };
+	Operacion(std::string _Documento) : Documento(_Documento) { Lineas = {};  };
 };
 
-/**
- * @brief Estructura para relacionar todo el conjunto de operaciones de un dia con su fecha.
- * 
- * @param fecha: fecha del dia (DD/MM)
- */
 struct DiaOperaciones
 {
 	std::string fecha;
 	std::vector<Operacion> operaciones;
 
-	/**
-	 * @brief Agrega una operacion al dia.
-	 *
-	 * @param oper: operacion que se anota en el dia
-	 */
 	void nuevaOperacion(Operacion oper) { operaciones.push_back(oper); }
 
 	DiaOperaciones(std::string f) : fecha(f) {};

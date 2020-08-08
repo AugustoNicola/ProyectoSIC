@@ -12,6 +12,7 @@ template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::To
 
 template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<DiaMercaderia>(const DiaMercaderia& mercaderia) {	return L"DiaMercaderia."; }
 template<> static std::wstring Microsoft::VisualStudio::CppUnitTestFramework::ToString<RegistroPrecio>(const RegistroPrecio& mercaderia) {	return L"RegistroPrecio."; }
+
 namespace Clase_Cuenta
 {
 	TEST_CLASS(Constructor)
@@ -622,6 +623,149 @@ namespace Clase_Mercaderia
 			Assert::AreEqual(static_cast<unsigned int>(500), fechas[2]->registros[1].precio);
 			Assert::AreEqual(-1, fechas[2]->registros[1].delta);
 			Assert::AreEqual(static_cast<unsigned int>(1), fechas[2]->registros[1].existenciasActuales);
+		}
+	};
+}
+
+namespace Clase_Operacion
+{
+	Cuenta cuenta_caja = Cuenta("Caja", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
+	Cuenta cuenta_proovedores = Cuenta("Proovedores", false, Cuenta::TipoCuenta::PASIVO_OPERATIVO);
+	Cuenta cuenta_gastos = Cuenta("Gastos", false, Cuenta::TipoCuenta::GASTO_OPERATIVO);
+	Cuenta cuenta_mercaderia = Cuenta("Mercaderias", false, Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO);
+
+	TEST_CLASS(Documento)
+	{
+	public:
+		TEST_METHOD(SinDocumento)
+		{
+			Operacion operacion;
+
+			Assert::IsTrue(operacion.getDocumento().empty());
+			Assert::AreEqual((std::string)"", operacion.getDocumento());
+		}
+		TEST_METHOD(Documento_Comun)
+		{
+			Operacion operacion = "MiOperacion";
+
+			Assert::IsFalse(operacion.getDocumento().empty());
+			Assert::AreEqual((std::string)"MiOperacion", operacion.getDocumento());
+		}
+		TEST_METHOD(Documento_ConEspacios)
+		{
+			Operacion operacion = "   Esta es    mi propia    operacion";
+
+			Assert::IsFalse(operacion.getDocumento().empty());
+			Assert::AreEqual((std::string)"   Esta es    mi propia    operacion", operacion.getDocumento());
+		}
+		TEST_METHOD(Documento_ConCaracteresEspeciales)
+		{
+			Operacion operacion = "\n\n||mi operación  ";
+
+			Assert::IsFalse(operacion.getDocumento().empty());
+			Assert::AreEqual((std::string)"\n\n||mi operación  ", operacion.getDocumento());
+		}
+
+		TEST_METHOD(settearDocumento_SinDocumentoPrevio)
+		{
+			Operacion operacion;
+			operacion.setDocumento("NuestraOperacion");
+
+			Assert::IsFalse(operacion.getDocumento().empty());
+			Assert::AreEqual((std::string)"NuestraOperacion", operacion.getDocumento());
+		}
+		TEST_METHOD(settearDocumento_ConNombrePrevio)
+		{
+			Operacion operacion = "MiOperacion";
+			operacion.setDocumento("NuestraOperacion");
+
+			Assert::IsFalse(operacion.getDocumento().empty());
+			Assert::AreEqual((std::string)"NuestraOperacion", operacion.getDocumento());
+		}
+	};
+
+	TEST_CLASS(Lineas)
+	{
+	public:
+		Operacion operacion;
+		Lineas() : operacion("MiOperacion") {}
+
+		TEST_METHOD(getLineas_SinLineas)
+		{
+			Assert::IsFalse(operacion.hayLineas());
+			Assert::IsTrue(operacion.getLineas().empty());
+		}
+		TEST_METHOD(getLineas_UnaLinea)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+
+			Assert::IsTrue(operacion.hayLineas());
+			Assert::AreEqual(1, (int)operacion.getLineas().size());
+
+			Assert::AreEqual((std::string)"Caja", operacion.getLineas()[0]->cuenta->getNombre());
+			Assert::AreEqual(300, operacion.getLineas()[0]->delta);
+		}
+		TEST_METHOD(getLineas_MultiplesLineas)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			operacion.crearLinea(&cuenta_proovedores, -100);
+			operacion.crearLinea(&cuenta_gastos, 250);
+
+			Assert::IsTrue(operacion.hayLineas());
+			Assert::AreEqual(3, (int)operacion.getLineas().size());
+
+			Assert::AreEqual((std::string)"Caja", operacion.getLineas()[0]->cuenta->getNombre());
+			Assert::AreEqual(300, operacion.getLineas()[0]->delta);
+
+			Assert::AreEqual((std::string)"Proovedores", operacion.getLineas()[1]->cuenta->getNombre());
+			Assert::AreEqual(-100, operacion.getLineas()[1]->delta);
+
+			Assert::AreEqual((std::string)"Gastos", operacion.getLineas()[2]->cuenta->getNombre());
+			Assert::AreEqual(250, operacion.getLineas()[2]->delta);
+		}
+	};
+
+	TEST_CLASS(Metodo_contieneCuenta)
+	{
+	public:
+		Operacion operacion;
+		Metodo_contieneCuenta() : operacion("MiOperacion") {}
+
+		TEST_METHOD(SinLineas)
+		{
+			Assert::IsFalse(operacion.contieneCuenta("Proovedores"));
+		}
+		TEST_METHOD(UnaLinea_CuentaExistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+
+			Assert::IsTrue(operacion.contieneCuenta("Caja"));
+		}
+		TEST_METHOD(UnaLinea_CuentaInexistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+
+			Assert::IsFalse(operacion.contieneCuenta("Proovedores"));
+		}
+		TEST_METHOD(MultiplesLineas_CuentaExistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			operacion.crearLinea(&cuenta_proovedores, -400);
+			operacion.crearLinea(&cuenta_gastos, -100);
+
+			Assert::IsTrue(operacion.contieneCuenta("Caja"));
+			Assert::IsTrue(operacion.contieneCuenta("Gastos"));
+			Assert::IsTrue(operacion.contieneCuenta("Proovedores"));
+		}
+		TEST_METHOD(MultiplesLineas_CuentaInexistente)
+		{
+			operacion.crearLinea(&cuenta_caja, 300);
+			operacion.crearLinea(&cuenta_proovedores, -400);
+			operacion.crearLinea(&cuenta_gastos, -100);
+
+			Assert::IsFalse(operacion.contieneCuenta("Banana"));
+			Assert::IsFalse(operacion.contieneCuenta("    "));
+			Assert::IsFalse(operacion.contieneCuenta(""));
 		}
 	};
 }
