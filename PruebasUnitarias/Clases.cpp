@@ -769,3 +769,120 @@ namespace Clase_Operacion
 		}
 	};
 }
+
+namespace Clase_DiaOperaciones
+{
+	Cuenta cuenta_caja = Cuenta("Caja", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
+	Cuenta cuenta_proovedores = Cuenta("Proovedores", false, Cuenta::TipoCuenta::PASIVO_OPERATIVO);
+	Cuenta cuenta_gastos = Cuenta("Gastos", false, Cuenta::TipoCuenta::GASTO_OPERATIVO);
+	Cuenta cuenta_mercaderia = Cuenta("Mercaderias", false, Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO);
+
+	TEST_CLASS(Fecha)
+	{
+		TEST_METHOD(SinFecha)
+		{
+			Assert::IsTrue(diaOperaciones.getFecha().empty());
+		}
+		TEST_METHOD(Fecha_Comun)
+		{
+			DiaOperaciones diaOperaciones("MiDiaOper");
+
+			Assert::IsFalse(diaOperaciones.getFecha().empty());
+			Assert::AreEqual((std::string)"MiDiaOper", diaOperaciones.getFecha());
+		}
+		TEST_METHOD(Fecha_ConEspacios)
+		{
+			DiaOperaciones diaOperaciones(" Mi  Dia Oper");
+
+			Assert::IsFalse(diaOperaciones.getFecha().empty());
+			Assert::AreEqual((std::string)" Mi  Dia Oper", diaOperaciones.getFecha());
+		}
+		TEST_METHOD(Fecha_ConCaracteresEspeciales)
+		{
+			DiaOperaciones diaOperaciones("\n||Mi \nDia Oper");
+
+			Assert::IsFalse(diaOperaciones.getFecha().empty());
+			Assert::AreEqual((std::string)"\n||Mi \nDia Oper", diaOperaciones.getFecha());
+		}
+
+		TEST_METHOD(settearFecha)
+		{
+			DiaOperaciones diaOperaciones("Mi/Dia");
+			diaOperaciones.setFecha("Nuestro/Dia");
+
+			Assert::IsFalse(diaOperaciones.getDocumento().empty());
+			Assert::AreEqual((std::string)"Nuestro/Dia", operacion.getDocumento());
+		}
+	};
+
+	TEST_CLASS(Operaciones)
+	{
+	public:
+		DiaOperaciones diaOperaciones;
+		Operaciones() : diaOperaciones("Mi/Dia") {}
+
+		TEST_METHOD(SinOperaciones)
+		{
+			Assert::IsFalse(diaOperaciones.hayOperaciones());
+			Assert::IsTrue(operacion.getOperaciones().empty());
+		}
+		TEST_METHOD(UnaOperacion)
+		{
+			//crea primera operacion
+			Operacion op1("Primera");
+			op1.crearLinea(&cuenta_caja, 300);
+			op1.crearLinea(&cuenta_proovedores, -100);
+			diaOperaciones.crearOperacion(op1);
+
+			// general
+			std::vector<const Operacion*> operaciones = diaOperaciones.getOperaciones();
+			Assert::IsTrue(diaOperaciones.hayOperaciones());
+			Assert::AreEqual(1, (int)operaciones.size());
+			Assert::AreEqual(2, (int)operaciones[0]->lineas.size());
+			Assert::AreEqual((std::string)"Primera", operaciones[0]->nombre);
+
+			// primera linea
+			Assert::AreEqual((std::string)"Caja", operaciones[0]->lineas[0]->cuenta->getNombre());
+			Assert::AreEqual(300, operaciones[0]->lineas[0]->delta);
+
+			// segunda linea
+			Assert::AreEqual((std::string)"Proovedores", operaciones[0]->lineas[1]->cuenta->getNombre());
+			Assert::AreEqual(-100, operaciones[0]->lineas[1]->delta);
+		}
+		TEST_METHOD(MultiplesOperaciones)
+		{
+			//crea primera operacion
+			Operacion op1("Primera");
+			op1.crearLinea(&cuenta_caja, 300);
+			op1.crearLinea(&cuenta_proovedores, -100);
+			diaOperaciones.crearOperacion(op1);
+
+			//crea segunda operacion
+			Operacion op2("Segunda");
+			op2.crearLinea(&cuenta_gastos, 500);
+			diaOperaciones.crearOperacion(op2);
+
+
+			//general
+			std::vector<const Operacion*> operaciones = diaOperaciones.getOperaciones();
+			Assert::IsTrue(diaOperaciones.hayOperaciones());
+			Assert::AreEqual(2, (int)operaciones.size());
+			Assert::AreEqual(2, (int)operaciones[0]->lineas.size());
+			Assert::AreEqual(1, (int)operaciones[1]->lineas.size());
+
+			Assert::AreEqual((std::string)"Primera", operaciones[0]->nombre);
+			//primera operacion, primera linea
+			Assert::AreEqual((std::string)"Caja", operaciones[0]->lineas[0]->cuenta->getNombre());
+			Assert::AreEqual(300, operaciones[0]->lineas[0]->delta);
+
+			//primera operacion, segunda linea
+			Assert::AreEqual((std::string)"Proovedores", operaciones[0]->lineas[1]->cuenta->getNombre());
+			Assert::AreEqual(-100, operaciones[0]->lineas[1]->delta);
+
+			Assert::AreEqual((std::string)"Segunda", operaciones[1]->nombre);
+			//segunda operacion, primera linea
+			Assert::AreEqual((std::string)"Gastos", operaciones[1]->lineas[1]->cuenta->getNombre());
+			Assert::AreEqual(500, operaciones[1]->lineas[1]->delta);
+		}
+	};
+}
