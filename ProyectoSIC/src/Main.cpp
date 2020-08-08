@@ -223,7 +223,7 @@ void pedirNuevaFecha(std::optional<std::string> mensaje = "Ingrese la nueva fech
  */
 void modificarCuenta(Cuenta* cuenta, int modificacion)
 {
-	operacionActual->nuevaLinea(cuenta, modificacion); //agrega Linea a la Operacion actual
+	operacionActual->crearLinea(cuenta, modificacion); //agrega Linea a la Operacion actual
 	cuenta->registrarModificacion(fecha, modificacion); //aumenta el valor de Cuenta
 }
 
@@ -250,14 +250,14 @@ Operacion* pedirNombreDocx(Operacion *op)
 			_getch();
 		}
 	} while (nombre.empty());
-	op->documento = nombre;
+	op->getDocumento() = nombre;
 	return op;
 }
 
 /* Pushea la operacion al ultimo dia */
 void commitOperacion(Operacion* op)
 {
-	DIAS.back().nuevaOperacion(*operacionActual);
+	DIAS.back().crearOperacion(*operacionActual);
 	oper = Operacion();
 }
 
@@ -782,13 +782,13 @@ void NotaDC(bool credito)
 	std::string opStr;
 	int op;
 	int modificacion;
-	Operacion* operacionModif = nullptr;
-	Linea* lineaModif = nullptr;
+	const Operacion* operacionModif = nullptr;
+	const Linea* lineaModif = nullptr;
 	tipoPartida tipo;
 
 	/* elegir operacion valida */
 	unsigned int cont;
-	std::vector<Operacion*> posOper;
+	std::vector<const Operacion*> posOper;
 	do
 	{
 		cont = 1;
@@ -797,10 +797,10 @@ void NotaDC(bool credito)
 
 		for (unsigned int d = 0; d < DIAS.size(); d++) //recorre dias
 		{
-			for (unsigned int o = 0; o < DIAS[d].operaciones.size(); o++) //recorre operaciones
+			for (unsigned int o = 0; o < DIAS[d].getOperaciones().size(); o++) //recorre operaciones
 			{
-				std::cout << "\n" << cont << ". " << DIAS[d].operaciones[o].documento << " (" << DIAS[d].fecha << ")";
-				posOper.push_back(&(DIAS[d].operaciones[o]));
+				std::cout << "\n" << cont << ". " << DIAS[d].getOperaciones()[o]->getDocumento() << " (" << DIAS[d].getFecha() << ")";
+				posOper.push_back(DIAS[d].getOperaciones()[o]);
 				cont++;
 			}
 		}
@@ -822,7 +822,7 @@ void NotaDC(bool credito)
 	} while (op == 0);
 
 	/* verificacion mercaderias */
-	if (operacionModif->involucraMercaderias())
+	if (operacionModif->contieneCuenta("Mercaderias"))
 	{
 		/// es compra-venta!
 	}
@@ -830,17 +830,17 @@ void NotaDC(bool credito)
 		/// no es compra-venta!
 
 		/* elegir linea de la modificacion */
-		std::vector<Linea*> posLinea;
+		std::vector<const Linea*> posLinea;
 		do
 		{
 			cont = 1;
 			posLinea = {};
 			system("CLS");
 
-			for (unsigned int c = 0; c < operacionModif->lineas.size(); c++) //recorre lineas
+			for (unsigned int c = 0; c < operacionModif->getLineas().size(); c++) //recorre lineas
 			{
-				std::cout << "\n" << cont << ". " << operacionModif->lineas[c].cuenta->getNombre() << " (" << operacionModif->lineas[c].modificacion << ")";
-				posLinea.push_back(&(operacionModif->lineas[c]));
+				std::cout << "\n" << cont << ". " << operacionModif->getLineas()[c]->cuenta->getNombre() << " (" << operacionModif->getLineas()[c]->delta << ")";
+				posLinea.push_back(operacionModif->getLineas()[c]);
 				cont++;
 			}
 
@@ -881,7 +881,7 @@ void NotaDC(bool credito)
 				/// opcion elegida valida, realizar cambios!
 
 				// ajusta signo modificacion y como se salda
-				if (lineaModif->modificacion > 0)
+				if (lineaModif->delta > 0)
 				{
 					/// La cuenta tenia una modificacion en el debe
 					
@@ -919,8 +919,8 @@ void EXP_LibroDiario()
 	LibroDiario << "'';Cuenta;Modif;Debe;Haber" << std::endl << std::endl;
 
 	DiaOperaciones* diaAct;
-	Operacion* opAct;
-	Linea* linAct;
+	const Operacion* opAct;
+	const Linea* linAct;
 
 	std::string nombreCuenta;
 	std::string modif;
@@ -930,24 +930,24 @@ void EXP_LibroDiario()
 	for (int d = 0; d < DIAS.size(); d++)
 	{
 		diaAct = &DIAS[d];
-		LibroDiario << "'" << diaAct->fecha << "'" << std::endl; // "'01/01'"
+		LibroDiario << "'" << diaAct->getFecha() << "'" << std::endl; // "'01/01'"
 
 		/// recorre operaciones
-		for (int o = 0; o < diaAct->operaciones.size(); o++)
+		for (int o = 0; o < diaAct->getOperaciones().size(); o++)
 		{
-			opAct = &diaAct->operaciones[o];
+			opAct = diaAct->getOperaciones()[o];
 
 			///recorre lineas
-			for (int l = 0; l < opAct->lineas.size(); l++)
+			for (int l = 0; l < opAct->getLineas().size(); l++)
 			{
-				linAct = &opAct->lineas[l];
+				linAct = opAct->getLineas()[l];
 
 				/* calcula valores */
 
 				nombreCuenta = linAct->cuenta->getNombre();
 				
 				//columnas debe y haber
-				int delta = linAct->modificacion;
+				int delta = linAct->delta;
 				debe = ((delta > 0) ? delta : 0);
 				haber = ((delta < 0) ? abs(delta) : 0);
 
@@ -982,7 +982,7 @@ void EXP_LibroDiario()
 
 			} //lineas
 
-			LibroDiario << "'';segun " << opAct->documento << std::endl << std::endl; //imprime documento
+			LibroDiario << "'';segun " << opAct->getDocumento() << std::endl << std::endl; //imprime documento
 		} //operaciones
 
 	} //dias
@@ -1126,7 +1126,7 @@ void OP_Capital()
 	modificarCuenta(buscarCuenta("Capital"), totalAumentado * -1);
 
 	/* finaliza operacion*/
-	operacionActual->documento = "Apertura";
+	operacionActual->setDocumento("Apertura");
 	commitOperacion(operacionActual);
 
 	pedirNuevaFecha("Ingrese la primera fecha de operaciones"); //una vez finalizada apertura, crea nuevo dia
@@ -1231,7 +1231,7 @@ int main()
 		std::cout << "Seleccione una opcion:\n";
 		for (int i = 0; i < OPCIONES.size(); i++)
 		{
-			std::cout << i + 1 << ". " << OPCIONES[i].nombre << "\n";
+			std::cout << i + 1 << ". " << OPCIONES[i].Nombre << "\n";
 		}
 		std::cin >> opString;
 
@@ -1240,7 +1240,7 @@ int main()
 		if (op != 0)
 		{
 			/// input valido!
-			OPCIONES[op - 1].pFuncion();
+			OPCIONES[op - 1].Funcion();
 
 			//loop = false; //provisorio
 		}
