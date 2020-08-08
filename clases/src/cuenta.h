@@ -22,7 +22,7 @@ struct DiaCuenta
 class Cuenta
 {
 public:
-	static enum class TipoCuenta {
+	enum class TipoCuenta {
 		ACTIVO_OPERATIVO, PASIVO_OPERATIVO, GASTO_OPERATIVO,
 		ACTIVO_NO_OPERATIVO, PASIVO_NO_OPERATIVO, GASTO_NO_OPERATIVO,
 		GANANCIA, PATRIMONIO_NETO,
@@ -49,7 +49,7 @@ public:
 	bool hayDias() const { return !dias.empty();  }
 	bool fechaExiste(std::string fecha) const
 	{
-		for (int i = 0; i < dias.size(); i++)
+		for (unsigned int i = 0; i < dias.size(); i++)
 		{
 			if (fecha == dias[i].fecha)
 			{
@@ -61,7 +61,7 @@ public:
 private:
 	DiaCuenta* getDiaPorFechaParaModificar(std::string fechaBuscada)
 	{
-		for (int i = 0; i < dias.size(); i++)
+		for (unsigned int i = 0; i < dias.size(); i++)
 		{
 			if (dias[i].fecha == fechaBuscada) { return &dias[i]; }
 		}
@@ -85,7 +85,7 @@ public:
 	}
 	const DiaCuenta* getDiaPorFecha(std::string fechaBuscada) const
 	{
-		for (int i = 0; i < dias.size(); i++)
+		for (unsigned int i = 0; i < dias.size(); i++)
 		{
 			if (dias[i].fecha == fechaBuscada) { return &dias[i]; }
 		}

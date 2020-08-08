@@ -154,7 +154,7 @@ private:
 
 	bool existenciasNoSerianNegativas(unsigned int precio, int delta)
 	{
-		return (getExistenciasPrecio(precio) >= -delta);
+		return ((int)getExistenciasPrecio(precio) >= -delta);
 	}
 
 	void crearPrecio(unsigned int precio)
@@ -346,6 +346,7 @@ public:
 				}
 			}
 		}
+		return nullptr;
 	}
 	
 	Mercaderia(std::string nom) : Nombre(nom) { Dias = {}; };
