@@ -18,15 +18,11 @@ namespace Clase_Cuenta
 	TEST_CLASS(Constructor)
 	{
 	public:
-		Cuenta cuenta = Cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
+		Cuenta cuenta = Cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
 
 		TEST_METHOD(Nombre)
 		{
 			Assert::AreEqual(static_cast<std::string>("MiCuenta"), cuenta.getNombre());
-		}
-		TEST_METHOD(ModoDebitado)
-		{
-			Assert::AreEqual(true, cuenta.getModoDebitado());
 		}
 		TEST_METHOD(Tipo)
 		{
@@ -44,7 +40,7 @@ namespace Clase_Cuenta
 	public:
 		Cuenta cuenta;
 
-		Metodo_hayDias() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+		Metodo_hayDias() : cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
 
 		TEST_METHOD(SinDias)
 		{
@@ -67,7 +63,7 @@ namespace Clase_Cuenta
 	{
 	public:
 		Cuenta cuenta;
-		Metodo_registrarModificacion() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+		Metodo_registrarModificacion() : cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
 
 		TEST_METHOD(Suma_UnDia)
 		{
@@ -101,7 +97,7 @@ namespace Clase_Cuenta
 	{
 	public:
 		Cuenta cuenta;
-		Metodo_fechaExiste() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+		Metodo_fechaExiste() : cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
 
 		TEST_METHOD(SinFechas)
 		{
@@ -140,7 +136,7 @@ namespace Clase_Cuenta
 	{
 	public:
 		Cuenta cuenta;
-		Metodo_getDiaPorFecha() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+		Metodo_getDiaPorFecha() : cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
 
 		TEST_METHOD(SinDias)
 		{
@@ -187,7 +183,7 @@ namespace Clase_Cuenta
 	{
 	public:
 		Cuenta cuenta;
-		Metodo_getDiaPorPosicion() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+		Metodo_getDiaPorPosicion() : cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
 
 		TEST_METHOD(SinDias)
 		{
@@ -233,7 +229,7 @@ namespace Clase_Cuenta
 	{
 	public:
 		Cuenta cuenta;
-		Metodo_getDias() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+		Metodo_getDias() : cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
 
 		TEST_METHOD(SinDias)
 		{
@@ -271,7 +267,7 @@ namespace Clase_Cuenta
 	{
 	public:
 		Cuenta cuenta;
-		Operador_Comparacion() : cuenta("MiCuenta", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
+		Operador_Comparacion() : cuenta("MiCuenta", Cuenta::TipoCuenta::ACTIVO_OPERATIVO) {}
 
 		TEST_METHOD(InputValido)
 		{
@@ -629,10 +625,10 @@ namespace Clase_Mercaderia
 
 namespace Clase_Operacion
 {
-	Cuenta cuenta_caja = Cuenta("Caja", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
-	Cuenta cuenta_proovedores = Cuenta("Proovedores", false, Cuenta::TipoCuenta::PASIVO_OPERATIVO);
-	Cuenta cuenta_gastos = Cuenta("Gastos", false, Cuenta::TipoCuenta::GASTO_OPERATIVO);
-	Cuenta cuenta_mercaderia = Cuenta("Mercaderias", false, Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO);
+	Cuenta cuenta_caja = Cuenta("Caja", Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
+	Cuenta cuenta_proovedores = Cuenta("Proovedores", Cuenta::TipoCuenta::PASIVO_OPERATIVO);
+	Cuenta cuenta_gastos = Cuenta("Gastos", Cuenta::TipoCuenta::GASTO_OPERATIVO);
+	Cuenta cuenta_mercaderia = Cuenta("Mercaderias", Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO);
 
 	TEST_CLASS(Documento)
 	{
@@ -772,10 +768,10 @@ namespace Clase_Operacion
 
 namespace Clase_DiaOperaciones
 {
-	Cuenta cuenta_caja = Cuenta("Caja", true, Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
-	Cuenta cuenta_proovedores = Cuenta("Proovedores", false, Cuenta::TipoCuenta::PASIVO_OPERATIVO);
-	Cuenta cuenta_gastos = Cuenta("Gastos", false, Cuenta::TipoCuenta::GASTO_OPERATIVO);
-	Cuenta cuenta_mercaderia = Cuenta("Mercaderias", false, Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO);
+	Cuenta cuenta_caja = Cuenta("Caja", Cuenta::TipoCuenta::ACTIVO_OPERATIVO);
+	Cuenta cuenta_proovedores = Cuenta("Proovedores", Cuenta::TipoCuenta::PASIVO_OPERATIVO);
+	Cuenta cuenta_gastos = Cuenta("Gastos", Cuenta::TipoCuenta::GASTO_OPERATIVO);
+	Cuenta cuenta_mercaderia = Cuenta("Mercaderias", Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO);
 
 	TEST_CLASS(Fecha)
 	{

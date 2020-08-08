@@ -31,7 +31,6 @@ public:
 
 private:
 	std::string Nombre;
-	bool ModoDebitado;
 	std::vector<DiaCuenta> dias;
 	Cuenta::TipoCuenta Tipo;
 
@@ -79,7 +78,6 @@ public:
 	int getSaldoActual() const { return (!dias.empty()) ? dias.back().valorActual : 0 ; }
 	Cuenta::TipoCuenta getTipo() const { return Tipo; }
 	std::string getNombre() const { return Nombre; }
-	bool getModoDebitado() const { return ModoDebitado; }
 	
 	const DiaCuenta* getDiaPorPosicion(unsigned int posicion) const
 	{
@@ -113,6 +111,6 @@ public:
 		return (Nombre == nombreBuscado);
 	}
 	
-	Cuenta(std::string _Nombre, bool _ModoDebitado, Cuenta::TipoCuenta _Tipo) : Nombre(_Nombre), ModoDebitado(_ModoDebitado), Tipo(_Tipo) { dias = {}; };
+	Cuenta(std::string _Nombre, Cuenta::TipoCuenta _Tipo) : Nombre(_Nombre), Tipo(_Tipo) { dias = {}; };
 
 };

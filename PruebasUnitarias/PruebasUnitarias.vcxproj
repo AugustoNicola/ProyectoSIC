@@ -176,9 +176,6 @@
       <Project>{0773080c-95e0-4748-ab51-883d061d564c}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\ProyectoSIC\Debug\presets.obj" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
