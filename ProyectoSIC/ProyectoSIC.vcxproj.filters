@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\presets.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="src\presets.cpp">
+    <ClCompile Include="src\main_falso.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

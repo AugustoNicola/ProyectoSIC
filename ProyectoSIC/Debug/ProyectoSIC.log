@@ -1,42 +1,4 @@
-﻿  Main.cpp
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(40,20): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(100,40): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(149,23): warning C4129: '/': secuencia de escape de carácter no reconocida
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(159,6): warning C4804: '>=': uso no seguro del tipo 'bool' en la operación
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(315,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(323,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(331,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(362,22): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(430,21): warning C4018: '<': no coinciden signed/unsigned
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(491,14): error C2065: 'PrecioMerca': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(491,26): error C2059: error de sintaxis: '>'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(502,37): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(507,32): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(509,94): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(510,26): error C2065: 'PrecioMerca': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(510,38): error C2059: error de sintaxis: ')'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(538,2): error C2065: 'PrecioMerca': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(538,15): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(557,17): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(557,35): error C3861: 'PrecioMerca': no se encontró el identificador
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(558,3): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(558,35): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(562,3): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(562,35): error C2039: "precios": no es un miembro de "Mercaderia"
-C:\dev\GitHub\ProyectoSIC\clases\src\mercaderia.h(95): message : vea la declaración de 'Mercaderia'
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(573,76): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(574,41): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(574,76): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(578,50): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(615,72): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(617,2): error C2065: 'precioElegido': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(641,2): error C2065: 'DiaMerca': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(641,12): error C2065: 'mercaModif': identificador no declarado
-C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(1230,21): warning C4018: '<': no coinciden signed/unsigned
-  presets.cpp
+﻿  presets.cpp
+  main_falso.cpp
   Generando código...
+  ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe
