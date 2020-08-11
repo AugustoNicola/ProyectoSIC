@@ -2,6 +2,7 @@
 #include <string>
 #include <optional>
 #include <iostream>
+#include <conio.h>
 
 #include "clases.h"
 #include "presets.h"
@@ -14,6 +15,101 @@ enum class ModoAumento
 	Debe, Haber, Apertura
 };
 
+
+
+class SeleccionadorDeCuentas
+{
+private:
+	static Cuenta::TipoCuenta FiltroCuentas;
+	static ModoAumento modoAumento;
+	static std::string MsgEleccionCuenta;
+
+	static std::vector<Cuenta*> cuentasSeleccionables;
+	static std::string mActivo;
+	static std::string mPasivo;
+	static std::string mResult;
+
+public:
+	static void Init(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
+	{
+		FiltroCuentas = _filtroCuentas;
+		modoAumento = _modoAumento;
+		MsgEleccionCuenta = _msgEleccionCuenta;
+
+		configurarModoAumento();
+		configurarFiltroCuentas();
+	}
+
+	static void configurarModoAumento()
+	{
+		switch (modoAumento)
+		{
+		case ModoAumento::Debe:
+			mActivo = " (A+)"; mPasivo = " (P-)"; mResult = " (R-)";
+			break;
+		case ModoAumento::Haber:
+			mActivo = " (A-)"; mPasivo = " (P+)"; mResult = " ((R-)+)";
+			break;
+		case ModoAumento::Apertura:
+			mActivo = " (A+)"; mPasivo = " (P+)"; mResult = " (R-)";
+			break;
+		}
+	}
+	static void configurarFiltroCuentas()
+	{
+		if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::ACTIVO_OPERATIVO)
+		{
+			cuentasSeleccionables.push_back(buscarCuenta("Mercaderias"));
+			cuentasSeleccionables.insert(cuentasSeleccionables.end(), ACTIVOS.begin(), ACTIVOS.end());
+		}
+		if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::PASIVO_OPERATIVO)
+		{
+			cuentasSeleccionables.insert(cuentasSeleccionables.end(), PASIVOS.begin(), PASIVOS.end());
+		}
+		if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::GASTO_OPERATIVO)
+		{
+			cuentasSeleccionables.insert(cuentasSeleccionables.end(), R_NEGS.begin(), R_NEGS.end());
+		}
+	}
+
+
+	static Cuenta* elegirCuenta()
+	{
+		std::string strOpcionElegida;
+		int opcionElegida;
+		do
+		{
+			int contadorCuentasRecorridas = 1;
+
+			system("CLS");
+
+			for (Cuenta* cuenta : cuentasSeleccionables)
+			{
+				std::cout << "\n" << contadorCuentasRecorridas << ". " << cuenta->getNombre() << mActivo;
+				contadorCuentasRecorridas++;
+			}
+
+			std::cout << "\n\n" << MsgEleccionCuenta << ": ";
+			std::cin >> strOpcionElegida;
+
+			opcionElegida = validarInt(strOpcionElegida, 1, cuentasSeleccionables.size(), {}, {});
+			if (opcionElegida == 0)
+			{
+				std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
+				_getch();
+			}
+			else {
+				return cuentasSeleccionables[opcionElegida - 1];
+			}
+		} while (opcionElegida == 0);
+	}
+};
+
+
+
+
+
+
 class AumentadorPartida
 {
 private:
@@ -21,6 +117,7 @@ private:
 	ModoAumento modoAumento;
 	std::string mensajeEleccionCuenta;
 	int limite = 0;
+	bool salir = false;
 
 	int aumentoTotal = 0;
 	int aumentoActual = 0;
@@ -30,44 +127,53 @@ public:
 	AumentadorPartida(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite)
 		: filtroCuentas(_filtroCuentas), modoAumento(_modoAumento), mensajeEleccionCuenta(_mensajeEleccionCuenta), limite(_limite.has_value() ? _limite.value() : 0)
 	{
-			while (condicionDeSalidaNoAlcanzada())
+		SeleccionadorDeCuentas::Init(filtroCuentas, modoAumento, mensajeEleccionCuenta);
+
+		while (!condicionDeSalidaAlcanzada())
+		{
+			SeleccionadorDeCuentas::elegirCuenta();
+
+			if (cuentaOperacionActualEsMercaderia())
 			{
-				elegirCuentaOperacionActual();
+				/// hay mercaderias!
+				/*
+				operMercaderia operMerca = seleccionarMercaderia(true);
+				aumentoActual = operMerca.cantidad * operMerca.precioUnitario;
 
-				if (cuentaOperacionActualEsMercaderia())
+				if (aumentoActual > 0)
 				{
-					/// hay mercaderias!
-					/*
-					operMercaderia operMerca = seleccionarMercaderia(true);
-					aumentoActual = operMerca.cantidad * operMerca.precioUnitario;
-
-					if (aumentoActual > 0)
-					{
-						aumentoTotal += aumentoActual;
-						modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
-					}
-					*/
+					aumentoTotal += aumentoActual;
+					modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
 				}
-				else {
-					elegirCantidad();
-				}
-
-				efectuarAumento();
-
-				if (noHayLimite())
-				{
-					permitirFinalizar();
-				}
+				*/
 			}
-		
+			else {
+				elegirCantidad();
+			}
 
+			efectuarAumento();
+
+			if (noHayLimite())
+			{
+				permitirFinalizar();
+			}
+		}
 	}
 
-	bool condicionDeSalidaNoAlcanzada();
+	bool condicionDeSalidaAlcanzada()
+	{
+		if (limite > 0)
+		{
+			return limite > aumentoTotal;
+		} else if (limite < 0) {
+			return limite < aumentoTotal;
+		} else {
+			return salir;
+		}
+	}
 
-	bool limiteNoAlcanzado();
 
-	void elegirCuentaOperacionActual();
+
 
 	bool cuentaOperacionActualEsMercaderia();
 
