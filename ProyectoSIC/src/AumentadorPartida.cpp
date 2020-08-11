@@ -25,9 +25,9 @@ private:
 	static std::string MsgEleccionCuenta;
 
 	static std::vector<Cuenta*> cuentasSeleccionables;
-	static std::string mActivo;
-	static std::string mPasivo;
-	static std::string mResult;
+	static std::string leyendaActivo;
+	static std::string leyendaPasivo;
+	static std::string leyendaGasto;
 
 public:
 	static void Init(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
@@ -39,19 +39,18 @@ public:
 		configurarModoAumento();
 		configurarFiltroCuentas();
 	}
-
 	static void configurarModoAumento()
 	{
 		switch (modoAumento)
 		{
 		case ModoAumento::Debe:
-			mActivo = " (A+)"; mPasivo = " (P-)"; mResult = " (R-)";
+			leyendaActivo = " (A+)"; leyendaPasivo = " (P-)"; leyendaGasto = " (R-)";
 			break;
 		case ModoAumento::Haber:
-			mActivo = " (A-)"; mPasivo = " (P+)"; mResult = " ((R-)+)";
+			leyendaActivo = " (A-)"; leyendaPasivo = " (P+)"; leyendaGasto = " ((R-)+)";
 			break;
 		case ModoAumento::Apertura:
-			mActivo = " (A+)"; mPasivo = " (P+)"; mResult = " (R-)";
+			leyendaActivo = " (A+)"; leyendaPasivo = " (P+)"; leyendaGasto = " (R-)";
 			break;
 		}
 	}
@@ -72,23 +71,14 @@ public:
 		}
 	}
 
-
 	static Cuenta* elegirCuenta()
 	{
 		std::string strOpcionElegida;
 		int opcionElegida;
 		do
 		{
-			int contadorCuentasRecorridas = 1;
-
 			system("CLS");
-
-			for (Cuenta* cuenta : cuentasSeleccionables)
-			{
-				std::cout << "\n" << contadorCuentasRecorridas << ". " << cuenta->getNombre() << mActivo;
-				contadorCuentasRecorridas++;
-			}
-
+			mostrarCuentas();
 			std::cout << "\n\n" << MsgEleccionCuenta << ": ";
 			std::cin >> strOpcionElegida;
 
@@ -103,11 +93,29 @@ public:
 			}
 		} while (opcionElegida == 0);
 	}
+	static void mostrarCuentas()
+	{
+		int contadorCuentasRecorridas = 1;
+		std::string leyendaActual;
+		for (Cuenta* cuenta : cuentasSeleccionables)
+		{
+			switch (cuenta->getTipo())
+			{
+			case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
+				leyendaActual = leyendaActivo;
+				break;
+			case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
+				leyendaActual = leyendaPasivo;
+				break;
+			case Cuenta::TipoCuenta::GASTO_OPERATIVO:
+				leyendaActual = leyendaGasto;
+				break;
+			}
+			std::cout << "\n" << contadorCuentasRecorridas << ". " << cuenta->getNombre() << leyendaActual;
+			contadorCuentasRecorridas++;
+		}
+	}
 };
-
-
-
-
 
 
 class AumentadorPartida
@@ -148,7 +156,7 @@ public:
 				*/
 			}
 			else {
-				elegirCantidad();
+				elegirAumentoActual();
 			}
 
 			efectuarAumento();
@@ -172,36 +180,41 @@ public:
 		}
 	}
 
-
-
-
-	bool cuentaOperacionActualEsMercaderia();
-
-	void elegirCantidad()
+	bool cuentaOperacionActualEsMercaderia()
 	{
-		std::string strCantidad;
+		return cuentaOperacionActual->getNombre() == "Mercaderias";
+	}
+
+	void elegirAumentoActual()
+	{
+		std::string strAumentoActual;
 		do
 		{
+			system("CLS");
 			mostrarInformacion();
 			std::cout << "\n\nSeleccione la cantidad: $";
-			std::cin >> strCantidad;
-		} while (!validarCantidad(strCantidad));
+			std::cin >> strAumentoActual;
+		} while (!validarAumentoActual(strAumentoActual));
 	}
 
 	void mostrarInformacion()
 	{
 		std::cout << "\n\nCuenta elegida: " << cuentaOperacionActual->getNombre() << " (valor: $" << cuentaOperacionActual->getSaldoActual() << ")";
 		std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
-		std::cout << "\nLimite: $" << limite;
+		std::cout << "\nLimite: $" << abs(limite);
 	}
 
-	bool validarCantidad(std::string strCantidad)
+	bool validarAumentoActual(std::string strCantidad)
 	{
-		/* validacion de cantidad */
-		aumentoActual = validarInt(strCantidad, cuentaOperacionActual->getSaldoActual(), limite, 1, (limite - abs(aumentoTotal))); //se asegura de que la cantidad sea valida
+		aumentoActual = validarInt(strCantidad, cuentaOperacionActual->getSaldoActual(), limite, 1, (limite - abs(aumentoTotal)));
 		if (aumentoActual != 0)
 		{
 			ajustarSignoAumentoActual();
+			return true;
+		} else {
+			std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
+			_getch();
+			return false;
 		}
 	}
 
@@ -222,7 +235,17 @@ public:
 		modificarCuenta(cuentaOperacionActual, aumentoActual);
 	}
 
-	bool noHayLimite();
+	bool noHayLimite()
+	{
+		return limite == 0;
+	}
 
-	void permitirFinalizar();
+	void permitirFinalizar()
+	{
+		std::string strFinalizar;
+		system("CLS");
+		std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
+		std::cin >> strFinalizar; //reusado de variables!!
+		salir = (validarInt(strFinalizar, 1, 2, {}, {}) == 2) ? true : false;
+	}
 };
