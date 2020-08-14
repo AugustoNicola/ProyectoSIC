@@ -10,20 +10,6 @@
 #include "clases.h" //estructuras de clases personalizadas
 #include "presets.h" //vector CUENTAS
 
-std::vector<DiaOperaciones> DIAS = {}; //lista de todas las operaciones que deben exportarse, en orden cronologico
-std::vector<Mercaderia> MERCADERIAS = {}; //lista de todos los tipos de mercaderias usados
-std::vector<Cuenta*> ACTIVOS, PASIVOS, R_NEGS;
-
-/* enum usado para definir si las operaciones de una funcion son en el Debe, en el Haber,
-   o un caso especial como Apertura.*/
-enum tipoPartida
-{
-	Debe, Haber, Apertura
-};
-
-std::string fecha; //global con la fecha actual
-Operacion oper;
-Operacion *operacionActual = &oper; //puntero global con la operacion actual
 
 /// ############################################################################################
 /// ################################         UTILIDADES         ################################

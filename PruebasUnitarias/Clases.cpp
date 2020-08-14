@@ -2,7 +2,6 @@
 #include "CppUnitTest.h"
 
 #include "../clases/src/clases.h"
-//#include "../ProyectoSIC/src/Main.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
