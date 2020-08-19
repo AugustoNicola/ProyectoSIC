@@ -1,0 +1,36 @@
+Caja
+Debe;Haber
+'50000';'4000'
+Saldo deudor: $46000
+
+Maquinarias
+Debe;Haber
+'5000';''
+Saldo deudor: $5000
+
+Mercaderias
+Debe;Haber
+Cuenta saldada: $0
+
+Capital
+Debe;Haber
+'';'50000'
+Saldo acreedor: $50000
+
+Ventas
+Debe;Haber
+'';'3000'
+'';'5000'
+Saldo acreedor: $8000
+
+CMV
+Debe;Haber
+'1000';''
+'4000';''
+Saldo deudor: $5000
+
+Sueldos
+Debe;Haber
+'1200';''
+Saldo deudor: $1200
+

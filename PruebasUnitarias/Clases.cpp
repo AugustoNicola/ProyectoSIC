@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include "clases.h"
+#include "Varias.h"
 #include "AumentadorPartida.h"
 
 
@@ -949,17 +950,6 @@ namespace Clase_DiaOperaciones
 			Assert::IsFalse(diaOperaciones.contieneCuenta("Banana"));
 			Assert::IsFalse(diaOperaciones.contieneCuenta("    "));
 			Assert::IsFalse(diaOperaciones.contieneCuenta(""));
-		}
-	};
-}
-
-namespace Pruebaaa
-{
-	TEST_CLASS(MegaTest)
-	{
-		TEST_METHOD(uwu)
-		{
-			Assert::AreEqual((int)345, validarInt("345", {}, {}, 1, 3444));
 		}
 	};
 }
