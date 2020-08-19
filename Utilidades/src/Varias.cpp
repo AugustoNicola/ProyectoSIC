@@ -1,9 +1,4 @@
-#include <optional>
-#include <iostream>
-#include <regex>
-
-#include "cuenta.h"
-#include "presets.h"
+#include "Varias.h"
 #include "Globales.h"
 
 Cuenta* buscarCuenta(std::string nombre)

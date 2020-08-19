@@ -1,8 +1,9 @@
 #pragma once
 
 #include "clases.h"
-#include "presets.h" // CUENTAS
 
-std::vector<DiaOperaciones> DIAS;
-std::vector<Mercaderia> MERCADERIAS;
-std::vector<Cuenta*> ACTIVOS, PASIVOS, R_NEGS;
+extern std::vector<DiaOperaciones> DIAS;
+extern std::vector<Mercaderia> MERCADERIAS;
+
+extern std::vector<Cuenta> CUENTAS;
+extern std::vector<Cuenta*> ACTIVOS, PASIVOS, R_NEGS;

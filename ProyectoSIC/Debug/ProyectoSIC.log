@@ -1,2 +1,21 @@
-﻿  main_falso.cpp
-  ProyectoSIC.vcxproj -> C:\dev\GitHub\ProyectoSIC\Debug\Main.exe
+﻿  Main.cpp
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(27,20): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(87,40): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(136,23): warning C4129: '/': secuencia de escape de carácter no reconocida
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(146,6): warning C4804: '>=': uso no seguro del tipo 'bool' en la operación
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(302,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(310,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(318,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(349,22): warning C4018: '<': no coinciden signed/unsigned
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(684,19): warning C4101: 'opAct': variable local sin referencia
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(683,18): warning C4101: 'diaAct': variable local sin referencia
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(685,15): warning C4101: 'linAct': variable local sin referencia
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(949,21): warning C4018: '<': no coinciden signed/unsigned
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\optional(599,1): warning C4804: '>=': uso no seguro del tipo 'bool' en la operación
+C:\dev\GitHub\ProyectoSIC\ProyectoSIC\src\Main.cpp(113): message : Vea la referencia a la creación de una instancia de la función plantilla "bool std::operator >=<bool,int,0>(const _Ty1 &,const std::optional<int> &)" que se está compilando
+          with
+          [
+              _Ty1=bool
+          ]
+  presets.cpp
+c1xx : fatal error C1083: No se puede abrir el archivo origen: 'src\presets.cpp': No such file or directory

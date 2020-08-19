@@ -18,7 +18,7 @@
     <ClInclude Include="src\AumentadorPartida.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="src\presets.h">
+    <ClInclude Include="src\Globales.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="src\Varias.h">
@@ -27,15 +27,18 @@
     <ClInclude Include="src\Vectores.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="src\Globales.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\presets.cpp">
+    <ClCompile Include="src\Varias.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="src\Varias.cpp">
+    <ClCompile Include="src\AumentadorPartida.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vectores.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Globales.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

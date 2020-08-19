@@ -8,8 +8,9 @@
 #include <optional> //valores optativos
 
 #include "clases.h" //estructuras de clases personalizadas
-#include "presets.h" //vector CUENTAS
-
+#include "Globales.h"
+#include "Vectores.h"
+#include "AumentadorPartida.h"
 
 /// ############################################################################################
 /// ################################         UTILIDADES         ################################
@@ -255,7 +256,7 @@ void commitOperacion(Operacion* op)
  * @param tipoPart: el valor del enum del tipo de operacion que se busca
  * @param mensaje: el mensaje que se muestra acompaniando el menu de seleccion
  */
-Cuenta* elegirCuenta(Cuenta::TipoCuenta t, tipoPartida tipoPart, std::string mensaje)
+Cuenta* elegirCuenta(Cuenta::TipoCuenta t, ModoAumento tipoPart, std::string mensaje)
 {
 	std::string opStr;
 	int op;
@@ -264,13 +265,13 @@ Cuenta* elegirCuenta(Cuenta::TipoCuenta t, tipoPartida tipoPart, std::string men
 	std::string mActivo, mPasivo, mResult;
 	switch (tipoPart)
 	{
-	case Debe:
+	case ModoAumento::Debe:
 		mActivo = " (A+)"; mPasivo = " (P-)"; mResult = " (R-)";
 		break;
-	case Haber:
+	case ModoAumento::Haber:
 		mActivo = " (A-)"; mPasivo = " (P+)"; mResult = " ((R-)+)";
 		break;
-	case Apertura:
+	case ModoAumento::Apertura:
 		mActivo = " (A+)"; mPasivo = " (P+)"; mResult = " (R-)";
 		break;
 	}
@@ -291,7 +292,7 @@ Cuenta* elegirCuenta(Cuenta::TipoCuenta t, tipoPartida tipoPart, std::string men
 
 			std::cout << "-------- ACTIVOS --------";
 			/* agrega mercaderia */
-			if (tipoPart == Apertura)
+			if (tipoPart == ModoAumento::Apertura)
 			{
 				std::cout << "\n" << cont << ". " << "Mercaderias (A+)"; //output
 				pos.push_back(buscarCuenta("Mercaderias"));
@@ -380,251 +381,26 @@ Cuenta* elegirCuenta(Cuenta::TipoCuenta t, tipoPartida tipoPart, std::string men
 }
 
 
-struct operMercaderia
-{
-	int cantidad; int precioUnitario; int precioVenta;
-};
-/**
- * @brief Funcion utilizada para adquirir/vender mercaderia, eligiendo la mercaderia, su precio y su cantidad.
- *  Permite crear tanto mercaderias como precios de compra nuevos en el caso de una compra.
- * 
- * @param compra: Booleano: compra(true) / venta(false)
- * 
- * @return integer con el valor total de la venta/compra
- */
-operMercaderia seleccionarMercaderia(bool compra)
-{
-	std::string opStr;
-	int op;
-	std::vector<Mercaderia*> posMerc;
-	unsigned int offSet; // offset para diferenciar valores validos en caso de compra o venta
-	bool hayOpcion; //booleano para determinar si una operacion de venta es valida
-	int cont; //contador para el output
-
-	/* ----- Bucle validacion mercaderia ----- */
-	do
-	{
-		cont = 1; //contador para el output
-		offSet = 0;
-		hayOpcion = false;
-		posMerc = {}; //vector que asocia cada posicion con su mercaderia
-
-		system("CLS");
-
-		/* Iteracion de mercaderias */
-		std::cout << "=============== " << ((compra) ? "COMPRA" : "VENTA") << " DE MERCADERIAS ===============\n";
-		for (int i = 0; i < MERCADERIAS.size(); i++)
-		{
-			// si es venta, comprueba que haya existencias de al menos un precio
-			if (compra || MERCADERIAS[i].hayExistencias())
-			{
-				std::cout << "\n" << cont << ". " << MERCADERIAS[i].getNombre();
-				posMerc.push_back((Mercaderia*)&MERCADERIAS[i]); //guarda lugar de memoria de mercaderia actual en vector
-				cont++;
-				hayOpcion = true;
-			}
-		}
-		//opcion crear mercaderia
-		if(compra)
-		{
-			std::cout << "\n" << cont << ". " << "Nueva mercaderia";
-			offSet = 1;
-			hayOpcion = true;
-		}
-		
-		// no hay opciones posibles
-		if (!hayOpcion)
-		{
-			std::cout << "\nNo hay mercaderias disponibles!\n\nPresione cualquier tecla para cancelar";
-			_getch();
-			return {};
-		}
-
-		/* Input */
-
-		std::cout << "\n\n" << "Elija una opcion: ";
-		std::cin >> opStr;
-
-		/* Validacion/return */
-		op = validarInt(opStr, {}, {}, 1, posMerc.size() + offSet);
-		if (op == 0)
-		{
-			/// valor no valido
-			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
-			_getch();
-		}
-	} while (op == 0);
-	
-	/* crear/encontrar mercaderia */
-	system("CLS");
-	Mercaderia* mercaElegida;
-	if (op == posMerc.size() + 1)
-	{
-		/// crear mercaderia
-		std::cout << "=============== NUEVA MERCADERIA ===============";
-		std::cout << "\n\nIngrese el nombre de la nueva mercaderia: ";
-		std::cin >> opStr;
-
-		MERCADERIAS.push_back(Mercaderia(opStr)); //crea la nueva mercaderia
-		mercaElegida = &(MERCADERIAS.back());
-	}
-	else {
-		/// encontrar mercaderia
-		mercaElegida = posMerc[op - 1];
-	}
-
-	/* ----- Bucle validacion precio ----- */
-	std::vector<PrecioMerca*> posPrecio;
-	do 
-	{
-		posPrecio = {}; //vector que asocia cada posicion con su precio-mercaderia
-		cont = 1; //contador para el output
-		offSet = 0;
-
-		system("CLS");
-		std::cout << "=============== " << mercaElegida->getNombre() << ": PRECIOS UNITARIOS ===============\n";
-
-		/* Iteracion de precios */
-		for (int i = 0; i < mercaElegida->precios.size(); i++)
-		{
-			/* no es necesario verificar que al menos un precio tenga existencias, esta asegurado */
-
-			// si es venta, comprueba que haya existencias para filtrar opciones
-			if (compra || mercaElegida->precios[i].hayExistencias())
-			{
-				std::cout << "\n" << cont << ". " << mercaElegida->getNombre() << " ($" << mercaElegida->precios[i].precio << ")";
-				posPrecio.push_back((PrecioMerca*)&mercaElegida->precios[i]); //guarda lugar de memoria del precio-mercaderia actual en vector
-				cont++;
-			}
-		}
-
-		if (compra)
-		{
-			std::cout << "\n" << cont << ". " << "Nuevo precio unitario";
-			offSet = 1;
-		}
-
-		/* Input */
-
-		std::cout << "\n\n" << "Elija una opcion: ";
-		std::cin >> opStr;
-
-		/* Validacion/return */
-		op = validarInt(opStr, {}, {}, 1, posPrecio.size() + offSet);
-		if (op == 0)
-		{
-			/// valor no valido
-			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
-			_getch();
-		}
-	} while (op == 0);
-
-	/* crear/encontrar mercaderia */
-	system("CLS");
-	PrecioMerca* precioElegido;
-	if (op == posPrecio.size() + 1)
-	{
-		/// crear precio-mercaderia
-		do
-		{
-			std::cout << "=============== " << mercaElegida->getNombre() << ": NUEVO PRECIO UNITARIO ===============";
-			std::cout << "\n\nIngrese el nuevo precio de compra: $";
-			std::cin >> opStr;
-
-			op = validarInt(opStr, {}, {}, 1);
-			if (op == 0)
-			{
-				std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
-				_getch();
-				system("CLS");
-			}
-		} while (op == 0);
-
-		mercaElegida->precios.push_back(PrecioMerca(op)); //crea el nuevo precio-mercaderia
-		precioElegido = &(mercaElegida->precios.back()); //guarda el puntero al precio-mercaderia
-	}
-	else {
-		/// encontrar mercaderia
-		precioElegido = &(mercaElegida->precios[op - 1]);
-	}
-
-	/* en este punto ya tenemos una mercaElegida y un precioElegido!! */
-	/* ----- Bucle validacion compra/venta ----- */
-	int cantidad = 0; unsigned int precioVenta = 0;
-	do
-	{
-		/* validar cantidad */
-
-		system("CLS");
-		std::cout << "=============== " << mercaElegida->getNombre() << " ($" << precioElegido->precio << " c/u) ===============";
-		std::cout << "\n\nExistencias: " << ((precioElegido->hayExistencias()) ? precioElegido->dias.back().cantidad : 0) << " unidades"; //para compra, puede ser 0
-		std::cout << "\n\nElija la cantidad de mercaderia que se " << ((compra) ? "compra" : "vende" ) << ": ";
-		std::cin >> opStr;
-		//si es compra, no hay maximo; si es venta, es la cantidad de existencias actuales (que no puede ser 0)
-		op = validarInt(opStr, {}, {}, 1, ((!compra) ? precioElegido->dias.back().cantidad : INT_MAX));
-		if (op == 0)
-		{
-			/// cantidad no valida
-			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
-			_getch();
-			system("CLS");
-		} else {
-			///cantidad valida!
-			
-			cantidad = op; //set cantidad
-
-			if (!compra)
-			{
-				/// necesidad de validar precio venta
-				do
-				{
-					std::cout << "\n\nIngrese el precio unitario al cual se vende la mercaderia: $";
-					std::cin >> opStr;
-					op = validarInt(opStr, {}, {}, 1);
-					if (op == 0)
-					{
-						/// precio venta no valido
-						std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
-						_getch();
-					} else {
-						/// precio venta valido!
-						
-						precioVenta = op; // set precioVenta (solo en caso de venta)
-					}
-				} while (precioVenta == 0);
-			}
-		}
-	} while (cantidad == 0);
-
-	// carga la respuesta del struct
-	operMercaderia resp;
-	resp.cantidad = cantidad * ((compra) ? 1 : -1); resp.precioUnitario = precioElegido->precio; resp.precioVenta = precioVenta;
-
-	precioElegido->nuevoDiaPrecioMerca(fecha, resp.cantidad); //efectua la modificacion de existencias
-
-	return resp;
-	
-}
 
 /**
  * @brief Le pide al usuario realizar operaciones con las cuentas permitidas en el sentido dictado hasta que
  *  se alcance un limite (de haberlo), o se decida parar.
  * 
  * @param t: enum del tipo de cuenta o filtro permitido para realizar operaciones
- * @param tipoPartida: enum representando si se estan sumando valores al debe, al haber, o si es el caso de una apertura
+ * @param ModoAumento: enum representando si se estan sumando valores al debe, al haber, o si es el caso de una apertura
  * @param mensaje: string con el mensaje que acompania la seleccion de Cuenta
  * @param [limite]: int hasta el cual se deben hacer operaciones (siempre positivo)
  * 
  * @return int con la cantidad total que se sumo
  */
 
-int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string mensaje, std::optional<int> limite)
+int aumentarPartida(Cuenta::TipoCuenta t, ModoAumento ModoAumento, std::string mensaje, std::optional<int> limite)
 {
 	Cuenta* cuentaActual;
 	std::string aumentoActualStr;
 	int aumentoActual;
 	int aumentoTotal = 0;
-	DiaMerca* mercaModif; //usado en caso de mercaderias
+	//DiaMerca* mercaModif; //usado en caso de mercaderias
 
 	if (limite)
 	{
@@ -634,13 +410,13 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 			system("CLS");
 			
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, tipoPartida, mensaje);
+			cuentaActual = elegirCuenta(t, ModoAumento, mensaje);
 
 			/* verificacion mercaderias*/
 			if (cuentaActual == buscarCuenta("Mercaderias"))
 			{
 				/// hay mercaderias!
-				
+				/*
 				operMercaderia operMerca = seleccionarMercaderia(true);
 				aumentoActual = operMerca.cantidad * operMerca.precioUnitario;
 
@@ -649,7 +425,7 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 					aumentoTotal += aumentoActual;
 					modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);	
 				}
-
+				*/
 			} else {
 				/// no hay mercaderias
 				
@@ -668,12 +444,12 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 					/// cantidad valida!
 
 					/* ajusta el signo de la modificacion */
-					if (tipoPartida == Apertura)
+					if (ModoAumento == ModoAumento::Apertura)
 					{
 						aumentoActual = aumentoActual * ((cuentaActual->getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) ? -1 : 1);
 					}
 					else {
-						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
+						aumentoActual = aumentoActual * ((ModoAumento == ModoAumento::Debe) ? 1 : -1);
 					}
 
 					aumentoTotal += aumentoActual;
@@ -697,13 +473,13 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 			system("CLS");
 
 			/* seleccion de cuenta */
-			cuentaActual = elegirCuenta(t, tipoPartida, mensaje);
+			cuentaActual = elegirCuenta(t, ModoAumento, mensaje);
 
 			/* verificacion mercaderias*/
 			if (cuentaActual->getNombre() == "Mercaderias")
 			{
 				/// hay mercaderias!
-
+				/*
 				operMercaderia operMerca = seleccionarMercaderia(true);
 				aumentoActual = operMerca.cantidad * operMerca.precioUnitario;
 
@@ -712,13 +488,13 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 					aumentoTotal += aumentoActual;
 					modificarCuenta(buscarCuenta("Mercaderias"), aumentoActual);
 
-					/* permitir finalizar */
+					/* permitir finalizar 
 					system("CLS");
 					std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
 					std::cin >> aumentoActualStr; //reusado de variables!!
 					satisfecho = (validarInt(aumentoActualStr, 1, 2) == 2) ? true : false;	
 				}
-
+				*/
 			} else {
 
 				/// no hay mercaderias
@@ -735,12 +511,12 @@ int aumentarPartida(Cuenta::TipoCuenta t, tipoPartida tipoPartida, std::string m
 					/// cantidad valida!
 
 					/* ajusta el signo de la modificacion */
-					if (tipoPartida == Apertura)
+					if (ModoAumento == ModoAumento::Apertura)
 					{
 						aumentoActual = aumentoActual * ((cuentaActual->getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) ? -1 : 1);
 					}
 					else {
-						aumentoActual = aumentoActual * ((tipoPartida == Debe) ? 1 : -1);
+						aumentoActual = aumentoActual * ((ModoAumento == ModoAumento::Debe) ? 1 : -1);
 					}
 
 					aumentoTotal += aumentoActual;
@@ -770,7 +546,7 @@ void NotaDC(bool credito)
 	int modificacion;
 	const Operacion* operacionModif = nullptr;
 	const Linea* lineaModif = nullptr;
-	tipoPartida tipo;
+	ModoAumento tipo;
 
 	/* elegir operacion valida */
 	unsigned int cont;
@@ -872,12 +648,12 @@ void NotaDC(bool credito)
 					/// La cuenta tenia una modificacion en el debe
 					
 					modificacion = op * ((!credito) ? 1 : -1); //si es debito la aumenta en el debe, sino en el haber
-					tipo = (!credito) ? Haber : Debe; //contrrarestar acorde
+					tipo = (!credito) ? ModoAumento::Haber : ModoAumento::Debe; //contrrarestar acorde
 				}
 				else {
 					/// La cuenta tenia una modificacion en el haber
 					modificacion = op * ((!credito) ? -1 : 1); //si es debito la aumenta en el haber, sino en el debe
-					tipo = (!credito) ? Debe : Haber; //contrarrestar acorde
+					tipo = (!credito) ? ModoAumento::Debe : ModoAumento::Haber; //contrarrestar acorde
 				}
 
 				modificarCuenta(lineaModif->cuenta, modificacion); //realiza modificacion
@@ -1101,7 +877,7 @@ void OP_Capital()
 	pedirNuevaFecha("Ingrese la fecha de apertura");
 
 	//aumenta operaciones hasta que el usuario decida
-	int totalAumentado = aumentarPartida(Cuenta::TipoCuenta::F_OPER, Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+	int totalAumentado = aumentarPartida(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
 
 	/* iguala cuentas con Capital(PN+) */
 	modificarCuenta(buscarCuenta("Capital"), totalAumentado * -1);
@@ -1118,63 +894,20 @@ void OP_Capital()
 void OP_Transaccion()
 {
 	/* ingreso de cuentas */
-	int perdida = abs(aumentarPartida(Cuenta::TipoCuenta::F_OPER, tipoPartida::Haber, "Elija las cuentas del haber", {})); //le quita el signo negativo
-	aumentarPartida(Cuenta::TipoCuenta::F_OPER, tipoPartida::Debe, "Elija las cuentas del debe", perdida);
+	int perdida = abs(aumentarPartida(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {})); //le quita el signo negativo
+	aumentarPartida(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", perdida);
 
 	/* commit de operacion */
 	operacionActual = pedirNombreDocx(operacionActual);
 	commitOperacion(operacionActual);
 }
 
-/* Pide llevar a cabo una operacion de venta. Si es posible, llena las cuentas necesarias con los datos de la venta, y pide al usuario saciar los ingresos del debe;
-	por ultimo guarda la operacion. */
-void OP_VentaMercaderias()
-{
-	operMercaderia venta = seleccionarMercaderia(false);
-	/* validacion posibilidad de venta */
-	if (venta.cantidad != 0)
-	{
-		/// venta posible!
-		
-		int totalGanado = abs(venta.cantidad * venta.precioVenta); // valor absoluto para mayor comodidad
-		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1); // Ventas (R+)
-
-		aumentarPartida(Cuenta::TipoCuenta::F_OPER, Debe, "Elija las cuentas de ganancia de la venta", totalGanado); // iguala con debe
-
-		/* anotar cmv y mercaderias */
-		int totalPerdido = abs(venta.cantidad * venta.precioUnitario); // valor absoluto para mayor comodidad
-
-		modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido * -1); // Mercaderias (A-)
-		modificarCuenta(buscarCuenta("CMV"), totalPerdido); // CMV (R-)
-
-		/* guarda operacion */
-		operacionActual = pedirNombreDocx(operacionActual);
-		commitOperacion(operacionActual);
-	}
-}
-
-/* Pide llevar a cabo una operacion de compra. LLena las cuentas necesarios con los datos de la compra, pide saciar las perdidas en el Haber.
-	Por ultimo, guuarda la operacion*/
-void OP_CompraMercaderias()
-{
-	/* compra de mercaderias */
-	operMercaderia compra = seleccionarMercaderia(true);
-	int totalPerdido = compra.cantidad * compra.precioUnitario; //siempre positivo
-
-	/* amortizacion en Haber */
-	modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido); // Mercaderias (A+)
-	aumentarPartida(Cuenta::TipoCuenta::F_OPER, Haber, "Elija las cuentas con las que se amortiza la compra", totalPerdido);
-
-	/* guarda operacion */
-	operacionActual = pedirNombreDocx(operacionActual);
-	commitOperacion(operacionActual);
-}
 
 const std::vector<Opcion> OPCIONES = {
 	Opcion("Nueva Fecha", []{ pedirNuevaFecha(); } ),
 	Opcion("Transaccion de Cuentas", []{ OP_Transaccion(); }),
-	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
-	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
+	//Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
+	//Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
 	Opcion("Nota de Credito", [] { NotaDC(true); } ),
 	Opcion("Nota de Debito", [] { NotaDC(false); } ),
 	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(); }),

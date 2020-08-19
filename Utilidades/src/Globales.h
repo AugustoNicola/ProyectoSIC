@@ -2,7 +2,7 @@
 
 #include "clases.h"
 
-std::string fecha; //global con la fecha actual
+extern std::string fecha;
 
-Operacion oper;
-Operacion* operacionActual = &oper; //puntero global con la operacion actual
+extern Operacion oper;
+extern Operacion* operacionActual;

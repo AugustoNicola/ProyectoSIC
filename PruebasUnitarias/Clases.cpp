@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 
-#include "../clases/src/clases.h"
+#include "clases.h"
+#include "AumentadorPartida.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -948,6 +949,17 @@ namespace Clase_DiaOperaciones
 			Assert::IsFalse(diaOperaciones.contieneCuenta("Banana"));
 			Assert::IsFalse(diaOperaciones.contieneCuenta("    "));
 			Assert::IsFalse(diaOperaciones.contieneCuenta(""));
+		}
+	};
+}
+
+namespace Pruebaaa
+{
+	TEST_CLASS(MegaTest)
+	{
+		TEST_METHOD(uwu)
+		{
+			Assert::AreEqual((int)345, validarInt("345", {}, {}, 1, 3444));
 		}
 	};
 }

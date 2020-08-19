@@ -1,9 +1,11 @@
 #pragma once
 
 #include <optional>
+#include <iostream>
+#include <regex>
 
-#include "clases.h"
-
+#include "Vectores.h"
+#include "Globales.h"
 
 Cuenta* buscarCuenta(std::string);
 void modificarCuenta(Cuenta*,int);
