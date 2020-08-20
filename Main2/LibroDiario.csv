@@ -1,8 +1,12 @@
 '';Cuenta;Modif;Debe;Haber
 
-'05/05'
-'';Proovedores;P+;'0';'8000'
-'';Acreedores Varios;P+;'0';'2000'
-'';Caja;A+;'10000';'0'
-'';segun 
+'20/03'
+'';Caja;A+;'505';'0'
+'';Capital;PN+;'0';'505'
+'';segun Apertura
+
+'01/05'
+'';Caja;A+;'495';'0'
+'';Proovedores;P+;'0';'495'
+'';segun NDeb
 
