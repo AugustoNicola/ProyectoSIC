@@ -85,7 +85,7 @@ public:
 	}
 
 	bool hayOperaciones() const { return !Operaciones.empty(); }
-	std::vector<const Operacion*> getOperaciones()
+	std::vector<const Operacion*> getOperaciones() const
 	{
 		std::vector<const Operacion*> operaciones;
 		if (hayOperaciones())

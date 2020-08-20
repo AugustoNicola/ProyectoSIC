@@ -237,14 +237,14 @@ Operacion* pedirNombreDocx(Operacion *op)
 			_getch();
 		}
 	} while (nombre.empty());
-	op->getDocumento() = nombre;
+	op->setDocumento(nombre);
 	return op;
 }
 
 /* Pushea la operacion al ultimo dia */
 void commitOperacion(Operacion* op)
 {
-	DIAS.back().crearOperacion(*operacionActual);
+	DIAS.back().crearOperacion(*op);
 	oper = Operacion();
 }
 
@@ -364,7 +364,7 @@ Cuenta* elegirCuenta(Cuenta::TipoCuenta t, ModoAumento tipoPart, std::string men
 		std::cin >> opStr;
 
 		/* Validacion/return */
-		op = validarInt(opStr, 1, pos.size(), {}, {});
+		op = validarInt(opStr, {}, {}, 1, pos.size());
 		if (op == 0)
 		{
 			/// valor no valido
@@ -526,7 +526,7 @@ int aumentarPartida(Cuenta::TipoCuenta t, ModoAumento ModoAumento, std::string m
 					system("CLS");
 					std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
 					std::cin >> aumentoActualStr; //reusado de variables!!
-					satisfecho = (validarInt(aumentoActualStr, 1, 2, {}, {}) == 2) ? true : false;
+					satisfecho = (validarInt(aumentoActualStr, {}, {}, 1, 2) == 2) ? true : false;
 
 				} else {
 					/// cantidad invalida
@@ -557,7 +557,7 @@ void NotaDC(bool credito)
 		posOper = {};
 		system("CLS");
 
-		for (DiaOperaciones dia : DIAS) //recorre dias
+		for (const DiaOperaciones& dia : DIAS) //recorre dias
 		{
 			for (const Operacion *operacion : dia.getOperaciones()) //recorre operaciones
 			{
@@ -570,7 +570,7 @@ void NotaDC(bool credito)
 		std::cin >> opStr;
 
 		/* Validacion/return */
-		op = validarInt(opStr, 1, posOper.size(), {}, {});
+		op = validarInt(opStr, {}, {}, 1, posOper.size());
 		if (op == 0)
 		{
 			/// valor no valido
@@ -610,7 +610,7 @@ void NotaDC(bool credito)
 			std::cin >> opStr;
 
 			/* Validacion/return */
-			op = validarInt(opStr, 1, posLinea.size(), {}, {});
+			op = validarInt(opStr, {}, {}, 1, posLinea.size());
 			if (op == 0)
 			{
 				/// valor no valido
@@ -632,7 +632,7 @@ void NotaDC(bool credito)
 			std::cin >> opStr;
 
 			/* Validacion/return */
-			op = validarInt(opStr, {}, {}, 1, {});
+			op = validarInt(opStr, {}, {}, 1);
 			if (op == 0)
 			{
 				/// valor no valido
@@ -947,7 +947,7 @@ int main()
 		std::cin >> opString;
 
 		/* Validacion */
-		int op = validarInt(opString, 1, OPCIONES.size(), {}, {});
+		int op = validarInt(opString, {}, {}, 1, OPCIONES.size());
 		if (op != 0)
 		{
 			/// input valido!
