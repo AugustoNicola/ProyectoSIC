@@ -2,7 +2,7 @@
 
 Cuenta* buscarCuenta(std::string nombre)
 {
-	for (int i = 0; i < CUENTAS.size(); i++)
+	for (unsigned int i = 0; i < CUENTAS.size(); i++)
 	{
 		if (CUENTAS[i].getNombre() == nombre)
 		{
@@ -37,7 +37,7 @@ int validarInt(std::string str, std::optional<int> valorC, std::optional<int> va
 		int n = std::stoi(smatch[2].str());
 
 		/* verifica valor relativo o absoluto */
-		if (smatch[3].matched && 100 >= n > 0)
+		if (smatch[3].matched && 100 >= n && n > 0)
 		{
 			/// usar valor relativo
 
@@ -63,7 +63,7 @@ int validarInt(std::string str, std::optional<int> valorC, std::optional<int> va
 			//verifica negativo
 			n *= ((smatch[1].matched) ? -1 : 1);
 
-			return (max >= n >= min) ? n : 0;
+			return (max >= n && n >= min) ? n : 0;
 		}
 
 	}

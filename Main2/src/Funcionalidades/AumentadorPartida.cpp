@@ -1,7 +1,7 @@
 #include "AumentadorPartida.h"
 
-	SeleccionadorDeCuentas::SeleccionadorDeCuentas(std::fstream& _data, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
-		: data(_data), FiltroCuentas(_filtroCuentas), modoAumento(_modoAumento), MsgEleccionCuenta(_msgEleccionCuenta)
+	SeleccionadorDeCuentas::SeleccionadorDeCuentas(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
+		: FiltroCuentas(_filtroCuentas), modoAumento(_modoAumento), MsgEleccionCuenta(_msgEleccionCuenta)
 	{
 		configurarModoAumento();
 		configurarFiltroCuentas();
@@ -47,18 +47,20 @@
 			system("CLS");
 			mostrarCuentas();
 			std::cout << "\n\n" << MsgEleccionCuenta << ": ";
-			std::getline(data, strOpcionElegida);
+			std::cin >> strOpcionElegida;
 
-			opcionElegida = validarInt(strOpcionElegida, 1, cuentasSeleccionables.size(), {}, {});
+			opcionElegida = validarInt(strOpcionElegida, {}, {}, 1, cuentasSeleccionables.size());
 			if (opcionElegida == 0)
 			{
 				std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
 				_getch();
 			}
 			else {
-				return cuentasSeleccionables[opcionElegida - 1];
+				break;
 			}
 		} while (opcionElegida == 0);
+
+		return cuentasSeleccionables[opcionElegida - 1];
 	}
 	void SeleccionadorDeCuentas::mostrarCuentas()
 	{
@@ -83,14 +85,15 @@
 		}
 	}
 
-	AumentadorPartida::AumentadorPartida(std::fstream& _data, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite)
-		: data(_data), filtroCuentas(_filtroCuentas), modoAumento(_modoAumento), mensajeEleccionCuenta(_mensajeEleccionCuenta), limite(_limite.has_value() ? _limite.value() : 0)
+
+	AumentadorPartida::AumentadorPartida(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite)
+		: filtroCuentas(_filtroCuentas), modoAumento(_modoAumento), mensajeEleccionCuenta(_mensajeEleccionCuenta), limite(_limite.has_value() ? _limite.value() : 0)
 	{
-		SeleccionadorDeCuentas seleccionador(data, filtroCuentas, modoAumento, mensajeEleccionCuenta);
+		SeleccionadorDeCuentas seleccionador(filtroCuentas, modoAumento, mensajeEleccionCuenta);
 
 		while (!condicionDeSalidaAlcanzada())
 		{
-			seleccionador.elegirCuenta();
+			cuentaOperacionActual = seleccionador.elegirCuenta();
 
 			if (cuentaOperacionActualEsMercaderia())
 			{
@@ -125,10 +128,10 @@
 	{
 		if (limite > 0)
 		{
-			return limite > aumentoTotal;
+			return limite <= aumentoTotal;
 		}
 		else if (limite < 0) {
-			return limite < aumentoTotal;
+			return limite >= aumentoTotal;
 		}
 		else {
 			return salir;
@@ -148,20 +151,20 @@
 			system("CLS");
 			mostrarInformacion();
 			std::cout << "\n\nSeleccione la cantidad: $";
-			std::getline(data, strAumentoActual);
+			std::cin >> strAumentoActual;
 		} while (!validarAumentoActual(strAumentoActual));
 	}
 
 	void AumentadorPartida::mostrarInformacion()
 	{
-		std::cout << "\n\nCuenta elegida: " << cuentaOperacionActual->getNombre() << " (valor: $" << cuentaOperacionActual->getSaldoActual() << ")";
+		std::cout << "\n\nCuenta elegida: " << cuentaOperacionActual->getNombre() << " (valor: $" << abs(cuentaOperacionActual->getSaldoActual()) << ")";
 		std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
 		std::cout << "\nLimite: $" << abs(limite);
 	}
 
 	bool AumentadorPartida::validarAumentoActual(std::string strCantidad)
 	{
-		aumentoActual = validarInt(strCantidad, cuentaOperacionActual->getSaldoActual(), limite, 1, (limite - abs(aumentoTotal)));
+		aumentoActual = validarInt(strCantidad, abs(cuentaOperacionActual->getSaldoActual()), abs(limite), 1, (noHayLimite() ? INT_MAX : abs(limite - aumentoTotal) )   );
 		if (aumentoActual != 0)
 		{
 			ajustarSignoAumentoActual();
@@ -201,6 +204,8 @@
 		std::string strFinalizar;
 		system("CLS");
 		std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
-		std::getline(data, strFinalizar);
-		salir = (validarInt(strFinalizar, 1, 2, {}, {}) == 2) ? true : false;
+		std::cin >> strFinalizar;
+		salir = (validarInt(strFinalizar, {}, {}, 1, 2) == 2) ? true : false;
 	}
+
+	int AumentadorPartida::getAumentoTotal() const { return aumentoTotal; }

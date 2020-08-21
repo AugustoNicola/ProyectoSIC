@@ -21,14 +21,13 @@ private:
 	ModoAumento modoAumento;
 	std::string MsgEleccionCuenta;
 
-	std::fstream& data;
 	std::vector<Cuenta*> cuentasSeleccionables;
 	std::string leyendaActivo;
 	std::string leyendaPasivo;
 	std::string leyendaGasto;
 
 public:
-	SeleccionadorDeCuentas(std::fstream& _data, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta);
+	SeleccionadorDeCuentas(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta);
 	void configurarModoAumento();
 	void configurarFiltroCuentas();
 	Cuenta* elegirCuenta();
@@ -48,10 +47,9 @@ private:
 	int aumentoActual = 0;
 	Cuenta* cuentaOperacionActual;
 
-	std::fstream &data;
-
 public:
-	AumentadorPartida(std::fstream& _data, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite);
+	AumentadorPartida(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite);
+private:
 	bool condicionDeSalidaAlcanzada();
 	bool cuentaOperacionActualEsMercaderia();
 	void elegirAumentoActual();
@@ -61,4 +59,6 @@ public:
 	void efectuarAumento();
 	bool noHayLimite();
 	void permitirFinalizar();
+public:
+	int getAumentoTotal() const;
 };
