@@ -4,10 +4,16 @@
 #include <iostream>
 #include <regex>
 #include <limits.h>
+#include <conio.h>
 
 #include "Globales.h"
 #include "Vectores.h"
 
-Cuenta* buscarCuenta(std::string);
-void modificarCuenta(Cuenta*,int);
+
+void pedirNuevaFecha(std::optional<std::string> mensaje = "Ingrese la nueva fecha");
+bool validarFecha(std::string str);
 int validarInt(std::string str, std::optional<int> valorC = {}, std::optional<int> valorT = {}, std::optional<int> min = INT_MIN, std::optional<int> max = INT_MAX);
+void modificarCuenta(Cuenta*,int);
+Cuenta* buscarCuenta(std::string);
+void commitOperacion(Operacion* op);
+Operacion* pedirNombreDocx(Operacion* op);

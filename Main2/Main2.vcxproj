@@ -155,6 +155,7 @@
     <ClInclude Include="src\Clases\opcion.h" />
     <ClInclude Include="src\Clases\operacion.h" />
     <ClInclude Include="src\Funcionalidades\AumentadorPartida.h" />
+    <ClInclude Include="src\Main.h" />
     <ClInclude Include="src\Utilidades\Globales.h" />
     <ClInclude Include="src\Utilidades\Varias.h" />
     <ClInclude Include="src\Utilidades\Vectores.h" />

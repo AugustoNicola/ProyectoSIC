@@ -1,21 +1,76 @@
 #include "Varias.h"
 
-Cuenta* buscarCuenta(std::string nombre)
+void pedirNuevaFecha(std::optional<std::string> mensaje)
 {
-	for (unsigned int i = 0; i < CUENTAS.size(); i++)
+	std::string fechaStr;
+	do
 	{
-		if (CUENTAS[i].getNombre() == nombre)
+		system("CLS");
+		std::cout << mensaje.value() << ": ";
+		std::cin >> fechaStr;
+		if (validarFecha(fechaStr))
 		{
-			return (Cuenta*)&CUENTAS[i];
+			break;
 		}
-	}
-	return nullptr;
+		else {
+			std::cout << "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
+			_getch();
+		}
+	} while (true);
+
+	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
 }
 
-void modificarCuenta(Cuenta* cuenta, int modificacion)
+bool validarFecha(std::string str)
 {
-	operacionActual->crearLinea(cuenta, modificacion);
-	cuenta->registrarModificacion(fecha, modificacion);
+	std::cin.clear();
+	std::cin.ignore(1000, '\n');
+
+	/* uso de regex */
+
+	std::basic_regex reg("^[ ]*([0-9]{1,2})\/([0-9]{1,2})[ ]*$");
+	std::smatch smatch;
+	bool match = std::regex_match(str, smatch, reg);
+
+	if (match)
+	{
+		///contiene ambos campos!
+		int numFecha[2] = { std::stoi(smatch[1].str()), std::stoi(smatch[2].str()) }; // extrae partes numericas
+
+		/* verificacion campos validos */
+		if ((31 >= numFecha[0] && numFecha[0] >= 1) && (12 >= numFecha[1] && numFecha[1] >= 1))
+		{
+			///ambos campos son validos
+			std::string strFecha[2] = { std::to_string(numFecha[0]), std::to_string(numFecha[1]) };
+
+			/* verificacion formato DD/MM */
+			if (numFecha[0] <= 9) { strFecha[0].insert(0, "0"); }
+			if (numFecha[1] <= 9) { strFecha[1].insert(0, "0"); }
+
+			//construccion de string
+			std::string nuevaFecha = strFecha[0] + "/" + strFecha[1];
+
+			/* verificacion repeticion fecha */
+			if (nuevaFecha != fecha)
+			{
+				/// fechas diferentes, permitir cambio
+				fecha = nuevaFecha; //actualiza la nueva fecha
+				return true;
+			}
+			else {
+				/// misma fecha, invalidar
+				return false;
+			}
+		}
+		else {
+			/// campos no validos
+			return false;
+		}
+	}
+	else {
+		/// no contiene ambos campos
+		return false;
+	}
 }
 
 int validarInt(std::string str, std::optional<int> valorC, std::optional<int> valorT, std::optional<int> min, std::optional<int> max)
@@ -72,3 +127,51 @@ int validarInt(std::string str, std::optional<int> valorC, std::optional<int> va
 		return 0;
 	}
 }
+
+void modificarCuenta(Cuenta* cuenta, int modificacion)
+{
+	operacionActual->crearLinea(cuenta, modificacion);
+	cuenta->registrarModificacion(fecha, modificacion);
+}
+
+Cuenta* buscarCuenta(std::string nombre)
+{
+	for (unsigned int i = 0; i < CUENTAS.size(); i++)
+	{
+		if (CUENTAS[i].getNombre() == nombre)
+		{
+			return (Cuenta*)&CUENTAS[i];
+		}
+	}
+	return nullptr;
+}
+
+void commitOperacion(Operacion* op)
+{
+	DIAS.back().crearOperacion(*op);
+	oper = Operacion();
+}
+
+Operacion* pedirNombreDocx(Operacion* op)
+{
+	std::string nombre;
+	do
+	{
+		system("CLS");
+		std::cout << "Ingrese el nombre del documento de esta operacion: ";
+		std::getline(std::cin, nombre);
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+
+		if (nombre.empty())
+		{
+			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente.";
+			_getch();
+		}
+	} while (nombre.empty());
+	op->setDocumento(nombre);
+	return op;
+}
+
+
+

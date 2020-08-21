@@ -1,15 +1,10 @@
 Caja
 Debe;Haber
-'541';''
-Saldo deudor: $541
-
-Bco. Cuenta Corriente
-Debe;Haber
 '25';''
 Saldo deudor: $25
 
 Capital
 Debe;Haber
-'';'566'
-Saldo acreedor: $566
+'';'25'
+Saldo acreedor: $25
 

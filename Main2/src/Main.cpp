@@ -1,17 +1,4 @@
-#include <iostream> //I/O basico
-#include <fstream> //I/O de archivos .csv
-#include <conio.h> // _getch()
-#include <climits> //INT_MIN, INT_MAX
-#include <cmath> //abs()
-#include <regex> //regular expressions
-#include <vector> //arrays dinamicos
-#include <optional> //valores optativos
-
-#include "clases.h" //estructuras de clases personalizadas
-#include "Globales.h"
-#include "Vectores.h"
-#include "Varias.h"
-#include "AumentadorPartida.h"
+#include "Main.h"
 
 std::vector<DiaOperaciones> DIAS = {};
 std::vector<Cuenta> CUENTAS = {
@@ -94,137 +81,33 @@ std::string fecha;
 Operacion oper;
 Operacion* operacionActual = &oper;
 
-void initVectores() {
-	for (unsigned int i = 0; i < CUENTAS.size(); i++)
-	{
-		if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
-	}
-}
-
-/// ############################################################################################
-/// ################################         UTILIDADES         ################################
-/// ############################################################################################
-
-std::string formatear(std::string texto)
+void OP_Capital()
 {
-	texto.insert(0, "'"); texto.append("'");
-	return texto;
-}
+	pedirNuevaFecha("Ingrese la fecha de apertura");
 
-void imprimeValoresColumnaLibroMayor(std::ofstream &LibroMayor, std::vector<int> valores, unsigned int pos)
+	//aumenta operaciones hasta que el usuario decida
+	AumentadorPartida aumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+
+	/* iguala cuentas con Capital(PN+) */
+	modificarCuenta(buscarCuenta("Capital"), aumento.getAumentoTotal() * -1);
+
+	/* finaliza operacion*/
+	operacionActual->setDocumento("Apertura");
+	commitOperacion(operacionActual);
+
+	pedirNuevaFecha("Ingrese la primera fecha de operaciones"); //una vez finalizada apertura, crea nuevo dia
+}
+void OP_Transaccion()
 {
+	/* ingreso de cuentas */
+	AumentadorPartida aumentoPerdida(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {});
+	int perdida = abs(aumentoPerdida.getAumentoTotal()); //le quita el signo negativo
+	AumentadorPartida aumentoGanancia(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", perdida);
 
-	for (unsigned int i = pos; i < valores.size(); i++)
-	{
-		if (valores[i] > 0)
-		{
-			LibroMayor << formatear(std::to_string(abs(valores[i]))) << ";''" << std::endl;
-		} else {
-			LibroMayor << "'';" << formatear(std::to_string(abs(valores[i]))) << std::endl;
-		}
-	}
-	
+	/* commit de operacion */
+	operacionActual = pedirNombreDocx(operacionActual);
+	commitOperacion(operacionActual);
 }
-
-bool validarFecha(std::string str)
-{
-	std::cin.clear();
-	std::cin.ignore(1000, '\n');
-
-	/* uso de regex */
-
-	std::basic_regex reg("^[ ]*([0-9]{1,2})\/([0-9]{1,2})[ ]*$");
-	std::smatch smatch;
-	bool match = std::regex_match(str, smatch, reg);
-
-	if (match)
-	{
-		///contiene ambos campos!
-		int numFecha[2] = { std::stoi(smatch[1].str()), std::stoi(smatch[2].str()) }; // extrae partes numericas
-
-		/* verificacion campos validos */
-		if ((31 >= numFecha[0] && numFecha[0] >= 1) && (12 >= numFecha[1] && numFecha[1] >= 1))
-		{
-			///ambos campos son validos
-			std::string strFecha[2] = { std::to_string(numFecha[0]), std::to_string(numFecha[1]) };
-
-			/* verificacion formato DD/MM */
-			if (numFecha[0] <= 9) { strFecha[0].insert(0, "0"); }
-			if (numFecha[1] <= 9) { strFecha[1].insert(0, "0"); }
-
-			//construccion de string
-			std::string nuevaFecha = strFecha[0] + "/" + strFecha[1];
-
-			/* verificacion repeticion fecha */
-			if (nuevaFecha != fecha)
-			{
-				/// fechas diferentes, permitir cambio
-				fecha = nuevaFecha; //actualiza la nueva fecha
-				return true;
-			} else {
-				/// misma fecha, invalidar
-				return false;
-			}
-		} else {
-			/// campos no validos
-			return false;
-		}
-	} else {
-		/// no contiene ambos campos
-		return false;
-	}
-}
-
-void pedirNuevaFecha(std::optional<std::string> mensaje = "Ingrese la nueva fecha")
-{
-	std::string fechaStr;
-	do
-	{
-		system("CLS");
-		std::cout << mensaje.value() << ": ";
-		std::cin >> fechaStr;
-		if (validarFecha(fechaStr))
-		{
-			break;
-		}
-		else {
-			std::cout << "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
-			_getch();
-		}
-	} while (true);
-
-	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
-}
-
-Operacion* pedirNombreDocx(Operacion *op)
-{
-	std::string nombre;
-	do
-	{
-		system("CLS");
-		std::cout << "Ingrese el nombre del documento de esta operacion: ";
-		std::getline(std::cin, nombre);
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		
-		if (nombre.empty())
-		{
-			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente.";
-			_getch();
-		}
-	} while (nombre.empty());
-	op->setDocumento(nombre);
-	return op;
-}
-
-void commitOperacion(Operacion* op)
-{
-	DIAS.back().crearOperacion(*op);
-	oper = Operacion();
-}
-
 void NotaDC(bool credito)
 {
 	std::string opStr;
@@ -245,7 +128,7 @@ void NotaDC(bool credito)
 
 		for (const DiaOperaciones& dia : DIAS) //recorre dias
 		{
-			for (const Operacion *operacion : dia.getOperaciones()) //recorre operaciones
+			for (const Operacion* operacion : dia.getOperaciones()) //recorre operaciones
 			{
 				std::cout << "\n" << cont << ". " << operacion->getDocumento() << " (" << dia.getFecha() << ")";
 				posOper.push_back(operacion);
@@ -292,7 +175,7 @@ void NotaDC(bool credito)
 				cont++;
 			}
 
-			std::cout << "\n\nElija la cuenta que " << ((!credito) ? "aumenta" : "disminuye") <<  " en la nota: ";
+			std::cout << "\n\nElija la cuenta que " << ((!credito) ? "aumenta" : "disminuye") << " en la nota: ";
 			std::cin >> opStr;
 
 			/* Validacion/return */
@@ -332,7 +215,7 @@ void NotaDC(bool credito)
 				if (lineaModif->delta > 0)
 				{
 					/// La cuenta tenia una modificacion en el debe
-					
+
 					modificacion = op * ((!credito) ? 1 : -1); //si es debito la aumenta en el debe, sino en el haber
 					tipo = (!credito) ? ModoAumento::Haber : ModoAumento::Debe; //contrrarestar acorde
 				}
@@ -428,7 +311,6 @@ void EXP_LibroDiario()
 	} //dias
 	LibroDiario.close();
 }
-
 void EXP_LibroMayor()
 {
 	//inicializa archivo
@@ -507,7 +389,6 @@ void EXP_LibroMayor()
 
 	LibroMayor.close();
 }
-
 void EXP_EstadoResultados()
 {
 	std::ofstream EstadoResultados; EstadoResultados.open("EstadoResultados.csv");
@@ -533,55 +414,47 @@ void EXP_EstadoResultados()
 	EstadoResultados.close();
 }
 
-/// ############################################################################################
-/// ################################         OPCIONES         ##################################
-/// ############################################################################################
-
-void OP_Capital()
+void imprimeValoresColumnaLibroMayor(std::ofstream& LibroMayor, std::vector<int> valores, unsigned int pos)
 {
-	pedirNuevaFecha("Ingrese la fecha de apertura");
 
-	//aumenta operaciones hasta que el usuario decida
-	AumentadorPartida aumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+	for (unsigned int i = pos; i < valores.size(); i++)
+	{
+		if (valores[i] > 0)
+		{
+			LibroMayor << formatear(std::to_string(abs(valores[i]))) << ";''" << std::endl;
+		}
+		else {
+			LibroMayor << "'';" << formatear(std::to_string(abs(valores[i]))) << std::endl;
+		}
+	}
 
-	/* iguala cuentas con Capital(PN+) */
-	modificarCuenta(buscarCuenta("Capital"), aumento.getAumentoTotal() * -1);
-
-	/* finaliza operacion*/
-	operacionActual->setDocumento("Apertura");
-	commitOperacion(operacionActual);
-
-	pedirNuevaFecha("Ingrese la primera fecha de operaciones"); //una vez finalizada apertura, crea nuevo dia
+}
+std::string formatear(std::string texto)
+{
+	texto.insert(0, "'"); texto.append("'");
+	return texto;
 }
 
-void OP_Transaccion()
-{
-	/* ingreso de cuentas */
-	AumentadorPartida aumentoPerdida(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {});
-	int perdida = abs(aumentoPerdida.getAumentoTotal()); //le quita el signo negativo
-	AumentadorPartida aumentoGanancia(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", perdida);
-
-	/* commit de operacion */
-	operacionActual = pedirNombreDocx(operacionActual);
-	commitOperacion(operacionActual);
+void initVectores() {
+	for (unsigned int i = 0; i < CUENTAS.size(); i++)
+	{
+		if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
+	}
 }
 
 const std::vector<Opcion> OPCIONES = {
-	Opcion("Nueva Fecha", []{ pedirNuevaFecha(); } ),
-	Opcion("Transaccion de Cuentas", []{ OP_Transaccion(); }),
+	Opcion("Nueva Fecha", [] { pedirNuevaFecha(); }),
+	Opcion("Transaccion de Cuentas", [] { OP_Transaccion(); }),
 	//Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	//Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
-	Opcion("Nota de Credito", [] { NotaDC(true); } ),
-	Opcion("Nota de Debito", [] { NotaDC(false); } ),
+	Opcion("Nota de Credito", [] { NotaDC(true); }),
+	Opcion("Nota de Debito", [] { NotaDC(false); }),
 	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(); }),
 	Opcion("Exportar L. Mayor", [] { EXP_LibroMayor(); }),
 	Opcion("Exportar Estado de Resultados", [] { EXP_EstadoResultados(); })
 };
-
-
-/// ############################################################################################
-/// ################################         EJECUCIÓN         #################################
-/// ############################################################################################
 
 int main()
 {

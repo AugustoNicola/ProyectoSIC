@@ -1,9 +1,8 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/05'
-'';Caja;A+;'541';'0'
-'';Bco. Cuenta Corriente;A+;'25';'0'
-'';Capital;PN+;'0';'566'
+'20/08'
+'';Caja;A+;'25';'0'
+'';Capital;PN+;'0';'25'
 '';segun Apertura
 
 '05/07'
