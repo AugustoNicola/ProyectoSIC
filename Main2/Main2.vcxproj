@@ -77,12 +77,17 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -149,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Funcionalidades\SeleccionadorDeMercaderias.h" />
     <ClInclude Include="src\Clases\clases.h" />
     <ClInclude Include="src\Clases\cuenta.h" />
     <ClInclude Include="src\Clases\mercaderia.h" />
@@ -161,6 +167,7 @@
     <ClInclude Include="src\Utilidades\Vectores.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Funcionalidades\SeleccionadorDeMercaderias.cpp" />
     <ClCompile Include="src\Funcionalidades\AumentadorPartida.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\main_falso.cpp">

@@ -45,6 +45,9 @@
     <ClInclude Include="src\Main.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="src\Funcionalidades\SeleccionadorDeMercaderias.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Funcionalidades\AumentadorPartida.cpp">
@@ -57,6 +60,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="src\main_falso.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Funcionalidades\SeleccionadorDeMercaderias.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

@@ -100,7 +100,7 @@ private:
 	std::vector<ExistenciasPrecioMercaderia> PreciosActuales;
 public:
 
-	void registrarCompra(std::string fecha, unsigned int precio, int delta)
+	bool intentarCompra(std::string fecha, unsigned int precio, int delta)
 	{
 		if (asegurarPrecioYDeltaValidos(precio, delta))
 		{
@@ -115,10 +115,13 @@ public:
 			modificarExistenciasDePrecio(precio, delta);
 
 			efectuarControl();
+
+			return true;
 		}
+		return false;
 	}
 
-	void registrarVenta(std::string fecha, unsigned int delta)
+	bool intentarVenta(std::string fecha, unsigned int delta)
 	{
 		if (cantidadDeVentaValida(delta))
 		{
@@ -134,9 +137,11 @@ public:
 				}
 				// utiliza registrarCompra como venta utilizando un numero negativo
 				// a la vez se encarga de eliminar el precio en caso de estar agotado
-				registrarCompra(fecha, getPrecioMasBajo()->precio, -mercaderiasVendidasEnOperacionActual);
+				intentarCompra(fecha, getPrecioMasBajo()->precio, -mercaderiasVendidasEnOperacionActual);
 			}
+			return true;
 		}
+		return false;
 	}
 
 private:

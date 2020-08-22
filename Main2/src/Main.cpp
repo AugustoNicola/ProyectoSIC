@@ -241,6 +241,45 @@ void NotaDC(bool credito)
 
 }
 
+void OP_VentaMercaderias()
+{
+	operMercaderia venta = seleccionarMercaderia(false);
+	if (venta.cantidad != 0)
+	{
+		/// venta posible!
+
+		int totalGanado = abs(venta.cantidad * venta.precioVenta);
+		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1);
+
+		AumentadorPartida igualacionEnDebe(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
+
+		/* anotar cmv y mercaderias */
+		int totalPerdido = abs(venta.cantidad * venta.precioUnitario);
+
+		modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido * -1);
+		modificarCuenta(buscarCuenta("CMV"), totalPerdido);
+
+		/* guarda operacion */
+		operacionActual = pedirNombreDocx(operacionActual);
+		commitOperacion(operacionActual);
+	}
+}
+
+/* Pide llevar a cabo una operacion de compra. LLena las cuentas necesarios con los datos de la compra, pide saciar las perdidas en el Haber.
+	Por ultimo, guuarda la operacion*/
+void OP_CompraMercaderias()
+{
+	operMercaderia compra = seleccionarMercaderia(true);
+	int totalPerdido = compra.cantidad * compra.precioUnitario;
+
+	modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido);
+	AumentadorPartida igualacionEnHaber(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalPerdido);
+
+	/* guarda operacion */
+	operacionActual = pedirNombreDocx(operacionActual);
+	commitOperacion(operacionActual);
+}
+
 void EXP_LibroDiario()
 {
 	//inicializa archivo
@@ -447,8 +486,8 @@ void initVectores() {
 const std::vector<Opcion> OPCIONES = {
 	Opcion("Nueva Fecha", [] { pedirNuevaFecha(); }),
 	Opcion("Transaccion de Cuentas", [] { OP_Transaccion(); }),
-	//Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
-	//Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
+	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
+	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
 	Opcion("Nota de Credito", [] { NotaDC(true); }),
 	Opcion("Nota de Debito", [] { NotaDC(false); }),
 	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(); }),
