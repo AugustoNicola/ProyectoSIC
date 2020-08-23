@@ -5,30 +5,29 @@ SeleccionadorDeMercaderias::SeleccionadorDeMercaderias(bool _esCompra)
 {
 	if (intentarElegirMercaderia())
 	{
-		if (intentarElegirPrecio())
+		if (esCompra)
 		{
-			if (intentarElegirCantidad())
-			{
-				cargarRespuesta();
-			}
+			elegirPrecioCompra();
+			elegirCantidadCompra();
+		} else {
+			elegirCantidadVenta();
+			elegirPrecioVenta();
 		}
 	}
-	
 };
 
 bool SeleccionadorDeMercaderias::intentarElegirMercaderia()
 {
-	if (hayOpcionesDeMercaderiasValidas())
+	if (hayOpcionesMercaderiasValidas())
 	{
-		//hasta que se seleccione una opcion
 		std::string strOpcion;
 		do
 		{
-			cargarOpcionesDeMercaderia();
+			cargarOpcionesMercaderia();
 
 			std::cout << "\n\nElija una opcion: ";
 			std::cin >> strOpcion;
-		} while (!validarOpcionDeMercaderia(strOpcion));
+		} while (!validarOpcionMercaderia(strOpcion));
 		return true;
 	} else {
 		std::cout << "\nNo hay mercaderias disponibles!\n\nPresione cualquier tecla para cancelar";
@@ -37,7 +36,7 @@ bool SeleccionadorDeMercaderias::intentarElegirMercaderia()
 	}
 }
 
-bool SeleccionadorDeMercaderias::hayOpcionesDeMercaderiasValidas()
+bool SeleccionadorDeMercaderias::hayOpcionesMercaderiasValidas()
 {
 	if (!esCompra)
 	{
@@ -53,9 +52,9 @@ bool SeleccionadorDeMercaderias::hayOpcionesDeMercaderiasValidas()
 	return true;
 }
 
-void SeleccionadorDeMercaderias::cargarOpcionesDeMercaderia()
+void SeleccionadorDeMercaderias::cargarOpcionesMercaderia()
 {
-	unsigned int contadorDeOpciones = 1;
+	unsigned int contadorOpciones = 1;
 	std::vector <Mercaderia*> mercaderiasDisponibles = {};
 
 	system("CLS");
@@ -64,21 +63,20 @@ void SeleccionadorDeMercaderias::cargarOpcionesDeMercaderia()
 	{
 		if (esCompra || mercaderia.hayExistencias())
 		{
-			std::cout << "\n" << contadorDeOpciones << ". " << mercaderia.getNombre();
+			std::cout << "\n" << contadorOpciones << ". " << mercaderia.getNombre();
 			mercaderiasDisponibles.push_back((Mercaderia*)&mercaderia);
-			contadorDeOpciones++;
+			contadorOpciones++;
 		}
 	}
 	if (esCompra)
 	{
-		std::cout << "\n" << contadorDeOpciones << ". " << "Nueva mercaderia";
+		std::cout << "\n" << contadorOpciones << ". " << "Nueva mercaderia";
 	}
 }
 
-bool SeleccionadorDeMercaderias::validarOpcionDeMercaderia(std::string strOpcion)
+bool SeleccionadorDeMercaderias::validarOpcionMercaderia(std::string strOpcion)
 {
-	int opcionElegida;
-	opcionElegida = validarInt(strOpcion, {}, {}, 1, mercaderiasDisponibles.size() + (esCompra ? 1 : 0));
+	int opcionElegida = validarInt(strOpcion, {}, {}, 1, mercaderiasDisponibles.size() + (esCompra ? 1 : 0));
 
 	if (opcionElegida == 0)
 	{
@@ -109,148 +107,121 @@ bool SeleccionadorDeMercaderias::opcionCrearMercaderiaElegida(int opcionElegida)
 	return opcionElegida == mercaderiasDisponibles.size() + 1;
 }
 
-
-
-struct operMercaderia
+void SeleccionadorDeMercaderias::elegirPrecioCompra()
 {
-	int cantidad; int precioUnitario; int precioVenta;
-};
-operMercaderia seleccionarMercaderia(bool compra)
-{
-	/* crear/encontrar mercaderia */
-	
-
-	/* ----- Bucle validacion precio ----- */
-	std::vector<PrecioMerca*> posPrecio;
+	std::string strOpcionPrecio;
 	do
 	{
-		posPrecio = {}; //vector que asocia cada posicion con su precio-mercaderia
-		cont = 1; //contador para el output
-		offSet = 0;
+		listarPreciosMercaderia();
 
-		system("CLS");
-		std::cout << "=============== " << mercaElegida->getNombre() << ": PRECIOS UNITARIOS ===============\n";
-
-		/* Iteracion de precios */
-		for (unsigned int i = 0; i < mercaElegida->precios.size(); i++)
-		{
-			/* no es necesario verificar que al menos un precio tenga existencias, esta asegurado */
-
-			// si es venta, comprueba que haya existencias para filtrar opciones
-			if (compra || mercaElegida->precios[i].hayExistencias())
-			{
-				std::cout << "\n" << cont << ". " << mercaElegida->getNombre() << " ($" << mercaElegida->precios[i].precio << ")";
-				posPrecio.push_back((PrecioMerca*)&mercaElegida->precios[i]); //guarda lugar de memoria del precio-mercaderia actual en vector
-				cont++;
-			}
-		}
-
-		if (compra)
-		{
-			std::cout << "\n" << cont << ". " << "Nuevo precio unitario";
-			offSet = 1;
-		}
-
-		/* Input */
-
-		std::cout << "\n\n" << "Elija una opcion: ";
-		std::cin >> opStr;
-
-		/* Validacion/return */
-		op = validarInt(opStr, {}, {}, 1, posPrecio.size() + offSet);
-		if (op == 0)
-		{
-			/// valor no valido
-			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
-			_getch();
-		}
-	} while (op == 0);
-
-	/* crear/encontrar mercaderia */
-	system("CLS");
-	PrecioMerca* precioElegido;
-	if (op == posPrecio.size() + 1)
-	{
-		/// crear precio-mercaderia
-		do
-		{
-			std::cout << "=============== " << mercaElegida->getNombre() << ": NUEVO PRECIO UNITARIO ===============";
-			std::cout << "\n\nIngrese el nuevo precio de compra: $";
-			std::cin >> opStr;
-
-			op = validarInt(opStr, {}, {}, 1);
-			if (op == 0)
-			{
-				std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
-				_getch();
-				system("CLS");
-			}
-		} while (op == 0);
-
-		mercaElegida->precios.push_back(PrecioMerca(op)); //crea el nuevo precio-mercaderia
-		precioElegido = &(mercaElegida->precios.back()); //guarda el puntero al precio-mercaderia
-	}
-	else {
-		/// encontrar mercaderia
-		precioElegido = &(mercaElegida->precios[op - 1]);
-	}
-
-	/* en este punto ya tenemos una mercaElegida y un precioElegido!! */
-	/* ----- Bucle validacion compra/venta ----- */
-	int cantidad = 0; unsigned int precioVenta = 0;
-	do
-	{
-		/* validar cantidad */
-
-		system("CLS");
-		std::cout << "=============== " << mercaElegida->getNombre() << " ($" << precioElegido->precio << " c/u) ===============";
-		std::cout << "\n\nExistencias: " << ((precioElegido->hayExistencias()) ? precioElegido->dias.back().cantidad : 0) << " unidades"; //para compra, puede ser 0
-		std::cout << "\n\nElija la cantidad de mercaderia que se " << ((compra) ? "compra" : "vende") << ": ";
-		std::cin >> opStr;
-		//si es compra, no hay maximo; si es venta, es la cantidad de existencias actuales (que no puede ser 0)
-		op = validarInt(opStr, {}, {}, 1, ((!compra) ? precioElegido->dias.back().cantidad : INT_MAX));
-		if (op == 0)
-		{
-			/// cantidad no valida
-			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
-			_getch();
-			system("CLS");
-		}
-		else {
-			///cantidad valida!
-
-			cantidad = op; //set cantidad
-
-			if (!compra)
-			{
-				/// necesidad de validar precio venta
-				do
-				{
-					std::cout << "\n\nIngrese el precio unitario al cual se vende la mercaderia: $";
-					std::cin >> opStr;
-					op = validarInt(opStr, {}, {}, 1);
-					if (op == 0)
-					{
-						/// precio venta no valido
-						std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente";
-						_getch();
-					}
-					else {
-						/// precio venta valido!
-
-						precioVenta = op; // set precioVenta (solo en caso de venta)
-					}
-				} while (precioVenta == 0);
-			}
-		}
-	} while (cantidad == 0);
-
-	// carga la respuesta del struct
-	operMercaderia resp;
-	resp.cantidad = cantidad * ((compra) ? 1 : -1); resp.precioUnitario = precioElegido->precio; resp.precioVenta = precioVenta;
-
-	precioElegido->nuevoDiaPrecioMerca(fecha, resp.cantidad); //efectua la modificacion de existencias
-
-	return resp;
-
+		std::cout << "\n\Ingrese el precio de compra de la mercaderia: $";
+		std::cin >> strOpcionPrecio;
+	} while (!validarOpcionPrecioCompra(strOpcionPrecio));
 }
+
+void SeleccionadorDeMercaderias::listarPreciosMercaderia()
+{
+	system("CLS");
+	std::cout << "=============== " << mercaderiaElegida->getNombre() << ": PRECIOS UNITARIOS ===============\n";
+	for (const ExistenciasPrecioMercaderia& registro : mercaderiaElegida->getExistencias())
+	{
+		std::cout << "\n- $" << registro.precio << " (" << registro.existencias << " existencia/s)";
+	}
+}
+
+bool SeleccionadorDeMercaderias::validarOpcionPrecioCompra(std::string strOpcionPrecio)
+{
+	precioCompraElegido = validarInt(strOpcionPrecio, {}, {}, 1);
+	if (precioCompraElegido == 0)
+	{
+		/// valor no valido
+		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+		_getch();
+		return false;
+	}
+	return true;
+}
+
+void SeleccionadorDeMercaderias::elegirCantidadCompra()
+{
+	std::string strOpcionCantidad;
+	do
+	{
+		system("CLS");
+		std::cout << "=============== " << mercaderiaElegida->getNombre() << " ($" << precioCompraElegido << " c/u) ===============";
+		std::cout << "\nExistencias: " << (mercaderiaElegida->getExistenciasPrecio(precioCompraElegido)) << " unidades";
+		std::cout << "\n\nElija la cantidad de mercaderia que se compra: ";
+		std::cin >> strOpcionCantidad;
+
+	} while (!validarCantidadCompra(strOpcionCantidad));
+}
+
+bool SeleccionadorDeMercaderias::validarCantidadCompra(std::string strOpcionCantidad)
+{
+	cantidadElegida = validarInt(strOpcionCantidad, {}, {}, 1);
+	if (cantidadElegida == 0)
+	{
+		/// valor no valido
+		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+		_getch();
+		return false;
+	} else {
+		mercaderiaElegida->intentarCompra(fecha, precioCompraElegido, cantidadElegida);
+		return true;
+	}
+}
+
+void SeleccionadorDeMercaderias::elegirCantidadVenta()
+{
+	std::string strOpcionCantidad;
+	do
+	{
+		listarPreciosMercaderia();
+		std::cout << "\n\nIngrese la cantidad de mercaderia que se vende: ";
+		std::cin >> strOpcionCantidad;
+	} while (!validarCantidadVenta(strOpcionCantidad));
+}
+
+bool SeleccionadorDeMercaderias::validarCantidadVenta(std::string strOpcionCantidad)
+{
+	cantidadElegida = validarInt(strOpcionCantidad, {}, mercaderiaElegida->getExistenciasTotales(), 1, mercaderiaElegida->getExistenciasTotales());
+	if (cantidadElegida == 0)
+	{
+		/// valor no valido
+		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+		_getch();
+		return false;
+	} else {
+		mercaderiaElegida->intentarVenta(fecha, cantidadElegida);
+		return true;
+	}
+}
+
+void SeleccionadorDeMercaderias::elegirPrecioVenta()
+{
+	std::string strOpcionPrecio;
+	do
+	{
+		system("CLS");
+		std::cout << "=============== " << mercaderiaElegida->getNombre() << " (" << cantidadElegida << " unidades vendida/s) ===============";
+		std::cout << "\n\nElija el precio de venta de la/s mercaderia/s vendida/s: $";
+		std::cin >> strOpcionPrecio;
+	} while (!validarPrecioVenta(strOpcionPrecio));
+}
+
+bool SeleccionadorDeMercaderias::validarPrecioVenta(std::string strOpcionPrecio)
+{
+	precioVentaElegido = validarInt(strOpcionPrecio, {}, {}, 1);
+	if (precioVentaElegido == 0)
+	{
+		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+		_getch();
+		return false;
+	}
+	return true;
+}
+
+Mercaderia* SeleccionadorDeMercaderias::getMercaderia() { return mercaderiaElegida; }
+unsigned int SeleccionadorDeMercaderias::getPrecioCompra() {return precioCompraElegido;}
+unsigned int SeleccionadorDeMercaderias::getPrecioVenta() {return precioVentaElegido;}
+unsigned int SeleccionadorDeMercaderias::getCantidad() {return cantidadElegida;}

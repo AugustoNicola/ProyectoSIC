@@ -286,6 +286,7 @@ public:
 	}
 	
 	bool hayExistencias() const { return (!PreciosActuales.empty()); }
+	std::vector<ExistenciasPrecioMercaderia> getExistencias() const { return PreciosActuales; }
 	unsigned int getExistenciasPrecio(unsigned int precioBuscado) const
 	{
 		if (hayExistencias())
@@ -312,7 +313,7 @@ public:
 		}
 		return total;
 	}
-	
+
 	bool precioExiste(unsigned int precioBuscado) const
 	{
 		if (hayExistencias())
