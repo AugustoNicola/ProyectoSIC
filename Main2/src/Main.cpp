@@ -1,6 +1,7 @@
 #include "Main.h"
 
 std::vector<DiaOperaciones> DIAS = {};
+std::vector<Mercaderia> MERCADERIAS = {};
 std::vector<Cuenta> CUENTAS = {
 	/* ----- activo ----- */
 	Cuenta("Caja", Cuenta::TipoCuenta::ACTIVO_OPERATIVO),
@@ -243,18 +244,18 @@ void NotaDC(bool credito)
 
 void OP_VentaMercaderias()
 {
-	operMercaderia venta = seleccionarMercaderia(false);
-	if (venta.cantidad != 0)
+	SeleccionadorDeMercaderias venta(false);
+	if (venta.getCantidad() != 0)
 	{
-		/// venta posible!
+		/// venta realizada!
 
-		int totalGanado = abs(venta.cantidad * venta.precioVenta);
+		int totalGanado = venta.getTotalGanadoVenta();
 		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1);
 
 		AumentadorPartida igualacionEnDebe(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
 
 		/* anotar cmv y mercaderias */
-		int totalPerdido = abs(venta.cantidad * venta.precioUnitario);
+		int totalPerdido = venta.getTotalPerdidoVenta();
 
 		modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido * -1);
 		modificarCuenta(buscarCuenta("CMV"), totalPerdido);
@@ -265,19 +266,21 @@ void OP_VentaMercaderias()
 	}
 }
 
-/* Pide llevar a cabo una operacion de compra. LLena las cuentas necesarios con los datos de la compra, pide saciar las perdidas en el Haber.
-	Por ultimo, guuarda la operacion*/
 void OP_CompraMercaderias()
 {
-	operMercaderia compra = seleccionarMercaderia(true);
-	int totalPerdido = compra.cantidad * compra.precioUnitario;
+	SeleccionadorDeMercaderias compra(true);
+	if (compra.getCantidad() != 0)
+	{
+		/// compra realizada!
+		int totalCompraMercaderias = compra.getTotalGastadoCompra();
 
-	modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido);
-	AumentadorPartida igualacionEnHaber(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalPerdido);
+		modificarCuenta(buscarCuenta("Mercaderias"), totalCompraMercaderias);
+		AumentadorPartida igualacionEnHaber(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalCompraMercaderias * -1);
 
-	/* guarda operacion */
-	operacionActual = pedirNombreDocx(operacionActual);
-	commitOperacion(operacionActual);
+		/* guarda operacion */
+		operacionActual = pedirNombreDocx(operacionActual);
+		commitOperacion(operacionActual);
+	}
 }
 
 void EXP_LibroDiario()

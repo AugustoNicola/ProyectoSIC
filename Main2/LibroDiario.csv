@@ -1,8 +1,18 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/08'
-'';Caja;A+;'25';'0'
-'';Capital;PN+;'0';'25'
+'20/03'
+'';Caja;A+;'500';'0'
+'';Capital;PN+;'0';'500'
 '';segun Apertura
 
-'05/07'
+'01/07'
+'';Mercaderias;A+;'50';'0'
+'';Caja;A-;'0';'50'
+'';segun Compra
+
+'';Ventas;R+;'0';'1600'
+'';Fondo Fijo;A+;'1600';'0'
+'';Mercaderias;A-;'0';'50'
+'';CMV;R-;'50';'0'
+'';segun Ventaaaa
+

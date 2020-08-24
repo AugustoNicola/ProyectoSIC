@@ -14,8 +14,10 @@ private:
 
 	std::vector<Mercaderia*> mercaderiasDisponibles = {};
 	Mercaderia* mercaderiaElegida = nullptr;
+	unsigned int totalGastadoCompra = 0;
+	unsigned int totalPerdidoVenta = 0;
+	unsigned int totalGanadoVenta = 0;
 	int precioCompraElegido = 0;
-	int precioVentaElegido = 0;
 	int cantidadElegida = 0;
 public:
 	SeleccionadorDeMercaderias(bool _esCompra);
@@ -40,8 +42,9 @@ private:
 
 public:
 	Mercaderia* getMercaderia();
-	unsigned int getPrecioCompra();
-	unsigned int getPrecioVenta();
+	unsigned int getTotalGastadoCompra();
+	unsigned int getTotalPerdidoVenta();
+	unsigned int getTotalGanadoVenta();
 	unsigned int getCantidad();
 };
 

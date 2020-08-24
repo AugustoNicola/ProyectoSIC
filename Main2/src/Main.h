@@ -14,6 +14,7 @@
 #include "Vectores.h"
 #include "Varias.h"
 #include "AumentadorPartida.h"
+#include "SeleccionadorDeMercaderias.h"
 
 void OP_Capital();
 

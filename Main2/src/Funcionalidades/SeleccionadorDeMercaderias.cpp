@@ -55,7 +55,6 @@ bool SeleccionadorDeMercaderias::hayOpcionesMercaderiasValidas()
 void SeleccionadorDeMercaderias::cargarOpcionesMercaderia()
 {
 	unsigned int contadorOpciones = 1;
-	std::vector <Mercaderia*> mercaderiasDisponibles = {};
 
 	system("CLS");
 	std::cout << "=============== " << ((esCompra) ? "COMPRA" : "VENTA") << " DE MERCADERIAS ===============\n";
@@ -114,7 +113,7 @@ void SeleccionadorDeMercaderias::elegirPrecioCompra()
 	{
 		listarPreciosMercaderia();
 
-		std::cout << "\n\Ingrese el precio de compra de la mercaderia: $";
+		std::cout << "\n\nIngrese el precio de compra de la mercaderia: $";
 		std::cin >> strOpcionPrecio;
 	} while (!validarOpcionPrecioCompra(strOpcionPrecio));
 }
@@ -127,6 +126,7 @@ void SeleccionadorDeMercaderias::listarPreciosMercaderia()
 	{
 		std::cout << "\n- $" << registro.precio << " (" << registro.existencias << " existencia/s)";
 	}
+	if (!mercaderiaElegida->hayExistencias()) { std::cout << "\nTodavia no hay precios unitarios!"; }
 }
 
 bool SeleccionadorDeMercaderias::validarOpcionPrecioCompra(std::string strOpcionPrecio)
@@ -166,7 +166,7 @@ bool SeleccionadorDeMercaderias::validarCantidadCompra(std::string strOpcionCant
 		_getch();
 		return false;
 	} else {
-		mercaderiaElegida->intentarCompra(fecha, precioCompraElegido, cantidadElegida);
+		totalGastadoCompra = mercaderiaElegida->registrarCompra(fecha, precioCompraElegido, cantidadElegida);
 		return true;
 	}
 }
@@ -192,7 +192,7 @@ bool SeleccionadorDeMercaderias::validarCantidadVenta(std::string strOpcionCanti
 		_getch();
 		return false;
 	} else {
-		mercaderiaElegida->intentarVenta(fecha, cantidadElegida);
+		totalPerdidoVenta = mercaderiaElegida->registarVenta(fecha, cantidadElegida);
 		return true;
 	}
 }
@@ -211,17 +211,19 @@ void SeleccionadorDeMercaderias::elegirPrecioVenta()
 
 bool SeleccionadorDeMercaderias::validarPrecioVenta(std::string strOpcionPrecio)
 {
-	precioVentaElegido = validarInt(strOpcionPrecio, {}, {}, 1);
+	int precioVentaElegido = validarInt(strOpcionPrecio, {}, {}, 1);
 	if (precioVentaElegido == 0)
 	{
 		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
 		_getch();
 		return false;
 	}
+	totalGanadoVenta = precioVentaElegido * cantidadElegida;
 	return true;
 }
 
 Mercaderia* SeleccionadorDeMercaderias::getMercaderia() { return mercaderiaElegida; }
-unsigned int SeleccionadorDeMercaderias::getPrecioCompra() {return precioCompraElegido;}
-unsigned int SeleccionadorDeMercaderias::getPrecioVenta() {return precioVentaElegido;}
-unsigned int SeleccionadorDeMercaderias::getCantidad() {return cantidadElegida;}
+unsigned int SeleccionadorDeMercaderias::getTotalGastadoCompra() { return totalGastadoCompra; }
+unsigned int SeleccionadorDeMercaderias::getTotalPerdidoVenta() { return totalPerdidoVenta; }
+unsigned int SeleccionadorDeMercaderias::getTotalGanadoVenta() { return totalGanadoVenta; }
+unsigned int SeleccionadorDeMercaderias::getCantidad() { return cantidadElegida; }
