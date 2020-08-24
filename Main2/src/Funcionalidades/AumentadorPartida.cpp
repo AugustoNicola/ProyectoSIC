@@ -25,7 +25,7 @@
 	{
 		if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::ACTIVO_OPERATIVO)
 		{
-			cuentasSeleccionables.push_back(buscarCuenta("Mercaderias"));
+			if (modoAumento != ModoAumento::Haber) { cuentasSeleccionables.push_back(buscarCuenta("Mercaderias")); }
 			cuentasSeleccionables.insert(cuentasSeleccionables.end(), ACTIVOS.begin(), ACTIVOS.end());
 		}
 		if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::PASIVO_OPERATIVO)
@@ -98,18 +98,9 @@
 			if (cuentaOperacionActualEsMercaderia())
 			{
 				/// hay mercaderias!
-				/*
-				operMercaderia operMerca = seleccionarMercaderia(true);
-				aumentoActual = operMerca.cantidad * operMerca.precioUnitario;
-
-				if (aumentoActual > 0)
-				{
-					aumentoTotal += aumentoActual;
-					
-					
-					(buscarCuenta("Mercaderias"), aumentoActual);
-				}
-				*/
+				
+				SeleccionadorDeMercaderias operacionMercaderia(true);
+				aumentoActual = operacionMercaderia.getTotalGastadoCompra();
 			}
 			else {
 				elegirAumentoActual();
@@ -140,7 +131,7 @@
 
 	bool AumentadorPartida::cuentaOperacionActualEsMercaderia()
 	{
-		return cuentaOperacionActual->getNombre() == "Mercaderias";
+		return *cuentaOperacionActual == "Mercaderias";
 	}
 
 	void AumentadorPartida::elegirAumentoActual()
@@ -190,8 +181,11 @@
 
 	void AumentadorPartida::efectuarAumento()
 	{
-		aumentoTotal += aumentoActual;
-		modificarCuenta(cuentaOperacionActual, aumentoActual);
+		if (aumentoActual != 0)
+		{
+			aumentoTotal += aumentoActual;
+			modificarCuenta(cuentaOperacionActual, aumentoActual);
+		}
 	}
 
 	bool AumentadorPartida::noHayLimite()

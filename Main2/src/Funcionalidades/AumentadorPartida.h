@@ -8,6 +8,7 @@
 #include "Globales.h"
 #include "Vectores.h"
 #include "Varias.h"
+#include "SeleccionadorDeMercaderias.h"
 
 enum class ModoAumento
 {

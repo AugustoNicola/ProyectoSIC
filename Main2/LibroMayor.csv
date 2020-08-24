@@ -1,29 +1,35 @@
 Caja
 Debe;Haber
-'500';'50'
-Saldo deudor: $450
+'10000';'3010'
+Saldo deudor: $6990
 
 Fondo Fijo
 Debe;Haber
-'1600';''
-Saldo deudor: $1600
+'8000';''
+Saldo deudor: $8000
 
 Mercaderias
 Debe;Haber
-Cuenta saldada: $0
+'1500';'500'
+Saldo deudor: $1000
+
+Proovedores
+Debe;Haber
+'';'90'
+Saldo acreedor: $90
 
 Capital
 Debe;Haber
-'';'500'
-Saldo acreedor: $500
+'';'11500'
+Saldo acreedor: $11500
 
 Ventas
 Debe;Haber
-'';'1600'
-Saldo acreedor: $1600
+'';'8000'
+Saldo acreedor: $8000
 
 CMV
 Debe;Haber
-'50';''
-Saldo deudor: $50
+'3600';''
+Saldo deudor: $3600
 
