@@ -156,7 +156,11 @@ void NotaDC(bool credito)
 	/* verificacion mercaderias */
 	if (operacionModif->contieneCuenta("Mercaderias"))
 	{
-		/// es compra-venta!
+		system("CLS");
+		std::cout << "Funcionalidad no admitida: mercaderia interviniente!";
+		std::cout << "\n\nPresione cualquier tecla para volver...";
+		_getch();
+		return;
 	}
 	else {
 		/// no es compra-venta!

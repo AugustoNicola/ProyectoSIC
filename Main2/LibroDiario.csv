@@ -1,36 +1,9 @@
 '';Cuenta;Modif;Debe;Haber
 
-'01/01'
+'20/03'
+'';Mercaderias;A+;'2500';'0'
 '';Caja;A+;'10000';'0'
-'';Mercaderias;A+;'1500';'0'
-'';Capital;PN+;'0';'11500'
+'';Capital;PN+;'0';'12500'
 '';segun Apertura
 
-'08/08'
-'';Mercaderias;A+;'350';'0'
-'';Caja;A-;'0';'350'
-'';segun Compra Motos
-
-'';Mercaderias;A+;'650';'0'
-'';Caja;A-;'0';'650'
-'';segun Compra Autos 650
-
-'';Mercaderias;A+;'2000';'0'
-'';Caja;A-;'0';'2000'
-'';segun Compra Autos 500
-
-'';Mercaderias;A+;'100';'0'
-'';Caja;A-;'0';'10'
-'';Proovedores;P+;'0';'90'
-'';segun Compra c Deuda Auto 100
-
-'';Ventas;R+;'0';'8000'
-'';Fondo Fijo;A+;'8000';'0'
-'';Mercaderias;A-;'0';'3600'
-'';CMV;R-;'3600';'0'
-'';segun Venta Autos 8 Unidades
-
-'';Mercaderias;A+;'650';'0'
-'';Fondo Fijo;A-;'0';'650'
-'';segun Compra Autis
-
+'01/01'
