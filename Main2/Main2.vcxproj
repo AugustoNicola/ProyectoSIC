@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Funcionalidades\SeleccionadorDeCuentas.h" />
     <ClInclude Include="src\Funcionalidades\SeleccionadorDeMercaderias.h" />
     <ClInclude Include="src\Clases\clases.h" />
     <ClInclude Include="src\Clases\cuenta.h" />
@@ -169,6 +170,7 @@
   <ItemGroup>
     <ClCompile Include="src\Funcionalidades\SeleccionadorDeMercaderias.cpp" />
     <ClCompile Include="src\Funcionalidades\AumentadorPartida.cpp" />
+    <ClCompile Include="src\Funcionalidades\SeleccionadorDeCuentas.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\main_falso.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

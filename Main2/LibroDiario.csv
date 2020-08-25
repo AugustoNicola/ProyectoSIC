@@ -1,9 +1,10 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/03'
-'';Mercaderias;A+;'2500';'0'
-'';Caja;A+;'10000';'0'
-'';Capital;PN+;'0';'12500'
+'20/04'
+'';Caja;A+;'500';'0'
+'';Fondo Fijo;A+;'100';'0'
+'';Inmueble destinado a la Renta;A+;'570';'0'
+'';Capital;PN+;'0';'1170'
 '';segun Apertura
 
-'01/01'
+'07/07'

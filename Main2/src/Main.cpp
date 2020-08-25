@@ -87,10 +87,10 @@ void OP_Capital()
 	pedirNuevaFecha("Ingrese la fecha de apertura");
 
 	//aumenta operaciones hasta que el usuario decida
-	AumentadorPartida aumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+	int aumentoTotal = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
 
 	/* iguala cuentas con Capital(PN+) */
-	modificarCuenta(buscarCuenta("Capital"), aumento.getAumentoTotal() * -1);
+	modificarCuenta(buscarCuenta("Capital"), aumentoTotal * -1);
 
 	/* finaliza operacion*/
 	operacionActual->setDocumento("Apertura");
@@ -101,9 +101,8 @@ void OP_Capital()
 void OP_Transaccion()
 {
 	/* ingreso de cuentas */
-	AumentadorPartida aumentoPerdida(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {});
-	int perdida = abs(aumentoPerdida.getAumentoTotal()); //le quita el signo negativo
-	AumentadorPartida aumentoGanancia(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", perdida);
+	int aumentoPerdida = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {});
+	int aumentoGanancia = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", abs(aumentoPerdida));
 
 	/* commit de operacion */
 	operacionActual = pedirNombreDocx(operacionActual);
@@ -234,7 +233,7 @@ void NotaDC(bool credito)
 
 				/* realizar aumentoPartida para saciarlo */
 				std::string mensaje = "Elija las cuentas que saldan el "; mensaje.append(((credito) ? "credito" : "debito"));
-				AumentadorPartida aum(Cuenta::TipoCuenta::F_OPER, tipo, mensaje, modificacion * -1);
+				int aumento = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, tipo, mensaje, modificacion * -1);
 
 				operacionActual = pedirNombreDocx(operacionActual);
 				commitOperacion(operacionActual);
@@ -256,7 +255,7 @@ void OP_VentaMercaderias()
 		int totalGanado = venta.getTotalGanadoVenta();
 		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1);
 
-		AumentadorPartida igualacionEnDebe(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
+		int igualacionEnDebe = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
 
 		/* anotar cmv y mercaderias */
 		int totalPerdido = venta.getTotalPerdidoVenta();
@@ -279,7 +278,7 @@ void OP_CompraMercaderias()
 		int totalCompraMercaderias = compra.getTotalGastadoCompra();
 
 		modificarCuenta(buscarCuenta("Mercaderias"), totalCompraMercaderias);
-		AumentadorPartida igualacionEnHaber(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalCompraMercaderias * -1);
+		int igualacionEnHaber = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalCompraMercaderias * -1);
 
 		/* guarda operacion */
 		operacionActual = pedirNombreDocx(operacionActual);
