@@ -1,10 +1,7 @@
-Ventas;0
-CMV;0
+Ventas;$0
+CMV;$0
 
-Utilidad Bruta;0
+Utilidad Bruta;$0
 
-Gastos;-120
-Depreciacion de Bienes de Uso;-44
-Faltante de Caja;-250
 
-Utilidad Neto;$-414
+Utilidad Neto;$0

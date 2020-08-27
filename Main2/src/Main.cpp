@@ -342,6 +342,11 @@ void EXP_LibroDiario()
 
 	} //dias
 	LibroDiario.close();
+
+	system("CLS");
+	std::cout << "Libro diario exportado como LibroDiario.csv en el directorio actual!";
+	std::cout << "\n\nPresione cualquier tecla para continuar...";
+	_getch();
 }
 void EXP_LibroMayor()
 {
@@ -393,6 +398,11 @@ void EXP_LibroMayor()
 	}
 
 	LibroMayor.close();
+
+	system("CLS");
+	std::cout << "Libro mayor exportado como LibroMayor.csv en el directorio actual!";
+	std::cout << "\n\nPresione cualquier tecla para continuar...";
+	_getch();
 }
 void EXP_EstadoResultados()
 {
@@ -414,6 +424,11 @@ void EXP_EstadoResultados()
 	EstadoResultados << std::endl << "Utilidad Neto;$" << utilidad;
 
 	EstadoResultados.close();
+
+	system("CLS");
+	std::cout << "Estado de Resultados exportado como EstadoResultados.csv en el directorio actual!";
+	std::cout << "\n\nPresione cualquier tecla para continuar...";
+	_getch();
 }
 
 std::string formatear(std::string texto)
