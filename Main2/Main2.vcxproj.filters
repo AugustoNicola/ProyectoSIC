@@ -62,9 +62,6 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="src\main_falso.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="src\Funcionalidades\SeleccionadorDeMercaderias.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>

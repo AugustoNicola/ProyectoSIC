@@ -1,10 +1,22 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/04'
-'';Caja;A+;'500';'0'
-'';Fondo Fijo;A+;'100';'0'
-'';Inmueble destinado a la Renta;A+;'570';'0'
-'';Capital;PN+;'0';'1170'
+'20/02'
+'';Caja;A+;'1500';'0'
+'';Mercaderias;A+;'1300';'0'
+'';Capital;PN+;'0';'2800'
 '';segun Apertura
 
-'07/07'
+'05/08'
+'';Caja;A-;'0';'120'
+'';Formulas;A+;'120';'0'
+'';segun Adawd
+
+'07/08'
+'';Proovedores;P+;'0';'100'
+'';Caja;A+;'100';'0'
+'';segun s
+
+'';Proovedores;P+;'0';'150'
+'';Caja;A+;'150';'0'
+'';segun gaeea
+

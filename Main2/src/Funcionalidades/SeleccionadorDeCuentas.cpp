@@ -71,7 +71,7 @@ void SeleccionadorDeCuentas::configurarFiltroCuentas()
 	}
 	if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::GASTO_OPERATIVO)
 	{
-		cuentasSeleccionables.insert(cuentasSeleccionables.end(), R_NEGS.begin(), R_NEGS.end());
+		cuentasSeleccionables.insert(cuentasSeleccionables.end(), GASTOS.begin(), GASTOS.end());
 	}
 }
 

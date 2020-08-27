@@ -76,7 +76,7 @@ std::vector<Cuenta> CUENTAS = {
 };
 std::vector<Cuenta*> ACTIVOS = {};
 std::vector<Cuenta*> PASIVOS = {};
-std::vector<Cuenta*> R_NEGS = {};
+std::vector<Cuenta*> GASTOS = {};
 
 std::string fecha;
 Operacion oper;
@@ -268,7 +268,6 @@ void OP_VentaMercaderias()
 		commitOperacion(operacionActual);
 	}
 }
-
 void OP_CompraMercaderias()
 {
 	SeleccionadorDeMercaderias compra(true);
@@ -295,62 +294,50 @@ void EXP_LibroDiario()
 
 	std::string nombreCuenta;
 	std::string modif;
-	int debe; int haber;
+	bool esDebe;
 
-	///recorre dias
-	for (DiaOperaciones dia : DIAS)
+	for (DiaOperaciones &dia : DIAS)
 	{
-		LibroDiario << "'" << dia.getFecha() << "'" << std::endl; // "'01/01'"
+		LibroDiario << formatear(dia.getFecha()) << std::endl; // "'01/01'"
 
-		/// recorre operaciones
 		for (const Operacion* operacion : dia.getOperaciones())
 		{
-
-			///recorre lineas
 			for (const Linea* linea : operacion->getLineas())
 			{
-
-				/* calcula valores */
-
 				nombreCuenta = linea->cuenta->getNombre();
-				
-				//columnas debe y haber
-				int delta = linea->delta;
-				debe = ((delta > 0) ? delta : 0);
-				haber = ((delta < 0) ? abs(delta) : 0);
+				esDebe = (linea->delta > 0) ? true : false;
 
 				// modificador
 				switch (linea->cuenta->getTipo())
 				{
 				case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
 				case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
-					modif = ((debe != 0) ? "A+" : "A-");
+					modif = esDebe ? "A+" : "A-";
 					break;
 				case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
 				case Cuenta::TipoCuenta::PASIVO_NO_OPERATIVO:
-					modif = ((haber != 0) ? "P+" : "P-");
+					modif = esDebe ? "P-" : "P+";
 					break;
 				case Cuenta::TipoCuenta::GASTO_OPERATIVO:
 				case Cuenta::TipoCuenta::GASTO_NO_OPERATIVO:
 				case Cuenta::TipoCuenta::GANANCIA:
-					modif = ((haber != 0) ? "R+" : "R-");
+					modif = esDebe ? "R-" : "R+";
 					break;
 				case Cuenta::TipoCuenta::PATRIMONIO_NETO:
-					modif = ((haber != 0) ? "PN+" : "PN-");
+					modif = esDebe ? "PN-" : "PN+";
 					break;
 				}
 
-				/* imprime linea! */
 
 				LibroDiario << "'';"
-							<< (nombreCuenta) << ";"
-							<< (modif) << ";" 
-							<< formatear(std::to_string(debe)) << ";"
-							<< formatear(std::to_string(haber)) << std::endl;
+							<< nombreCuenta << ";"
+							<< modif << ";" 
+							<< formatear(esDebe ? linea->delta : 0) << ";"
+							<< formatear(!esDebe ? abs(linea->delta) : 0) << std::endl;
 
 			} //lineas
 
-			LibroDiario << "'';segun " << operacion->getDocumento() << std::endl << std::endl; //imprime documento
+			LibroDiario << "'';segun " << operacion->getDocumento() << std::endl << std::endl;
 		} //operaciones
 
 	} //dias
@@ -358,69 +345,42 @@ void EXP_LibroDiario()
 }
 void EXP_LibroMayor()
 {
-	//inicializa archivo
 	std::ofstream LibroMayor; LibroMayor.open("LibroMayor.csv");
 
 	std::vector<int> debes; std::vector<int> haberes;
 	int saldo;
 	bool salir;
 
-	for (Cuenta cuenta : CUENTAS)
+	for (Cuenta &cuenta : CUENTAS)
 	{
 		debes.clear(); haberes.clear();
 
 		if (cuenta.hayDias())
 		{
-			/// hay dias en la cuenta
 			LibroMayor << cuenta.getNombre() << std::endl << "Debe;Haber" << std::endl;
 
 			saldo = 0; salir = false;
-			/* separa los deltas en positivos y negativos */
-			for (DiaCuenta dia : cuenta.getDias())
+
+			for (DiaCuenta &dia : cuenta.getDias())
 			{
 				if (dia.delta > 0)
 				{
 					debes.push_back(dia.delta);
 				} else if (dia.delta < 0)
 				{
-					haberes.push_back(dia.delta);
+					haberes.push_back(abs(dia.delta));
 				}
 
 				saldo += dia.delta;
 			}
 
-			/* comienza a imprimir los valores */
-			if (!debes.empty() && !haberes.empty())
+			unsigned int lineaActual = 0;
+			while (lineaActual < debes.size() || lineaActual < haberes.size())
 			{
-				for (unsigned int deb = 0; deb < debes.size(); deb++)
-				{
-					for (unsigned int hab = 0; hab < haberes.size(); hab++)
-					{
-						if (!salir)
-						{
-							/// imprime debe y haber en misma columna!
-							LibroMayor << formatear(std::to_string(debes[deb])) << ";" << formatear(std::to_string(abs(haberes[hab]))) << std::endl;
-
-							if (debes[deb] == debes.back() && haberes[hab] != haberes.back())
-							{
-								/// ultimo debe pero quedan haberes, imprime solo haberes
-								imprimeValoresColumnaLibroMayor(LibroMayor, haberes, hab+1);
-								salir = true;
-							}
-							else if (haberes[hab] == haberes.back() && debes[deb] != debes.back())
-							{
-								/// ultimo haber pero quedan debes, imprime solo debes
-								imprimeValoresColumnaLibroMayor(LibroMayor, debes, deb+1);
-								salir = true;
-							}
-						}
-					}
-				}
-			}
-			else if (debes.empty() || haberes.empty())
-			{
-				///imprime solo una de las dos columnas
-				imprimeValoresColumnaLibroMayor(LibroMayor, ((!debes.empty()) ? debes : haberes ), 0);
+				LibroMayor
+					<< (lineaActual < debes.size() ? formatear(debes[lineaActual]) : "") << ";"
+					<< (lineaActual < haberes.size() ? formatear(haberes[lineaActual]) : "") << std::endl;
+				lineaActual++;
 			}
 
 			if (saldo != 0)
@@ -439,53 +399,42 @@ void EXP_EstadoResultados()
 	std::ofstream EstadoResultados; EstadoResultados.open("EstadoResultados.csv");
 	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
 
-	/* Imprime Utilidad Bruta */
-	EstadoResultados << "Ventas;" << buscarCuenta("Ventas")->getSaldoActual() * -1 << std::endl;
-	EstadoResultados << "CMV;" << buscarCuenta("CMV")->getSaldoActual() * -1 << std::endl << std::endl;
-	EstadoResultados << "Utilidad Bruta;" << utilidad << std::endl << std::endl;
+	EstadoResultados << "Ventas;$" << buscarCuenta("Ventas")->getSaldoActual() * -1 << std::endl;
+	EstadoResultados << "CMV;$" << buscarCuenta("CMV")->getSaldoActual() * -1 << std::endl << std::endl;
+	EstadoResultados << "Utilidad Bruta;$" << utilidad << std::endl << std::endl;
 
-	/* Imprime Utilidad Neto */
-
-	for (Cuenta *cuentasGastos : R_NEGS)
+	for (const Cuenta *cuentaGastos : GASTOS)
 	{
-		if (cuentasGastos->getSaldoActual() != 0)
+		if (cuentaGastos->getSaldoActual() != 0)
 		{
-			EstadoResultados << cuentasGastos->getNombre() << ";" << cuentasGastos->getSaldoActual() * -1 << std::endl;
-			utilidad -= cuentasGastos->getSaldoActual();
+			EstadoResultados << cuentaGastos->getNombre() << ";$" << cuentaGastos->getSaldoActual() * -1 << std::endl;
+			utilidad -= cuentaGastos->getSaldoActual();
 		}
 	}
-
 	EstadoResultados << std::endl << "Utilidad Neto;$" << utilidad;
+
 	EstadoResultados.close();
 }
 
-void imprimeValoresColumnaLibroMayor(std::ofstream& LibroMayor, std::vector<int> valores, unsigned int pos)
-{
-
-	for (unsigned int i = pos; i < valores.size(); i++)
-	{
-		if (valores[i] > 0)
-		{
-			LibroMayor << formatear(std::to_string(abs(valores[i]))) << ";''" << std::endl;
-		}
-		else {
-			LibroMayor << "'';" << formatear(std::to_string(abs(valores[i]))) << std::endl;
-		}
-	}
-
-}
 std::string formatear(std::string texto)
 {
 	texto.insert(0, "'"); texto.append("'");
 	return texto;
 }
+std::string formatear(int texto)
+{
+	std::string strTexto = std::to_string(texto);
+	strTexto.insert(0, "'"); strTexto.append("'");
+	return strTexto;
+}
+
 
 void initVectores() {
 	for (unsigned int i = 0; i < CUENTAS.size(); i++)
 	{
 		if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
 		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { R_NEGS.push_back((Cuenta*)&CUENTAS[i]); }
+		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { GASTOS.push_back((Cuenta*)&CUENTAS[i]); }
 	}
 }
 

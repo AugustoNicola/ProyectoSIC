@@ -26,7 +26,7 @@ void EXP_LibroDiario();
 void EXP_LibroMayor();
 void EXP_EstadoResultados();
 
-void imprimeValoresColumnaLibroMayor(std::ofstream& LibroMayor, std::vector<int> valores, unsigned int pos);
 std::string formatear(std::string texto);
+std::string formatear(int valor);
 
 void initVectores();

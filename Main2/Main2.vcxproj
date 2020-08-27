@@ -172,12 +172,6 @@
     <ClCompile Include="src\Funcionalidades\AumentadorPartida.cpp" />
     <ClCompile Include="src\Funcionalidades\SeleccionadorDeCuentas.cpp" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\main_falso.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="src\Utilidades\Varias.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
