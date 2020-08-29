@@ -22,7 +22,6 @@ Cuenta* SeleccionadorDeCuentas::elegirCuenta(Cuenta::TipoCuenta _filtroCuentas, 
 	int opcionElegida;
 	do
 	{
-		system("CLS");
 		mostrarCuentas();
 		std::cout << "\n\n" << MsgEleccionCuenta << ": ";
 		std::cin >> strOpcionElegida;

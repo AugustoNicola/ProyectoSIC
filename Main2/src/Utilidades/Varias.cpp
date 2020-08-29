@@ -38,6 +38,20 @@ void header(std::string texto, unsigned int espacios)
 	
 }
 
+bool validarStr(std::string str)
+{
+	std::cin.clear();
+	std::cin.ignore(1000, '\n');
+
+	if (str.empty())
+	{
+		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+		_getch();
+		return false;
+	}
+	return true;
+}
+
 bool validarFecha(std::string str)
 {
 	std::cin.clear();
@@ -153,11 +167,11 @@ void modificarCuenta(Cuenta* cuenta, int modificacion)
 
 Cuenta* buscarCuenta(std::string nombre)
 {
-	for (unsigned int i = 0; i < CUENTAS.size(); i++)
+	for (Cuenta &cuenta : CUENTAS)
 	{
-		if (CUENTAS[i].getNombre() == nombre)
+		if (cuenta.getNombre() == nombre)
 		{
-			return (Cuenta*)&CUENTAS[i];
+			return (Cuenta*)&cuenta;
 		}
 	}
 	return nullptr;
@@ -177,15 +191,8 @@ Operacion* pedirNombreDocx(Operacion* op)
 		header("OPERACION FINALIZADA", 2);
 		std::cout << "Ingrese el nombre del documento de esta operacion: ";
 		std::getline(std::cin, nombre);
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
+	} while (!validarStr(nombre));
 
-		if (nombre.empty())
-		{
-			std::cout << "\n\nValor ingresado no valido, presione cualquier tecla para intentarlo nuevamente.";
-			_getch();
-		}
-	} while (nombre.empty());
 	op->setDocumento(nombre);
 	return op;
 }

@@ -88,9 +88,12 @@ bool SeleccionadorDeMercaderias::validarOpcionMercaderia(std::string strOpcion)
 	if (opcionCrearMercaderiaElegida(opcionElegida))
 	{
 		std::string strNuevaMercaderia;
-		header("NUEVA MERCADERIA", 2);
-		std::cout << "Ingrese el nombre de la nueva mercaderia: ";
-		std::cin >> strNuevaMercaderia;
+		do
+		{
+			header("NUEVA MERCADERIA", 2);
+			std::cout << "Ingrese el nombre de la nueva mercaderia: ";
+			std::getline(std::cin, strNuevaMercaderia);
+		} while (!validarStr(strNuevaMercaderia));
 
 		MERCADERIAS.push_back(Mercaderia(strNuevaMercaderia));
 		mercaderiaElegida = &(MERCADERIAS.back());

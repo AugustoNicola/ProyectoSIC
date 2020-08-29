@@ -38,23 +38,23 @@ struct RegistroPrecio
 
 struct DiaMercaderia
 {
-	std::string fecha;
-	std::vector<RegistroPrecio> registros;
+	std::string Fecha;
+	std::vector<RegistroPrecio> Registros;
 
 	void crearRegistro(unsigned int precio, int delta, unsigned int existenciasActuales)
 	{
-		registros.push_back(RegistroPrecio(precio, delta, existenciasActuales));
+		Registros.push_back(RegistroPrecio(precio, delta, existenciasActuales));
 	}
 
 	void borrarRegistroPorPrecio(unsigned int precioAEliminar)
 	{
 		if (hayRegistros())
 		{
-			for (unsigned int i = 0; i < registros.size(); i++)
+			for (unsigned int i = 0; i < Registros.size(); i++)
 			{
-				if (registros[i].precio == precioAEliminar)
+				if (Registros[i].precio == precioAEliminar)
 				{
-					registros.erase(registros.begin() + i);
+					Registros.erase(Registros.begin() + i);
 				}
 			}
 		}
@@ -64,9 +64,9 @@ struct DiaMercaderia
 	{
 		if (hayRegistros())
 		{
-			for (unsigned int i = 0; i < registros.size(); i++)
+			for (RegistroPrecio& registro : Registros)
 			{
-				if (registros[i].precio == precio) { return &registros[i]; }
+				if (registro.precio == precio) { return &registro; }
 			}
 		}
 		return nullptr;
@@ -76,20 +76,20 @@ struct DiaMercaderia
 	{
 		if (hayRegistros())
 		{
-			for (unsigned int i = 0; i < registros.size(); i++)
+			for (unsigned int i = 0; i < Registros.size(); i++)
 			{
-				if (registros[i].delta == 0)
+				if (Registros[i].delta == 0)
 				{
-					registros.erase(registros.begin() + i);
+					Registros.erase(Registros.begin() + i);
 				}
 			}
 		}
 	}
 
-	bool hayRegistros() const { return !registros.empty(); }
+	bool hayRegistros() const { return !Registros.empty(); }
 
 	DiaMercaderia(std::string _fecha)
-		: fecha(_fecha) { registros = {}; }
+		: Fecha(_fecha) { Registros = {}; }
 };
 
 class Mercaderia
@@ -172,7 +172,7 @@ private:
 	{
 		if (hayDias())
 		{
-			return (Dias.back().fecha == fechaBuscada);
+			return (Dias.back().Fecha == fechaBuscada);
 		}
 		return false;
 	}
@@ -215,11 +215,11 @@ private:
 		if (hayExistencias())
 		{
 			ExistenciasPrecioMercaderia* precioMasBajo = &ExistenciasPrecioMercaderia(99999);
-			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			for (ExistenciasPrecioMercaderia& registro : PreciosActuales)
 			{
-				if (PreciosActuales[i].precio < precioMasBajo->precio)
+				if (registro.precio < precioMasBajo->precio)
 				{
-					precioMasBajo = &PreciosActuales[i];
+					precioMasBajo = &registro;
 				}
 			}
 			return precioMasBajo;
@@ -264,9 +264,9 @@ public:
 		std::vector<const DiaMercaderia*> dias;
 		if (hayDias())
 		{
-			for (unsigned int i = 0; i < Dias.size(); i++)
+			for (const DiaMercaderia& dia : Dias)
 			{
-				dias.push_back( const_cast<const DiaMercaderia*>(&Dias[i]) );
+				dias.push_back(&dia);
 			}
 		}
 		return dias;
@@ -275,11 +275,11 @@ public:
 	{
 		if (hayDias())
 		{
-			for (unsigned int i = 0; i < Dias.size(); i++)
+			for (const DiaMercaderia& dia : Dias)
 			{
-				if (Dias[i].fecha == fechaBuscada)
+				if (dia.Fecha == fechaBuscada)
 				{
-					return const_cast<const DiaMercaderia*>(&Dias[i]);
+					return &dia;
 				}
 			}
 		}
@@ -292,11 +292,11 @@ public:
 	{
 		if (hayExistencias())
 		{
-			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			for (const ExistenciasPrecioMercaderia& registro : PreciosActuales)
 			{
-				if (PreciosActuales[i].precio == precioBuscado)
+				if (registro.precio == precioBuscado)
 				{
-					return PreciosActuales[i].existencias;
+					return registro.existencias;
 				}
 			}
 		}
@@ -307,9 +307,9 @@ public:
 		unsigned int total = 0;
 		if (hayExistencias())
 		{
-			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			for (const ExistenciasPrecioMercaderia& registro : PreciosActuales)
 			{
-				total += PreciosActuales[i].existencias;
+				total += registro.existencias;
 			}
 		}
 		return total;
@@ -319,9 +319,9 @@ public:
 	{
 		if (hayExistencias())
 		{
-			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			for (const ExistenciasPrecioMercaderia& registro : PreciosActuales)
 			{
-				if (PreciosActuales[i].precio == precioBuscado)
+				if (registro.precio == precioBuscado)
 				{
 					return true;
 				}
@@ -334,9 +334,9 @@ public:
 		std::vector<unsigned int> preciosActuales = {};
 		if (hayExistencias())
 		{
-			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			for (const ExistenciasPrecioMercaderia& registro : PreciosActuales)
 			{
-				preciosActuales.push_back(PreciosActuales[i].precio);
+				preciosActuales.push_back(registro.precio);
 			}
 		}
 		return preciosActuales;
@@ -345,11 +345,11 @@ public:
 	{
 		if (hayExistencias())
 		{
-			for (unsigned int i = 0; i < PreciosActuales.size(); i++)
+			for (ExistenciasPrecioMercaderia& registro : PreciosActuales)
 			{
-				if (PreciosActuales[i].precio == precioBuscado)
+				if (registro.precio == precioBuscado)
 				{
-					return &PreciosActuales[i];
+					return &registro;
 				}
 			}
 		}

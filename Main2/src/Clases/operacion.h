@@ -34,9 +34,9 @@ public:
 		std::vector<const Linea*> lineas;
 		if(hayLineas())
 		{
-			for (unsigned int i = 0; i < Lineas.size(); i++)
+			for (const Linea& linea : Lineas)
 			{
-				lineas.push_back(const_cast<const Linea*>(&Lineas[i]));
+				lineas.push_back(const_cast<const Linea*>(&linea));
 			}
 		}
 		return lineas;
@@ -46,9 +46,9 @@ public:
 	{
 		if (hayLineas())
 		{
-			for (unsigned int i = 0; i < Lineas.size(); i++)
+			for (const Linea& linea : Lineas)
 			{
-				if (Lineas[i].cuenta->getNombre() == cuentaBuscada)
+				if (linea.cuenta->getNombre() == cuentaBuscada)
 				{
 					return true;
 				}
@@ -73,9 +73,9 @@ public:
 	{
 		if (hayOperaciones())
 		{
-			for (unsigned int i = 0; i < Operaciones.size(); i++)
+			for (const Operacion& operacion : Operaciones)
 			{
-				if (Operaciones[i].contieneCuenta(cuentaBuscada))
+				if (operacion.contieneCuenta(cuentaBuscada))
 				{
 					return true;
 				}
@@ -90,9 +90,9 @@ public:
 		std::vector<const Operacion*> operaciones;
 		if (hayOperaciones())
 		{
-			for (unsigned int i = 0; i < Operaciones.size(); i++)
+			for (const Operacion& operacion : Operaciones)
 			{
-				operaciones.push_back( const_cast<const Operacion*>(&Operaciones[i]) );
+				operaciones.push_back( const_cast<const Operacion*>(&operacion) );
 			}
 		}
 		return operaciones;

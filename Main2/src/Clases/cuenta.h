@@ -73,7 +73,7 @@ public:
 	
 	bool diaExiste(std::string fechaBuscada) const
 	{
-		for (DiaCuenta dia : Dias)
+		for (const DiaCuenta &dia : Dias)
 		{
 			if (fechaBuscada == dia.fecha)
 			{
@@ -88,9 +88,9 @@ public:
 	}
 	const DiaCuenta* getDiaPorFecha(std::string fechaBuscada) const
 	{
-		for (unsigned int i = 0; i < Dias.size(); i++)
+		for (const DiaCuenta &dia : Dias)
 		{
-			if (Dias[i].fecha == fechaBuscada) { return &Dias[i]; }
+			if (dia.fecha == fechaBuscada) { return &dia; }
 		}
 		return nullptr;
 	}
@@ -102,9 +102,9 @@ public:
 
 		if (hayDias())
 		{
-			for (unsigned int i = 0; i < Dias.size(); i++)
+			for (DiaCuenta &dia : Dias)
 			{
-				vectorRespuesta.push_back(Dias[i]);
+				vectorRespuesta.push_back(dia);
 			}
 		}
 		return vectorRespuesta;

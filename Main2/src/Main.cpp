@@ -436,11 +436,11 @@ std::string formatear(int texto)
 }
 
 void initVectores() {
-	for (unsigned int i = 0; i < CUENTAS.size(); i++)
+	for (Cuenta& cuenta : CUENTAS)
 	{
-		if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back((Cuenta*)&CUENTAS[i]); }
-		else if (CUENTAS[i].getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { GASTOS.push_back((Cuenta*)&CUENTAS[i]); }
+		if (cuenta.getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back(&cuenta); }
+		else if (cuenta.getTipo() == Cuenta::TipoCuenta::PASIVO_OPERATIVO) { PASIVOS.push_back(&cuenta); }
+		else if (cuenta.getTipo() == Cuenta::TipoCuenta::GASTO_OPERATIVO) { GASTOS.push_back(&cuenta); }
 	}
 }
 

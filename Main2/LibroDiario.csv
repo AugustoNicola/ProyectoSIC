@@ -1,35 +1,12 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/07'
-'';Caja;A+;'250';'0'
-'';Dividendo a Cobrar;A+;'256';'0'
-'';Capital;PN+;'0';'506'
+'20/04'
+'';Caja;A+;'2000';'0'
+'';Capital;PN+;'0';'2000'
 '';segun Apertura
 
-'04/07'
-'15/07'
-'';Caja;A-;'0';'2'
-'';Caja;A+;'2';'0'
-'';segun jeje
-
-'';Mercaderias;A+;'50';'0'
-'';Proovedores;P+;'0';'22'
-'';Sueldo a Pagar;P+;'0';'28'
-'';segun dwa
-
-'';Ventas;R+;'0';'200'
-'';Caja;A+;'20';'0'
-'';Fondo Fijo;A+;'180';'0'
-'';Mercaderias;A-;'0';'25'
-'';CMV;R-;'25';'0'
-'';segun gwea
-
-'';Dividendo a Cobrar;A-;'0';'100'
-'';Fondo Fijo;A+;'100';'0'
-'';segun aeg
-
-'';Fondo Fijo;A+;'1000';'0'
-'';Proovedores;P+;'0';'100'
-'';Acreedores Varios;P+;'0';'900'
-'';segun dwa
+'05/07'
+'';Mercaderias;A+;'625';'0'
+'';Caja;A-;'0';'625'
+'';segun yes i am!!!!
 
