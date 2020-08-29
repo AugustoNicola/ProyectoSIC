@@ -125,8 +125,8 @@ bool AumentadorPartida::noHayLimite()
 void AumentadorPartida::permitirFinalizar()
 {
 	std::string strFinalizar;
-	system("CLS");
-	std::cout << "1. Continuar\n2.Finalizar\nElija una opcion: ";
+	header("MODIFICACION REGISTRADA", 2);
+	std::cout << "1. Continuar\n2.Finalizar\n\nElija una opcion: ";
 	std::cin >> strFinalizar;
 	salir = (validarInt(strFinalizar, {}, {}, 1, 2) == 2) ? true : false;
 }

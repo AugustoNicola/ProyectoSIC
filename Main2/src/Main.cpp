@@ -82,9 +82,9 @@ std::string fecha;
 Operacion oper;
 Operacion* operacionActual = &oper;
 
-void OP_Capital()
+void OP_Apertura()
 {
-	pedirNuevaFecha("Ingrese la fecha de apertura");
+	pedirNuevaFecha("Ingrese la fecha de apertura", "APERTURA");
 
 	int aumentoTotal = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
 
@@ -93,8 +93,6 @@ void OP_Capital()
 	// finaliza operacion
 	operacionActual->setDocumento("Apertura");
 	commitOperacion(operacionActual);
-
-	pedirNuevaFecha("Ingrese la primera fecha de operaciones", "COMIENZO DE OPERACIONES"); //una vez finalizada apertura, crea nuevo dia
 }
 void OP_Transaccion()
 {
@@ -280,7 +278,6 @@ void NotaDC(bool credito)
 	}
 }
 
-
 void EXP_LibroDiario()
 {
 	//inicializa archivo
@@ -339,7 +336,7 @@ void EXP_LibroDiario()
 	} //dias
 	LibroDiario.close();
 
-	system("CLS");
+	header("EXPORTAR LIBRO DIARIO", 2);
 	std::cout << "Libro diario exportado como LibroDiario.csv en el directorio actual!";
 	std::cout << "\n\nPresione cualquier tecla para continuar...";
 	_getch();
@@ -395,7 +392,7 @@ void EXP_LibroMayor()
 
 	LibroMayor.close();
 
-	system("CLS");
+	header("EXPORTAR LIBRO MAYOR", 2);
 	std::cout << "Libro mayor exportado como LibroMayor.csv en el directorio actual!";
 	std::cout << "\n\nPresione cualquier tecla para continuar...";
 	_getch();
@@ -421,12 +418,11 @@ void EXP_EstadoResultados()
 
 	EstadoResultados.close();
 
-	system("CLS");
+	header("EXPORTAR ESTADO DE RESULTADOS", 2);
 	std::cout << "Estado de Resultados exportado como EstadoResultados.csv en el directorio actual!";
 	std::cout << "\n\nPresione cualquier tecla para continuar...";
 	_getch();
 }
-
 std::string formatear(std::string texto)
 {
 	texto.insert(0, "'"); texto.append("'");
@@ -438,7 +434,6 @@ std::string formatear(int texto)
 	strTexto.insert(0, "'"); strTexto.append("'");
 	return strTexto;
 }
-
 
 void initVectores() {
 	for (unsigned int i = 0; i < CUENTAS.size(); i++)
@@ -473,32 +468,31 @@ int main()
 	std::cin >> opString;
 	if (validarInt(opString, {}, {}, 1) == 1)
 	{
-		OP_Capital();
+		OP_Apertura();
 	}
+	pedirNuevaFecha("Ingrese la primera fecha de operaciones", "COMIENZO DE OPERACIONES");
+	
 	// -------- LOOP PRINCIPAL --------
 	do
 	{
-		/* Display de opciones y ingreso de input */
-		system("CLS");
-		std::cout << "Seleccione una opcion:\n";
+		header("PROYECTO SIC", 1);
 		for (unsigned int i = 0; i < OPCIONES.size(); i++)
 		{
-			std::cout << i + 1 << ". " << OPCIONES[i].Nombre << "\n";
+			std::cout << "\n" << i + 1 << ". " << OPCIONES[i].Nombre;
 		}
+		std::cout << "\n\nSeleccione una opcion: ";
 		std::cin >> opString;
 
-		/* Validacion */
+		
 		int op = validarInt(opString, {}, {}, 1, OPCIONES.size());
 		if (op != 0)
 		{
 			/// input valido!
 			OPCIONES[op - 1].Funcion();
-
-			//loop = false; //provisorio
 		}
 		else {
 			///input invalido
-			std::cout << "Valor no valido, presione cualquier tecla para volver a intentarlo: ";
+			std::cout << "\n\nValor no valido, presione cualquier tecla para volver a intentarlo: ";
 			_getch();
 		}
 	} while (loop);

@@ -174,7 +174,7 @@ Operacion* pedirNombreDocx(Operacion* op)
 	std::string nombre;
 	do
 	{
-		system("CLS");
+		header("OPERACION FINALIZADA", 2);
 		std::cout << "Ingrese el nombre del documento de esta operacion: ";
 		std::getline(std::cin, nombre);
 		std::cin.clear();

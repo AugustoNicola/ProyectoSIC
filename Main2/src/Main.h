@@ -16,7 +16,7 @@
 #include "AumentadorPartida.h"
 #include "SeleccionadorDeMercaderias.h"
 
-void OP_Capital();
+void OP_Apertura();
 
 void OP_Transaccion();
 
