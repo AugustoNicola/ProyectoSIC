@@ -30,7 +30,7 @@ Cuenta* SeleccionadorDeCuentas::elegirCuenta(Cuenta::TipoCuenta _filtroCuentas, 
 		opcionElegida = validarInt(strOpcionElegida, {}, {}, 1, cuentasSeleccionables.size());
 		if (opcionElegida == 0)
 		{
-			std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
+			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
 			_getch();
 		}
 		else {
@@ -77,6 +77,21 @@ void SeleccionadorDeCuentas::configurarFiltroCuentas()
 
 void SeleccionadorDeCuentas::mostrarCuentas()
 {
+	switch (modoAumento)
+	{
+	case ModoAumento::Debe:
+		header("AUMENTO EN EL DEBE", 1);
+		break;
+	case ModoAumento::Haber:
+		header("AUMENTO EN EL HABER", 1);
+		break;
+	case ModoAumento::Apertura:
+		header("AUMENTO DE APERTURA", 1);
+		break;
+	default:
+		break;
+	}
+
 	int contadorCuentasRecorridas = 1;
 	std::string leyendaActual;
 	for (Cuenta* cuenta : cuentasSeleccionables)

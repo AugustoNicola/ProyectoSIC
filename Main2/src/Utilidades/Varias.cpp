@@ -1,12 +1,14 @@
 #include "Varias.h"
 
-void pedirNuevaFecha(std::optional<std::string> mensaje)
+
+void pedirNuevaFecha(std::string mensaje, std::optional<std::string> strHeader)
 {
 	std::string fechaStr;
 	do
 	{
 		system("CLS");
-		std::cout << mensaje.value() << ": ";
+		if (strHeader) { header(strHeader.value(), 2); }
+		std::cout << mensaje << ": ";
 		std::cin >> fechaStr;
 		if (validarFecha(fechaStr))
 		{
@@ -19,6 +21,21 @@ void pedirNuevaFecha(std::optional<std::string> mensaje)
 	} while (true);
 
 	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
+}
+
+void header(std::string texto, unsigned int espacios)
+{
+	std::string header = "===============  ===============";
+	header.insert(16, texto);
+
+	system("CLS");
+	std::cout << header;
+
+	for (unsigned int i = 0; i < espacios; i++)
+	{
+		std::cout << "\n";
+	}
+	
 }
 
 bool validarFecha(std::string str)

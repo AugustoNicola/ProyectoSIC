@@ -1,2 +1,12 @@
 '';Cuenta;Modif;Debe;Haber
 
+'04/08'
+'';Caja;A+;'511514';'0'
+'';Capital;PN+;'0';'511514'
+'';segun Apertura
+
+'02/07'
+'';Caja;A+;'2';'0'
+'';Proovedores;P+;'0';'2'
+'';segun grd
+

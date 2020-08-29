@@ -57,7 +57,7 @@ void SeleccionadorDeMercaderias::cargarOpcionesMercaderia()
 	unsigned int contadorOpciones = 1;
 
 	system("CLS");
-	std::cout << "=============== " << ((esCompra) ? "COMPRA" : "VENTA") << " DE MERCADERIAS ===============\n";
+	header((esCompra ? "COMPRA DE MERCADERIAS" : "VENTA DE MERCADERIAS"), 1);
 	for (const Mercaderia& mercaderia : MERCADERIAS)
 	{
 		if (esCompra || mercaderia.hayExistencias())
@@ -88,9 +88,8 @@ bool SeleccionadorDeMercaderias::validarOpcionMercaderia(std::string strOpcion)
 	if (opcionCrearMercaderiaElegida(opcionElegida))
 	{
 		std::string strNuevaMercaderia;
-		system("CLS");
-		std::cout << "=============== NUEVA MERCADERIA ===============";
-		std::cout << "\n\nIngrese el nombre de la nueva mercaderia: ";
+		header("NUEVA MERCADERIA", 2);
+		std::cout << "Ingrese el nombre de la nueva mercaderia: ";
 		std::cin >> strNuevaMercaderia;
 
 		MERCADERIAS.push_back(Mercaderia(strNuevaMercaderia));
@@ -120,8 +119,7 @@ void SeleccionadorDeMercaderias::elegirPrecioCompra()
 
 void SeleccionadorDeMercaderias::listarPreciosMercaderia()
 {
-	system("CLS");
-	std::cout << "=============== " << mercaderiaElegida->getNombre() << ": PRECIOS UNITARIOS ===============\n";
+	header(mercaderiaElegida->getNombre() += ": PRECIOS UNITARIOS", 1);
 	for (const ExistenciasPrecioMercaderia& registro : mercaderiaElegida->getExistencias())
 	{
 		std::cout << "\n- $" << registro.precio << " (" << registro.existencias << " existencia/s)";
@@ -147,9 +145,8 @@ void SeleccionadorDeMercaderias::elegirCantidadCompra()
 	std::string strOpcionCantidad;
 	do
 	{
-		system("CLS");
-		std::cout << "=============== " << mercaderiaElegida->getNombre() << " ($" << precioCompraElegido << " c/u) ===============";
-		std::cout << "\nExistencias: " << (mercaderiaElegida->getExistenciasPrecio(precioCompraElegido)) << " unidades";
+		header(mercaderiaElegida->getNombre() += std::string(" ($") += std::to_string(precioCompraElegido) += " c/u)", 2);
+		std::cout << "Existencias: " << (mercaderiaElegida->getExistenciasPrecio(precioCompraElegido)) << " unidades";
 		std::cout << "\n\nElija la cantidad de mercaderia que se compra: ";
 		std::cin >> strOpcionCantidad;
 
@@ -202,9 +199,8 @@ void SeleccionadorDeMercaderias::elegirPrecioVenta()
 	std::string strOpcionPrecio;
 	do
 	{
-		system("CLS");
-		std::cout << "=============== " << mercaderiaElegida->getNombre() << " (" << cantidadElegida << " unidades vendida/s) ===============";
-		std::cout << "\n\nElija el precio de venta de la/s mercaderia/s vendida/s: $";
+		header(mercaderiaElegida->getNombre() += (std::string)" (" += std::to_string(cantidadElegida) += " unidades vendida/s", 2);
+		std::cout << "Elija el precio de venta de la/s mercaderia/s vendida/s: $";
 		std::cin >> strOpcionPrecio;
 	} while (!validarPrecioVenta(strOpcionPrecio));
 }

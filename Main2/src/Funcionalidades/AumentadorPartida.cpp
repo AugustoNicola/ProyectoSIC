@@ -69,7 +69,6 @@ void AumentadorPartida::elegirAumentoActual()
 	std::string strAumentoActual;
 	do
 	{
-		system("CLS");
 		mostrarInformacion();
 		std::cout << "\n\nSeleccione la cantidad: $";
 		std::cin >> strAumentoActual;
@@ -78,8 +77,8 @@ void AumentadorPartida::elegirAumentoActual()
 
 void AumentadorPartida::mostrarInformacion()
 {
-	std::cout << "\n\nCuenta elegida: " << cuentaOperacionActual->getNombre() << " (valor: $" << abs(cuentaOperacionActual->getSaldoActual()) << ")";
-	std::cout << "\n\nTotal actual: $" << abs(aumentoTotal);
+	header(cuentaOperacionActual->getNombre() += (std::string)" (Saldo Actual: $" += std::to_string(cuentaOperacionActual->getSaldoActual()) += ")", 2);
+	std::cout << "Total actual: $" << abs(aumentoTotal);
 	std::cout << "\nLimite: $" << abs(limite);
 }
 

@@ -86,17 +86,15 @@ void OP_Capital()
 {
 	pedirNuevaFecha("Ingrese la fecha de apertura");
 
-	//aumenta operaciones hasta que el usuario decida
 	int aumentoTotal = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
 
-	/* iguala cuentas con Capital(PN+) */
 	modificarCuenta(buscarCuenta("Capital"), aumentoTotal * -1);
 
-	/* finaliza operacion*/
+	// finaliza operacion
 	operacionActual->setDocumento("Apertura");
 	commitOperacion(operacionActual);
 
-	pedirNuevaFecha("Ingrese la primera fecha de operaciones"); //una vez finalizada apertura, crea nuevo dia
+	pedirNuevaFecha("Ingrese la primera fecha de operaciones", "COMIENZO DE OPERACIONES"); //una vez finalizada apertura, crea nuevo dia
 }
 void OP_Transaccion()
 {
@@ -107,142 +105,6 @@ void OP_Transaccion()
 	/* commit de operacion */
 	operacionActual = pedirNombreDocx(operacionActual);
 	commitOperacion(operacionActual);
-}
-void NotaDC(bool credito)
-{
-	std::string opStr;
-	int op;
-	int modificacion;
-	const Operacion* operacionModif = nullptr;
-	const Linea* lineaModif = nullptr;
-	ModoAumento tipo;
-
-	/* elegir operacion valida */
-	unsigned int cont;
-	std::vector<const Operacion*> posOper;
-	do
-	{
-		cont = 1;
-		posOper = {};
-		system("CLS");
-
-		for (const DiaOperaciones& dia : DIAS) //recorre dias
-		{
-			for (const Operacion* operacion : dia.getOperaciones()) //recorre operaciones
-			{
-				std::cout << "\n" << cont << ". " << operacion->getDocumento() << " (" << dia.getFecha() << ")";
-				posOper.push_back(operacion);
-				cont++;
-			}
-		}
-		std::cout << "\n\nElija la operacion a la que se refiere la nota: ";
-		std::cin >> opStr;
-
-		/* Validacion/return */
-		op = validarInt(opStr, {}, {}, 1, posOper.size());
-		if (op == 0)
-		{
-			/// valor no valido
-			std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
-			_getch();
-		}
-		else {
-			/// opcion elegida valida!
-			operacionModif = posOper[op - 1];
-		}
-	} while (op == 0);
-
-	/* verificacion mercaderias */
-	if (operacionModif->contieneCuenta("Mercaderias"))
-	{
-		system("CLS");
-		std::cout << "Funcionalidad no admitida: mercaderia interviniente!";
-		std::cout << "\n\nPresione cualquier tecla para volver...";
-		_getch();
-		return;
-	}
-	else {
-		/// no es compra-venta!
-
-		/* elegir linea de la modificacion */
-		std::vector<const Linea*> posLinea;
-		do
-		{
-			cont = 1;
-			posLinea = {};
-			system("CLS");
-
-			for (const Linea* linea : operacionModif->getLineas()) //recorre lineas
-			{
-				std::cout << "\n" << cont << ". " << linea->cuenta->getNombre() << " (" << linea->delta << ")";
-				posLinea.push_back(linea);
-				cont++;
-			}
-
-			std::cout << "\n\nElija la cuenta que " << ((!credito) ? "aumenta" : "disminuye") << " en la nota: ";
-			std::cin >> opStr;
-
-			/* Validacion/return */
-			op = validarInt(opStr, {}, {}, 1, posLinea.size());
-			if (op == 0)
-			{
-				/// valor no valido
-				std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
-				_getch();
-			}
-			else {
-				/// opcion elegida valida!
-				lineaModif = posLinea[op - 1];
-			}
-		} while (op == 0);
-
-		/* ingresar modificacion */
-		do
-		{
-			system("CLS");
-
-			std::cout << "\n\n Ingrese el valor " << ((!credito) ? "del aumento" : "de la disminucion") << " de la cuenta: $";
-			std::cin >> opStr;
-
-			/* Validacion/return */
-			op = validarInt(opStr, {}, {}, 1);
-			if (op == 0)
-			{
-				/// valor no valido
-				std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
-				_getch();
-			}
-			else {
-				/// opcion elegida valida, realizar cambios!
-
-				// ajusta signo modificacion y como se salda
-				if (lineaModif->delta > 0)
-				{
-					/// La cuenta tenia una modificacion en el debe
-
-					modificacion = op * ((!credito) ? 1 : -1); //si es debito la aumenta en el debe, sino en el haber
-					tipo = (!credito) ? ModoAumento::Haber : ModoAumento::Debe; //contrrarestar acorde
-				}
-				else {
-					/// La cuenta tenia una modificacion en el haber
-					modificacion = op * ((!credito) ? -1 : 1); //si es debito la aumenta en el haber, sino en el debe
-					tipo = (!credito) ? ModoAumento::Debe : ModoAumento::Haber; //contrarrestar acorde
-				}
-
-				modificarCuenta(lineaModif->cuenta, modificacion); //realiza modificacion
-
-				/* realizar aumentoPartida para saciarlo */
-				std::string mensaje = "Elija las cuentas que saldan el "; mensaje.append(((credito) ? "credito" : "debito"));
-				int aumento = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, tipo, mensaje, modificacion * -1);
-
-				operacionActual = pedirNombreDocx(operacionActual);
-				commitOperacion(operacionActual);
-			}
-		} while (op == 0);
-	}
-
-	/* cerrar operacion*/
-
 }
 
 void OP_VentaMercaderias()
@@ -284,6 +146,140 @@ void OP_CompraMercaderias()
 		commitOperacion(operacionActual);
 	}
 }
+
+void NotaDC(bool credito)
+{
+	std::string opStr;
+	int op;
+	int modificacion;
+	const Operacion* operacionModif = nullptr;
+	const Linea* lineaModif = nullptr;
+	ModoAumento tipo;
+
+	/* elegir operacion valida */
+	unsigned int cont;
+	std::vector<const Operacion*> posOper;
+	do
+	{
+		cont = 1;
+		posOper = {};
+		header( std::string(credito ? "NOTA DE CREDITO" : "NOTA DE DEBITO") += ": LISTADO DE OPERACIONES", 1);
+
+		for (const DiaOperaciones& dia : DIAS)
+		{
+			for (const Operacion* operacion : dia.getOperaciones())
+			{
+				std::cout << "\n" << cont << ". " << operacion->getDocumento() << " (" << dia.getFecha() << ")";
+				posOper.push_back(operacion);
+				cont++;
+			}
+		}
+		std::cout << "\n\nElija la operacion a la que se refiere la nota: ";
+		std::cin >> opStr;
+
+		// Validacion/return
+		op = validarInt(opStr, {}, {}, 1, posOper.size());
+		if (op == 0)
+		{
+			/// valor no valido
+			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+			_getch();
+		}
+		else {
+			/// opcion elegida valida!
+			operacionModif = posOper[op - 1];
+		}
+	} while (op == 0);
+
+	/* verificacion mercaderias */
+	if (operacionModif->contieneCuenta("Mercaderias"))
+	{
+		std::cout << "\n\nFuncionalidad no admitida: mercaderia interviniente!";
+		std::cout << "\n\nPresione cualquier tecla para volver...";
+		_getch();
+		return;
+	}
+	else {
+		/// no es compra-venta!
+
+		// elegir linea de la modificacion
+		std::vector<const Linea*> posLinea;
+		do
+		{
+			cont = 1;
+			posLinea = {};
+			header(operacionModif->getDocumento() += ": LISTADO DE CUENTAS", 1);
+
+			for (const Linea* linea : operacionModif->getLineas())
+			{
+				std::cout << "\n" << cont << ". " << linea->cuenta->getNombre() << " (" << linea->delta << ")";
+				posLinea.push_back(linea);
+				cont++;
+			}
+
+			std::cout << "\n\nElija la cuenta que " << ((!credito) ? "aumenta" : "disminuye") << " en la nota: ";
+			std::cin >> opStr;
+
+			// Validacion/return
+			op = validarInt(opStr, {}, {}, 1, posLinea.size());
+			if (op == 0)
+			{
+				/// valor no valido
+				std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+				_getch();
+			}
+			else {
+				/// opcion elegida valida!
+				lineaModif = posLinea[op - 1];
+			}
+		} while (op == 0);
+
+		// ingresar modificacion
+		do
+		{
+			header(lineaModif->cuenta->getNombre() += (!credito ? ": AUMENTO" : ": DISMINUCION"));
+
+			std::cout << "\n\n Ingrese el valor " << ((!credito) ? "del aumento" : "de la disminucion") << " de la cuenta: $";
+			std::cin >> opStr;
+
+			/* Validacion/return */
+			op = validarInt(opStr, {}, {}, 1);
+			if (op == 0)
+			{
+				/// valor no valido
+				std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
+				_getch();
+			}
+			else {
+				/// opcion elegida valida, realizar cambios!
+
+				// ajusta signo modificacion y como se salda
+				if (lineaModif->delta > 0)
+				{
+					/// La cuenta tenia una modificacion en el debe
+
+					modificacion = op * ((!credito) ? 1 : -1); //si es debito la aumenta en el debe, sino en el haber
+					tipo = (!credito) ? ModoAumento::Haber : ModoAumento::Debe; //contrrarestar acorde
+				}
+				else {
+					/// La cuenta tenia una modificacion en el haber
+					modificacion = op * ((!credito) ? -1 : 1); //si es debito la aumenta en el haber, sino en el debe
+					tipo = (!credito) ? ModoAumento::Debe : ModoAumento::Haber; //contrarrestar acorde
+				}
+
+				modificarCuenta(lineaModif->cuenta, modificacion); //realiza modificacion
+
+				// realizar aumentoPartida para saciarlo
+				std::string mensaje = std::string("Elija las cuentas que saldan el ") += (credito ? "credito" : "debito");
+				int aumento = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, tipo, mensaje, modificacion * -1);
+
+				operacionActual = pedirNombreDocx(operacionActual);
+				commitOperacion(operacionActual);
+			}
+		} while (op == 0);
+	}
+}
+
 
 void EXP_LibroDiario()
 {
@@ -454,7 +450,7 @@ void initVectores() {
 }
 
 const std::vector<Opcion> OPCIONES = {
-	Opcion("Nueva Fecha", [] { pedirNuevaFecha(); }),
+	Opcion("Nueva Fecha", [] { pedirNuevaFecha("Ingrese la nueva fecha", "NUEVA FECHA"); }),
 	Opcion("Transaccion de Cuentas", [] { OP_Transaccion(); }),
 	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
@@ -472,8 +468,8 @@ int main()
 	bool loop = true; //Controla la ejecucion del programa
 	std::string opString;
 
-	std::cout << "=============== PROYECTO SIC ===============";
-	std::cout << "\n\nIniciar con apertura?\n1. Si\n2. No\n";
+	header("PROYECTO SIC", 2);
+	std::cout << "Iniciar con apertura?\n1. Si\n2. No\n";
 	std::cin >> opString;
 	if (validarInt(opString, {}, {}, 1) == 1)
 	{
