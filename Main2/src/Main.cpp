@@ -1,5 +1,6 @@
 #include "Main.h"
 
+bool loop = true; //Controla la ejecucion del programa
 std::vector<DiaOperaciones> DIAS = {};
 std::vector<Mercaderia> MERCADERIAS = {};
 std::vector<Cuenta> CUENTAS = {
@@ -82,32 +83,36 @@ std::string fecha;
 Operacion oper;
 Operacion* operacionActual = &oper;
 
-void OP_Apertura()
+bool OP_Apertura()
 {
 	pedirNuevaFecha("Ingrese la fecha de apertura", "APERTURA");
 
-	int aumentoTotal = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
-
+	int aumentoTotal = AumentadorPartida::realizarAumento(true, Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+	
+	if (aumentoTotal == 0) { return false; }
+	
 	modificarCuenta(buscarCuenta("Capital"), aumentoTotal * -1);
-
-	// finaliza operacion
+	
 	operacionActual->setDocumento("Apertura");
 	commitOperacion(operacionActual);
+
+	return true;
+	
 }
 void OP_Transaccion()
 {
-	/* ingreso de cuentas */
-	int aumentoPerdida = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {});
-	int aumentoGanancia = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", abs(aumentoPerdida));
+	int aumentoPerdida = AumentadorPartida::realizarAumento(true, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {});
+	if (aumentoPerdida == 0) { return; }
+	
+	int aumentoGanancia = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", abs(aumentoPerdida));
 
-	/* commit de operacion */
 	operacionActual = pedirNombreDocx(operacionActual);
 	commitOperacion(operacionActual);
 }
 
 void OP_VentaMercaderias()
 {
-	SeleccionadorDeMercaderias venta(false);
+	SeleccionadorDeMercaderias venta(true, false);
 	if (venta.getCantidad() != 0)
 	{
 		/// venta realizada!
@@ -115,7 +120,7 @@ void OP_VentaMercaderias()
 		int totalGanado = venta.getTotalGanadoVenta();
 		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1);
 
-		int igualacionEnDebe = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
+		int igualacionEnDebe = AumentadorPartida::realizarAumento(false ,Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
 
 		/* anotar cmv y mercaderias */
 		int totalPerdido = venta.getTotalPerdidoVenta();
@@ -130,14 +135,14 @@ void OP_VentaMercaderias()
 }
 void OP_CompraMercaderias()
 {
-	SeleccionadorDeMercaderias compra(true);
+	SeleccionadorDeMercaderias compra(true, true);
 	if (compra.getCantidad() != 0)
 	{
 		/// compra realizada!
 		int totalCompraMercaderias = compra.getTotalGastadoCompra();
 
 		modificarCuenta(buscarCuenta("Mercaderias"), totalCompraMercaderias);
-		int igualacionEnHaber = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalCompraMercaderias * -1);
+		int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalCompraMercaderias * -1);
 
 		/* guarda operacion */
 		operacionActual = pedirNombreDocx(operacionActual);
@@ -154,7 +159,7 @@ void NotaDC(bool credito)
 	const Linea* lineaModif = nullptr;
 	ModoAumento tipo;
 
-	/* elegir operacion valida */
+	// elegir operacion valida
 	unsigned int cont;
 	std::vector<const Operacion*> posOper;
 	do
@@ -172,18 +177,22 @@ void NotaDC(bool credito)
 				cont++;
 			}
 		}
+		std::cout << "\n" << cont << ". Cancelar";
+
 		std::cout << "\n\nElija la operacion a la que se refiere la nota: ";
 		std::cin >> opStr;
 
 		// Validacion/return
-		op = validarInt(opStr, {}, {}, 1, posOper.size());
+		op = validarInt(opStr, {}, {}, 1, posOper.size() + 1);
 		if (op == 0)
 		{
 			/// valor no valido
 			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
 			_getch();
 		}
-		else {
+		else if (op == posOper.size() + 1) {
+			return; // cancelar!
+		} else {
 			/// opcion elegida valida!
 			operacionModif = posOper[op - 1];
 		}
@@ -269,7 +278,7 @@ void NotaDC(bool credito)
 
 				// realizar aumentoPartida para saciarlo
 				std::string mensaje = std::string("Elija las cuentas que saldan el ") += (credito ? "credito" : "debito");
-				int aumento = AumentadorPartida::realizarAumento(Cuenta::TipoCuenta::F_OPER, tipo, mensaje, modificacion * -1);
+				int aumento = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, tipo, mensaje, modificacion * -1);
 
 				operacionActual = pedirNombreDocx(operacionActual);
 				commitOperacion(operacionActual);
@@ -278,7 +287,7 @@ void NotaDC(bool credito)
 	}
 }
 
-void EXP_LibroDiario()
+void EXP_LibroDiario(bool mostrarMensaje)
 {
 	//inicializa archivo
 	std::ofstream LibroDiario; LibroDiario.open("LibroDiario.csv");
@@ -336,12 +345,15 @@ void EXP_LibroDiario()
 	} //dias
 	LibroDiario.close();
 
-	header("EXPORTAR LIBRO DIARIO", 2);
-	std::cout << "Libro diario exportado como LibroDiario.csv en el directorio actual!";
-	std::cout << "\n\nPresione cualquier tecla para continuar...";
-	_getch();
+	if (mostrarMensaje)
+	{
+		header("EXPORTAR LIBRO DIARIO", 2);
+		std::cout << "Libro diario exportado como LibroDiario.csv en el directorio actual!";
+		std::cout << "\n\nPresione cualquier tecla para continuar...";
+		_getch();
+	}
 }
-void EXP_LibroMayor()
+void EXP_LibroMayor(bool mostrarMensaje)
 {
 	std::ofstream LibroMayor; LibroMayor.open("LibroMayor.csv");
 
@@ -392,12 +404,15 @@ void EXP_LibroMayor()
 
 	LibroMayor.close();
 
+	if (mostrarMensaje)
+	{
 	header("EXPORTAR LIBRO MAYOR", 2);
 	std::cout << "Libro mayor exportado como LibroMayor.csv en el directorio actual!";
 	std::cout << "\n\nPresione cualquier tecla para continuar...";
 	_getch();
+	}
 }
-void EXP_EstadoResultados()
+void EXP_EstadoResultados(bool mostrarMensaje)
 {
 	std::ofstream EstadoResultados; EstadoResultados.open("EstadoResultados.csv");
 	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
@@ -418,10 +433,13 @@ void EXP_EstadoResultados()
 
 	EstadoResultados.close();
 
-	header("EXPORTAR ESTADO DE RESULTADOS", 2);
-	std::cout << "Estado de Resultados exportado como EstadoResultados.csv en el directorio actual!";
-	std::cout << "\n\nPresione cualquier tecla para continuar...";
-	_getch();
+	if (mostrarMensaje)
+	{
+		header("EXPORTAR ESTADO DE RESULTADOS", 2);
+		std::cout << "Estado de Resultados exportado como EstadoResultados.csv en el directorio actual!";
+		std::cout << "\n\nPresione cualquier tecla para continuar...";
+		_getch();
+	}
 }
 std::string formatear(std::string texto)
 {
@@ -451,26 +469,27 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
 	Opcion("Nota de Credito", [] { NotaDC(true); }),
 	Opcion("Nota de Debito", [] { NotaDC(false); }),
-	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(); }),
-	Opcion("Exportar L. Mayor", [] { EXP_LibroMayor(); }),
-	Opcion("Exportar Estado de Resultados", [] { EXP_EstadoResultados(); })
+	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(true); }),
+	Opcion("Exportar L. Mayor", [] { EXP_LibroMayor(true); }),
+	Opcion("Exportar Estado de Resultados", [] { EXP_EstadoResultados(true); }),
+	Opcion("Salir del Programa", []{ loop = false; EXP_LibroDiario(false); EXP_LibroMayor(false); EXP_EstadoResultados(false); })
 };
 
 int main()
 {
 	initVectores();
 
-	bool loop = true; //Controla la ejecucion del programa
 	std::string opString;
+	bool pedirFecha = true;
 
 	header("PROYECTO SIC", 2);
 	std::cout << "Iniciar con apertura?\n1. Si\n2. No\n";
 	std::cin >> opString;
 	if (validarInt(opString, {}, {}, 1) == 1)
 	{
-		OP_Apertura();
+		pedirFecha = OP_Apertura();
 	}
-	pedirNuevaFecha("Ingrese la primera fecha de operaciones", "COMIENZO DE OPERACIONES");
+	if (pedirFecha) { pedirNuevaFecha("Ingrese la primera fecha de operaciones", "COMIENZO DE OPERACIONES"); }
 	
 	// -------- LOOP PRINCIPAL --------
 	do
@@ -480,6 +499,7 @@ int main()
 		{
 			std::cout << "\n" << i + 1 << ". " << OPCIONES[i].Nombre;
 		}
+
 		std::cout << "\n\nSeleccione una opcion: ";
 		std::cin >> opString;
 

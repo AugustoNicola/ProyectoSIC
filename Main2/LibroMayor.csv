@@ -1,51 +1,10 @@
 Caja
 Debe;Haber
-'250';
-'20';
-Saldo deudor: $270
-
-Fondo Fijo
-Debe;Haber
-'1280';
-Saldo deudor: $1280
-
-Dividendo a Cobrar
-Debe;Haber
-'256';'100'
-Saldo deudor: $156
-
-Mercaderias
-Debe;Haber
-'25';
-Saldo deudor: $25
-
-Proovedores
-Debe;Haber
-;'122'
-Saldo acreedor: $122
-
-Acreedores Varios
-Debe;Haber
-;'900'
-Saldo acreedor: $900
-
-Sueldo a Pagar
-Debe;Haber
-;'28'
-Saldo acreedor: $28
+'200';
+Saldo deudor: $200
 
 Capital
 Debe;Haber
-;'506'
-Saldo acreedor: $506
-
-Ventas
-Debe;Haber
 ;'200'
 Saldo acreedor: $200
-
-CMV
-Debe;Haber
-'25';
-Saldo deudor: $25
 

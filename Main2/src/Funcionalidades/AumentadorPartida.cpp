@@ -1,5 +1,6 @@
 #include "AumentadorPartida.h"
 
+bool AumentadorPartida::permitirCancelar;
 Cuenta::TipoCuenta AumentadorPartida::filtroCuentas;
 ModoAumento AumentadorPartida::modoAumento;
 std::string AumentadorPartida::mensajeEleccionCuenta;
@@ -10,8 +11,9 @@ int AumentadorPartida::aumentoTotal;
 int AumentadorPartida::aumentoActual;
 Cuenta* AumentadorPartida::cuentaOperacionActual;
 
-int AumentadorPartida::realizarAumento(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite)
+int AumentadorPartida::realizarAumento(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite)
 {
+	permitirCancelar = _permitirCancelar;
 	filtroCuentas = _filtroCuentas;
 	modoAumento = _modoAumento;
 	mensajeEleccionCuenta = _mensajeEleccionCuenta;
@@ -22,24 +24,27 @@ int AumentadorPartida::realizarAumento(Cuenta::TipoCuenta _filtroCuentas, ModoAu
 
 	while (!condicionDeSalidaAlcanzada())
 	{
-		cuentaOperacionActual = SeleccionadorDeCuentas::elegirCuenta(filtroCuentas, modoAumento, mensajeEleccionCuenta);
-
-		if (cuentaOperacionActualEsMercaderia())
+		if (intentarElegirCuenta())
 		{
-			/// hay mercaderias!
+			if (cuentaOperacionActualEsMercaderia())
+			{
+				/// hay mercaderias!
 				
-			SeleccionadorDeMercaderias operacionMercaderia(true);
-			aumentoActual = operacionMercaderia.getTotalGastadoCompra();
-		}
-		else {
-			elegirAumentoActual();
-		}
+				SeleccionadorDeMercaderias operacionMercaderia(true, true);
+				aumentoActual = operacionMercaderia.getTotalGastadoCompra();
+			}
+			else {
+				elegirAumentoActual();
+			}
 
-		efectuarAumento();
+			efectuarAumento();
 
-		if (noHayLimite())
-		{
-			permitirFinalizar();
+			if (noHayLimite())
+			{
+				permitirFinalizar();
+			}
+		} else {
+			return 0;
 		}
 	}
 	return aumentoTotal;
@@ -57,6 +62,13 @@ bool AumentadorPartida::condicionDeSalidaAlcanzada()
 	else {
 		return salir;
 	}
+}
+
+bool AumentadorPartida::intentarElegirCuenta()
+{
+	cuentaOperacionActual = SeleccionadorDeCuentas::elegirCuenta(permitirCancelar, filtroCuentas, modoAumento, mensajeEleccionCuenta);
+	permitirCancelar = false;
+	return ( (cuentaOperacionActual != nullptr) ? true : false);
 }
 
 bool AumentadorPartida::cuentaOperacionActualEsMercaderia()

@@ -16,15 +16,15 @@
 #include "AumentadorPartida.h"
 #include "SeleccionadorDeMercaderias.h"
 
-void OP_Apertura();
+bool OP_Apertura();
 
 void OP_Transaccion();
 
 void NotaDC(bool credito);
 
-void EXP_LibroDiario();
-void EXP_LibroMayor();
-void EXP_EstadoResultados();
+void EXP_LibroDiario(bool mostrarMensaje);
+void EXP_LibroMayor(bool mostrarMensaje);
+void EXP_EstadoResultados(bool mostrarMensaje);
 
 std::string formatear(std::string texto);
 std::string formatear(int valor);

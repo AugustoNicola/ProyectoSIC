@@ -13,6 +13,7 @@ enum class ModoAumento
 class SeleccionadorDeCuentas
 {
 private:
+	static bool PermitirCancelar;
 	static Cuenta::TipoCuenta FiltroCuentas;
 	static ModoAumento modoAumento;
 	static std::string MsgEleccionCuenta;
@@ -23,7 +24,7 @@ private:
 	static std::string leyendaGasto;
 
 public:
-	static Cuenta* elegirCuenta(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta);
+	static Cuenta* elegirCuenta(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta);
 	static void configurarModoAumento();
 	static void configurarFiltroCuentas();
 	static void mostrarCuentas();

@@ -14,6 +14,7 @@
 class AumentadorPartida
 {
 private:
+	static bool permitirCancelar;
 	static Cuenta::TipoCuenta filtroCuentas;
 	static ModoAumento modoAumento;
 	static std::string mensajeEleccionCuenta;
@@ -25,9 +26,10 @@ private:
 	static Cuenta* cuentaOperacionActual;
 
 public:
-	static int realizarAumento(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite);
+	static int realizarAumento(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite);
 private:
 	static bool condicionDeSalidaAlcanzada();
+	static bool intentarElegirCuenta();
 	static bool cuentaOperacionActualEsMercaderia();
 	static void elegirAumentoActual();
 	static void mostrarInformacion();

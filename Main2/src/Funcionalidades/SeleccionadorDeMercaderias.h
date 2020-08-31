@@ -10,6 +10,8 @@
 class SeleccionadorDeMercaderias
 {
 private:
+	bool PermitirCancelar;
+	bool cancelar = false;
 	bool esCompra;
 
 	std::vector<Mercaderia*> mercaderiasDisponibles = {};
@@ -20,13 +22,14 @@ private:
 	int precioCompraElegido = 0;
 	int cantidadElegida = 0;
 public:
-	SeleccionadorDeMercaderias(bool _esCompra);
+	SeleccionadorDeMercaderias(bool _permitirCancelar, bool _esCompra);
 private:
 	bool intentarElegirMercaderia();
 	bool hayOpcionesMercaderiasValidas();
 	void cargarOpcionesMercaderia();
 	bool validarOpcionMercaderia(std::string strOpcion);
 	bool opcionCrearMercaderiaElegida(int opcionElegida);
+	bool opcionCancelarElegida(int opcionElegida);
 	
 	void elegirPrecioCompra();
 	void listarPreciosMercaderia();

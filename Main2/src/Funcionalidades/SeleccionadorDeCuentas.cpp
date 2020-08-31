@@ -1,5 +1,6 @@
 #include "SeleccionadorDeCuentas.h"
 
+bool SeleccionadorDeCuentas::PermitirCancelar;
 Cuenta::TipoCuenta SeleccionadorDeCuentas::FiltroCuentas;
 ModoAumento SeleccionadorDeCuentas::modoAumento;
 std::string SeleccionadorDeCuentas::MsgEleccionCuenta;
@@ -9,8 +10,9 @@ std::string SeleccionadorDeCuentas::leyendaActivo;
 std::string SeleccionadorDeCuentas::leyendaPasivo;
 std::string SeleccionadorDeCuentas::leyendaGasto;
 
-Cuenta* SeleccionadorDeCuentas::elegirCuenta(Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
+Cuenta* SeleccionadorDeCuentas::elegirCuenta(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
 {
+	PermitirCancelar = _permitirCancelar;
 	FiltroCuentas = _filtroCuentas;
 	modoAumento = _modoAumento;
 	MsgEleccionCuenta = _msgEleccionCuenta;
@@ -26,7 +28,7 @@ Cuenta* SeleccionadorDeCuentas::elegirCuenta(Cuenta::TipoCuenta _filtroCuentas, 
 		std::cout << "\n\n" << MsgEleccionCuenta << ": ";
 		std::cin >> strOpcionElegida;
 
-		opcionElegida = validarInt(strOpcionElegida, {}, {}, 1, cuentasSeleccionables.size());
+		opcionElegida = validarInt(strOpcionElegida, {}, {}, 1, cuentasSeleccionables.size() + (PermitirCancelar ? 1 : 0));
 		if (opcionElegida == 0)
 		{
 			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
@@ -37,9 +39,8 @@ Cuenta* SeleccionadorDeCuentas::elegirCuenta(Cuenta::TipoCuenta _filtroCuentas, 
 		}
 	} while (opcionElegida == 0);
 
-	return cuentasSeleccionables[opcionElegida - 1];
-
-
+	return ( (opcionElegida == cuentasSeleccionables.size() + 1) ? 
+		nullptr : cuentasSeleccionables[opcionElegida - 1]);
 }
 void SeleccionadorDeCuentas::configurarModoAumento()
 {
@@ -110,4 +111,7 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 		std::cout << "\n" << contadorCuentasRecorridas << ". " << cuenta->getNombre() << leyendaActual;
 		contadorCuentasRecorridas++;
 	}
+	
+	if (PermitirCancelar) { std::cout << "\n" << contadorCuentasRecorridas << ". " << "Cancelar"; }
+	
 }

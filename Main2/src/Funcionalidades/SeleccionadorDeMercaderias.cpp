@@ -1,8 +1,11 @@
 #include "SeleccionadorDeMercaderias.h"
 
-SeleccionadorDeMercaderias::SeleccionadorDeMercaderias(bool _esCompra)
-	: esCompra(_esCompra)
+SeleccionadorDeMercaderias::SeleccionadorDeMercaderias(bool _permitirCancelar, bool _esCompra)
+	: esCompra(_esCompra), PermitirCancelar(_permitirCancelar)
 {
+	esCompra = _esCompra;
+	PermitirCancelar = _permitirCancelar;
+
 	if (intentarElegirMercaderia())
 	{
 		if (esCompra)
@@ -28,6 +31,8 @@ bool SeleccionadorDeMercaderias::intentarElegirMercaderia()
 			std::cout << "\n\nElija una opcion: ";
 			std::cin >> strOpcion;
 		} while (!validarOpcionMercaderia(strOpcion));
+
+		if (cancelar) { return false; }
 		return true;
 	} else {
 		std::cout << "\nNo hay mercaderias disponibles!\n\nPresione cualquier tecla para cancelar";
@@ -56,7 +61,6 @@ void SeleccionadorDeMercaderias::cargarOpcionesMercaderia()
 {
 	unsigned int contadorOpciones = 1;
 
-	system("CLS");
 	header((esCompra ? "COMPRA DE MERCADERIAS" : "VENTA DE MERCADERIAS"), 1);
 	for (const Mercaderia& mercaderia : MERCADERIAS)
 	{
@@ -70,12 +74,18 @@ void SeleccionadorDeMercaderias::cargarOpcionesMercaderia()
 	if (esCompra)
 	{
 		std::cout << "\n" << contadorOpciones << ". " << "Nueva mercaderia";
+		contadorOpciones++;
+	}
+	if (PermitirCancelar)
+	{
+		std::cout << "\n" << contadorOpciones << ". " << "Cancelar";
 	}
 }
 
 bool SeleccionadorDeMercaderias::validarOpcionMercaderia(std::string strOpcion)
 {
-	int opcionElegida = validarInt(strOpcion, {}, {}, 1, mercaderiasDisponibles.size() + (esCompra ? 1 : 0));
+	int opcionElegida = validarInt(strOpcion, {}, {}, 1, mercaderiasDisponibles.size() 
+		+ (esCompra ? 1 : 0) + (PermitirCancelar ? 1 : 0));
 
 	if (opcionElegida == 0)
 	{
@@ -97,15 +107,22 @@ bool SeleccionadorDeMercaderias::validarOpcionMercaderia(std::string strOpcion)
 
 		MERCADERIAS.push_back(Mercaderia(strNuevaMercaderia));
 		mercaderiaElegida = &(MERCADERIAS.back());
+	} else if(opcionCancelarElegida(opcionElegida)) {
+		cancelar = true;
+		return true;
 	} else {
 		mercaderiaElegida = mercaderiasDisponibles[opcionElegida - 1];
+		return true;
 	}
-	return true;
 }
 
 bool SeleccionadorDeMercaderias::opcionCrearMercaderiaElegida(int opcionElegida)
 {
 	return opcionElegida == mercaderiasDisponibles.size() + 1;
+}
+bool SeleccionadorDeMercaderias::opcionCancelarElegida(int opcionElegida)
+{
+	return opcionElegida == mercaderiasDisponibles.size() + (esCompra ? 1 : 0) + 1;
 }
 
 void SeleccionadorDeMercaderias::elegirPrecioCompra()

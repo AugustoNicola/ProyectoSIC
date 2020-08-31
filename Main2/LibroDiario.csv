@@ -1,12 +1,8 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/04'
-'';Caja;A+;'2000';'0'
-'';Capital;PN+;'0';'2000'
+'20/05'
+'';Caja;A+;'200';'0'
+'';Capital;PN+;'0';'200'
 '';segun Apertura
 
-'05/07'
-'';Mercaderias;A+;'625';'0'
-'';Caja;A-;'0';'625'
-'';segun yes i am!!!!
-
+'02/07'
