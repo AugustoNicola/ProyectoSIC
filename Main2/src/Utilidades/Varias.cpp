@@ -104,7 +104,7 @@ bool validarFecha(std::string str)
 	}
 }
 
-int validarInt(std::string str, std::optional<int> valorC, std::optional<int> valorT, std::optional<int> min, std::optional<int> max)
+int validarInt(std::string str, std::optional<int> min, std::optional<int> max, std::optional<int> valorC, std::optional<int> valorT)
 {
 	std::cin.clear();
 	std::cin.ignore(1000, '\n');

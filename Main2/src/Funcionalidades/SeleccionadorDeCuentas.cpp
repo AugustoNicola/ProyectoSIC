@@ -28,7 +28,7 @@ Cuenta* SeleccionadorDeCuentas::elegirCuenta(bool _permitirCancelar, Cuenta::Tip
 		std::cout << "\n\n" << MsgEleccionCuenta << ": ";
 		std::cin >> strOpcionElegida;
 
-		opcionElegida = validarInt(strOpcionElegida, {}, {}, 1, cuentasSeleccionables.size() + (PermitirCancelar ? 1 : 0));
+		opcionElegida = validarInt(strOpcionElegida, 1, cuentasSeleccionables.size() + (PermitirCancelar ? 1 : 0));
 		if (opcionElegida == 0)
 		{
 			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";

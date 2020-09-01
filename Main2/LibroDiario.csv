@@ -1,9 +1,12 @@
 '';Cuenta;Modif;Debe;Haber
 
 '20/03'
-'';Caja;A+;'250';'0'
-'';Fondo Fijo;A+;'51';'0'
-'';Capital;PN+;'0';'301'
+'';Caja;A+;'252';'0'
+'';Capital;PN+;'0';'252'
 '';segun Apertura
 
 '02/07'
+'';Mercaderias;A+;'3450';'0'
+'';Proovedores;P+;'0';'3450'
+'';segun yes
+

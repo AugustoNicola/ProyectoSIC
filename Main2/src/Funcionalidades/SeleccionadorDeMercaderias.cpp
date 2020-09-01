@@ -84,7 +84,7 @@ void SeleccionadorDeMercaderias::cargarOpcionesMercaderia()
 
 bool SeleccionadorDeMercaderias::validarOpcionMercaderia(std::string strOpcion)
 {
-	int opcionElegida = validarInt(strOpcion, {}, {}, 1, mercaderiasDisponibles.size() 
+	int opcionElegida = validarInt(strOpcion, 1, mercaderiasDisponibles.size() 
 		+ (esCompra ? 1 : 0) + (PermitirCancelar ? 1 : 0));
 
 	if (opcionElegida == 0)
@@ -149,7 +149,7 @@ void SeleccionadorDeMercaderias::listarPreciosMercaderia()
 
 bool SeleccionadorDeMercaderias::validarOpcionPrecioCompra(std::string strOpcionPrecio)
 {
-	precioCompraElegido = validarInt(strOpcionPrecio, {}, {}, 1);
+	precioCompraElegido = validarInt(strOpcionPrecio, 1);
 	if (precioCompraElegido == 0)
 	{
 		/// valor no valido
@@ -175,7 +175,7 @@ void SeleccionadorDeMercaderias::elegirCantidadCompra()
 
 bool SeleccionadorDeMercaderias::validarCantidadCompra(std::string strOpcionCantidad)
 {
-	cantidadElegida = validarInt(strOpcionCantidad, {}, {}, 1);
+	cantidadElegida = validarInt(strOpcionCantidad, 1);
 	if (cantidadElegida == 0)
 	{
 		/// valor no valido
@@ -201,7 +201,7 @@ void SeleccionadorDeMercaderias::elegirCantidadVenta()
 
 bool SeleccionadorDeMercaderias::validarCantidadVenta(std::string strOpcionCantidad)
 {
-	cantidadElegida = validarInt(strOpcionCantidad, {}, mercaderiaElegida->getExistenciasTotales(), 1, mercaderiaElegida->getExistenciasTotales());
+	cantidadElegida = validarInt(strOpcionCantidad, 1, mercaderiaElegida->getExistenciasTotales(), mercaderiaElegida->getExistenciasTotales(), mercaderiaElegida->getExistenciasTotales());
 	if (cantidadElegida == 0)
 	{
 		/// valor no valido
@@ -227,7 +227,7 @@ void SeleccionadorDeMercaderias::elegirPrecioVenta()
 
 bool SeleccionadorDeMercaderias::validarPrecioVenta(std::string strOpcionPrecio)
 {
-	int precioVentaElegido = validarInt(strOpcionPrecio, {}, {}, 1);
+	int precioVentaElegido = validarInt(strOpcionPrecio, 1);
 	if (precioVentaElegido == 0)
 	{
 		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";

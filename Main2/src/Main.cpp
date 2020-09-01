@@ -183,7 +183,7 @@ void NotaDC(bool credito)
 		std::cin >> opStr;
 
 		// Validacion/return
-		op = validarInt(opStr, {}, {}, 1, posOper.size() + 1);
+		op = validarInt(opStr, 1, posOper.size() + 1);
 		if (op == 0)
 		{
 			/// valor no valido
@@ -228,7 +228,7 @@ void NotaDC(bool credito)
 			std::cin >> opStr;
 
 			// Validacion/return
-			op = validarInt(opStr, {}, {}, 1, posLinea.size());
+			op = validarInt(opStr, 1, posLinea.size());
 			if (op == 0)
 			{
 				/// valor no valido
@@ -250,7 +250,7 @@ void NotaDC(bool credito)
 			std::cin >> opStr;
 
 			/* Validacion/return */
-			op = validarInt(opStr, {}, {}, 1);
+			op = validarInt(opStr, 1);
 			if (op == 0)
 			{
 				/// valor no valido
@@ -688,7 +688,7 @@ int main()
 	header("PROYECTO SIC", 2);
 	std::cout << "Iniciar con apertura?\n1. Si\n2. No\n";
 	std::cin >> opString;
-	if (validarInt(opString, {}, {}, 1) == 1)
+	if (validarInt(opString, 1) == 1)
 	{
 		pedirFecha = OP_Apertura();
 	}
@@ -707,7 +707,7 @@ int main()
 		std::cin >> opString;
 
 		
-		int op = validarInt(opString, {}, {}, 1, OPCIONES.size());
+		int op = validarInt(opString, 1, OPCIONES.size());
 		if (op != 0)
 		{
 			/// input valido!
