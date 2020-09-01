@@ -287,6 +287,99 @@ void NotaDC(bool credito)
 	}
 }
 
+void OP_mostrarLibroDiario()
+{
+	std::string separador = "--------------------------------------------------+------------+------------";
+	std::string lineaVacia = "|            |            ";
+
+	header("LIBRO DIARIO", 3);
+
+	//                 50                  |     12     |     12     
+	std::cout << "Cuenta                                            |    Debe    |   Haber  " << std::endl
+		      << separador << std::endl;
+
+	std::string nombreCuenta;
+	std::string modif;
+	bool esDebe;
+
+	for (DiaOperaciones& dia : DIAS)
+	{
+		std::cout << formatearColumnaCuenta(dia.getFecha()) << lineaVacia << std::endl
+			<< formatearColumnaCuenta("") << lineaVacia << std::endl;
+
+		for (const Operacion* operacion : dia.getOperaciones())
+		{
+			for (const Linea* linea : operacion->getLineas())
+			{
+				nombreCuenta = linea->cuenta->getNombre();
+				esDebe = (linea->delta > 0) ? true : false;
+
+				// modificador
+				switch (linea->cuenta->getTipo())
+				{
+				case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
+				case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
+					modif = esDebe ? "A+" : "A-";
+					break;
+				case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
+				case Cuenta::TipoCuenta::PASIVO_NO_OPERATIVO:
+					modif = esDebe ? "P-" : "P+";
+					break;
+				case Cuenta::TipoCuenta::GASTO_OPERATIVO:
+				case Cuenta::TipoCuenta::GASTO_NO_OPERATIVO:
+				case Cuenta::TipoCuenta::GANANCIA:
+					modif = esDebe ? "R-" : "R+";
+					break;
+				case Cuenta::TipoCuenta::PATRIMONIO_NETO:
+					modif = esDebe ? "PN-" : "PN+";
+					break;
+				}
+				nombreCuenta += " "; nombreCuenta += modif;
+
+				std::cout << formatearColumnaCuenta(nombreCuenta) << "|" 
+					<< formatearColumnaNumero(esDebe ? linea->delta : 0) << "|" 
+					<< formatearColumnaNumero(!esDebe ? abs(linea->delta) : 0) << std::endl;
+
+			} //lineas
+
+			std::string nombreDocumento = "segun "; nombreDocumento += operacion->getDocumento();
+			std::cout << formatearColumnaCuenta(nombreDocumento)
+				<< lineaVacia << std::endl 
+				<< separador << std::endl;
+		} //operaciones
+
+	} //dias
+	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
+	_getch();
+}
+
+std::string formatearColumnaCuenta(std::string str)
+{
+	if (str.size() > 50)
+	{
+		str = str.substr(0, 50);
+	} else if (str.size() < 50)
+	{
+		while (str.size() != 50)
+		{
+			str += " ";
+		}
+	}
+	return str;
+}
+std::string formatearColumnaNumero(int num)
+{
+	std::string str = std::to_string(num);
+	if (str.size() < 12)
+	{
+		while (str.size() < 12)
+		{
+			str.insert(0," ");
+		}
+	}
+	return str;
+}
+
 void EXP_LibroDiario(bool mostrarMensaje)
 {
 	//inicializa archivo
@@ -469,6 +562,7 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
 	Opcion("Nota de Credito", [] { NotaDC(true); }),
 	Opcion("Nota de Debito", [] { NotaDC(false); }),
+	Opcion("Ver L. Diario", [] { OP_mostrarLibroDiario(); }),
 	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(true); }),
 	Opcion("Exportar L. Mayor", [] { EXP_LibroMayor(true); }),
 	Opcion("Exportar Estado de Resultados", [] { EXP_EstadoResultados(true); }),

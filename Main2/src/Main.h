@@ -17,15 +17,16 @@
 #include "SeleccionadorDeMercaderias.h"
 
 bool OP_Apertura();
-
 void OP_Transaccion();
-
 void NotaDC(bool credito);
+
+void OP_mostrarLibroDiario();
+std::string formatearColumnaCuenta(std::string str);
+std::string formatearColumnaNumero(int str);
 
 void EXP_LibroDiario(bool mostrarMensaje);
 void EXP_LibroMayor(bool mostrarMensaje);
 void EXP_EstadoResultados(bool mostrarMensaje);
-
 std::string formatear(std::string texto);
 std::string formatear(int valor);
 
