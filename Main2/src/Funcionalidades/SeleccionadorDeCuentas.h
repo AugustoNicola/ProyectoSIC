@@ -28,4 +28,5 @@ public:
 	static void configurarModoAumento();
 	static void configurarFiltroCuentas();
 	static void mostrarCuentas();
+	static void separadorDeTipo(Cuenta::TipoCuenta tipo);
 };

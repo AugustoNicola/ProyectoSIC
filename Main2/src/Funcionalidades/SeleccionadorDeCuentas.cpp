@@ -80,13 +80,13 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 	switch (modoAumento)
 	{
 	case ModoAumento::Debe:
-		header("AUMENTO EN EL DEBE", 1);
+		header("AUMENTO EN EL DEBE");
 		break;
 	case ModoAumento::Haber:
-		header("AUMENTO EN EL HABER", 1);
+		header("AUMENTO EN EL HABER");
 		break;
 	case ModoAumento::Apertura:
-		header("AUMENTO DE APERTURA", 1);
+		header("AUMENTO DE APERTURA");
 		break;
 	default:
 		break;
@@ -94,11 +94,14 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 
 	int contadorCuentasRecorridas = 1;
 	std::string leyendaActual;
-	for (Cuenta* cuenta : cuentasSeleccionables)
+
+	separadorDeTipo(cuentasSeleccionables[0]->getTipo());
+	for (unsigned int i = 0; i < cuentasSeleccionables.size(); i++)
 	{
-		switch (cuenta->getTipo())
+		switch (cuentasSeleccionables[i]->getTipo())
 		{
 		case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
+		case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
 			leyendaActual = leyendaActivo;
 			break;
 		case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
@@ -108,10 +111,38 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 			leyendaActual = leyendaGasto;
 			break;
 		}
-		std::cout << "\n" << contadorCuentasRecorridas << ". " << cuenta->getNombre() << leyendaActual;
+		std::cout << "\n" << contadorCuentasRecorridas << ". " << cuentasSeleccionables[i]->getNombre() << leyendaActual;
 		contadorCuentasRecorridas++;
+
+		if (i != cuentasSeleccionables.size() - 1 && cuentasSeleccionables[i]->getNombre() != "Mercaderias")
+		{
+			if (cuentasSeleccionables[i]->getTipo() != cuentasSeleccionables[i + 1]->getTipo())
+			{
+				separadorDeTipo(cuentasSeleccionables[i + 1]->getTipo());
+			}
+		}
+	}
+	if (PermitirCancelar)
+	{
+		std::cout << "\n=========================\n" << 
+			contadorCuentasRecorridas << ". " << "Cancelar";
 	}
 	
-	if (PermitirCancelar) { std::cout << "\n" << contadorCuentasRecorridas << ". " << "Cancelar"; }
-	
+}
+
+void SeleccionadorDeCuentas::separadorDeTipo(Cuenta::TipoCuenta tipo)
+{
+	switch (tipo)
+	{
+	case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
+	case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
+		std::cout << "\n\n-------- ACTIVOS --------";
+		break;
+	case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
+		std::cout << "\n\n-------- PASIVOS --------";
+		break;
+	case Cuenta::TipoCuenta::GASTO_OPERATIVO:
+		std::cout << "\n\n-------- RESULTADOS --------";
+		break;
+	}
 }

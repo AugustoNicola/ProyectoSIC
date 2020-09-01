@@ -1,10 +1,15 @@
-Proovedores
+Caja
 Debe;Haber
-;'604'
-Saldo acreedor: $604
+'250';
+Saldo deudor: $250
+
+Fondo Fijo
+Debe;Haber
+'51';
+Saldo deudor: $51
 
 Capital
 Debe;Haber
-'604';
-Saldo deudor: $604
+;'301'
+Saldo acreedor: $301
 

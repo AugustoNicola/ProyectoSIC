@@ -1,8 +1,9 @@
 '';Cuenta;Modif;Debe;Haber
 
 '20/03'
-'';Proovedores;P+;'0';'604'
-'';Capital;PN-;'604';'0'
+'';Caja;A+;'250';'0'
+'';Fondo Fijo;A+;'51';'0'
+'';Capital;PN+;'0';'301'
 '';segun Apertura
 
-'07/07'
+'02/07'
