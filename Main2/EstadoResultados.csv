@@ -1,7 +1,10 @@
-Ventas;$0
-CMV;$0
+Ventas;$4000
+CMV;$-2500
 
-Utilidad Bruta;$0
+Utilidad Bruta;$1500
 
+Gastos de Publicidad;$-100
+Sueldos;$-50
+Cargas Sociales;$-50
 
-Utilidad Neto;$0
+Utilidad Neto;$1300

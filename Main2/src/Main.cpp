@@ -334,7 +334,7 @@ void OP_mostrarLibroDiario()
 					modif = esDebe ? "PN-" : "PN+";
 					break;
 				}
-				nombreCuenta += " "; nombreCuenta += modif;
+				nombreCuenta += " ("; nombreCuenta += modif; nombreCuenta += ")";
 
 				std::cout << formatearColumnaCuenta(nombreCuenta) << "|" 
 					<< formatearColumnaNumero(esDebe ? linea->delta : 0) << "|" 
@@ -425,10 +425,10 @@ void OP_mostrarLibroMayor()
 
 			if (saldo != 0)
 			{
-				std::cout << ((saldo > 0) ? "Saldo deudor: $" : "Saldo acreedor: $") << abs(saldo);
+				std::cout << formatearSaldo(saldo);
 			}
 			else {
-				std::cout << "Cuenta saldada: $0";
+				std::cout << "   Cuenta saldada: $0    ";
 			}
 			std::cout << std::endl << std::endl << std::endl << std::endl;
 		}
@@ -451,9 +451,54 @@ std::string formatearNombreCuenta(std::string str)
 	}
 	return str;
 }
+std::string formatearSaldo(int saldo)
+{
+	std::string str = std::to_string(abs(saldo));
+	str.insert(0, (saldo > 0 ? "Saldo deudor: $" : "Saldo acreedor: $"));
+	if (str.size() < 25)
+	{
+		bool alternar = true;
+		while (str.size() < 25)
+		{
+			str.insert((alternar ? str.size() : 0), " ");
+			alternar = !alternar;
+		}
+	}
+	return str;
+}
 
+void OP_mostrarEstadoResultados()
+{
+	header("ESTADO DE RESULTADOS", 3);
 
-void EXP_LibroDiario(bool mostrarMensaje)
+	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
+
+	std::cout << "Ventas: " << formatearResultado(buscarCuenta("Ventas")->getSaldoActual() * -1) << std::endl;
+	std::cout << "CMV: " << formatearResultado(buscarCuenta("CMV")->getSaldoActual() * -1) << std::endl << std::endl;
+
+	std::cout << "Utilidad Bruta: " << formatearResultado(utilidad) << std::endl << std::endl;
+
+	for (const Cuenta* cuentaGastos : GASTOS)
+	{
+		if (cuentaGastos->getSaldoActual() != 0)
+		{
+			std::cout << cuentaGastos->getNombre() << ": " << formatearResultado(cuentaGastos->getSaldoActual() * -1) << std::endl;
+			utilidad -= cuentaGastos->getSaldoActual();
+		}
+	}
+	std::cout << std::endl << "Utilidad Neto: " << formatearResultado(utilidad);
+
+	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
+	_getch();
+}
+std::string formatearResultado(int num)
+{
+	std::string str = std::to_string(abs(num));
+	str.insert(0, (num >= 0 ? "$" : "-$"));
+	return str;
+}
+
+void EXP_LibroDiario()
 {
 	//inicializa archivo
 	std::ofstream LibroDiario; LibroDiario.open("LibroDiario.csv");
@@ -510,16 +555,8 @@ void EXP_LibroDiario(bool mostrarMensaje)
 
 	} //dias
 	LibroDiario.close();
-
-	if (mostrarMensaje)
-	{
-		header("EXPORTAR LIBRO DIARIO", 2);
-		std::cout << "Libro diario exportado como LibroDiario.csv en el directorio actual!";
-		std::cout << "\n\nPresione cualquier tecla para continuar...";
-		_getch();
-	}
 }
-void EXP_LibroMayor(bool mostrarMensaje)
+void EXP_LibroMayor()
 {
 	std::ofstream LibroMayor; LibroMayor.open("LibroMayor.csv");
 
@@ -569,16 +606,8 @@ void EXP_LibroMayor(bool mostrarMensaje)
 	}
 
 	LibroMayor.close();
-
-	if (mostrarMensaje)
-	{
-		header("EXPORTAR LIBRO MAYOR", 2);
-		std::cout << "Libro mayor exportado como LibroMayor.csv en el directorio actual!";
-		std::cout << "\n\nPresione cualquier tecla para continuar...";
-		_getch();
-	}
 }
-void EXP_EstadoResultados(bool mostrarMensaje)
+void EXP_EstadoResultados()
 {
 	std::ofstream EstadoResultados; EstadoResultados.open("EstadoResultados.csv");
 	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
@@ -598,14 +627,6 @@ void EXP_EstadoResultados(bool mostrarMensaje)
 	EstadoResultados << std::endl << "Utilidad Neto;$" << utilidad;
 
 	EstadoResultados.close();
-
-	if (mostrarMensaje)
-	{
-		header("EXPORTAR ESTADO DE RESULTADOS", 2);
-		std::cout << "Estado de Resultados exportado como EstadoResultados.csv en el directorio actual!";
-		std::cout << "\n\nPresione cualquier tecla para continuar...";
-		_getch();
-	}
 }
 
 std::string formatearParaArchivo(std::string str)
@@ -638,10 +659,8 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Nota de Debito", [] { NotaDC(false); }),
 	Opcion("Ver L. Diario", [] { OP_mostrarLibroDiario(); }),
 	Opcion("Ver L. Mayor", [] { OP_mostrarLibroMayor(); }),
-	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(true); }),
-	Opcion("Exportar L. Mayor", [] { EXP_LibroMayor(true); }),
-	Opcion("Exportar Estado de Resultados", [] { EXP_EstadoResultados(true); }),
-	Opcion("Salir del Programa", []{ loop = false; EXP_LibroDiario(false); EXP_LibroMayor(false); EXP_EstadoResultados(false); })
+	Opcion("Ver Estado de Resultados", [] {OP_mostrarEstadoResultados(); }),
+	Opcion("Salir del Programa", []{ loop = false; EXP_LibroDiario(); EXP_LibroMayor(); EXP_EstadoResultados(); })
 };
 
 int main()

@@ -26,8 +26,10 @@ std::string formatearColumnaCuenta(std::string str);
 
 void OP_mostrarLibroMayor();
 std::string formatearNombreCuenta(std::string str);
+std::string formatearSaldo(int saldo);
 
 void OP_mostrarEstadoResultados();
+std::string formatearResultado(int num);
 
 void EXP_LibroDiario(bool mostrarMensaje);
 void EXP_LibroMayor(bool mostrarMensaje);

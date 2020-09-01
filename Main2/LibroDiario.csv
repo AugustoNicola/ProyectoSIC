@@ -1,3 +1,31 @@
 '';Cuenta;Modif;Debe;Haber
 
-'01/07'
+'20/03'
+'';Caja;A+;'10000';'0'
+'';Mercaderias;A+;'1500';'0'
+'';Capital;PN+;'0';'11500'
+'';segun Apertura
+
+'01/01'
+'';Acreedores Varios;P+;'0';'250'
+'';Caja;A+;'250';'0'
+'';segun yes
+
+'02/02'
+'';Caja;A-;'0';'200'
+'';Gastos de Publicidad;R-;'100';'0'
+'';Sueldos;R-;'50';'0'
+'';Cargas Sociales;R-;'50';'0'
+'';segun nooo
+
+'03/03'
+'';Mercaderias;A+;'1000';'0'
+'';Proovedores;P+;'0';'1000'
+'';segun ewaf
+
+'';Ventas;R+;'0';'4000'
+'';Fondo Fijo;A+;'4000';'0'
+'';Mercaderias;A-;'0';'2500'
+'';CMV;R-;'2500';'0'
+'';segun ff
+

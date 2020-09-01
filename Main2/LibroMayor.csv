@@ -1,10 +1,56 @@
 Caja
 Debe;Haber
-'200';
-Saldo deudor: $200
+'10000';'200'
+'250';
+Saldo deudor: $10050
+
+Fondo Fijo
+Debe;Haber
+'4000';
+Saldo deudor: $4000
+
+Mercaderias
+Debe;Haber
+'1500';'1500'
+Cuenta saldada: $0
+
+Proovedores
+Debe;Haber
+;'1000'
+Saldo acreedor: $1000
+
+Acreedores Varios
+Debe;Haber
+;'250'
+Saldo acreedor: $250
 
 Capital
 Debe;Haber
-;'200'
-Saldo acreedor: $200
+;'11500'
+Saldo acreedor: $11500
+
+Ventas
+Debe;Haber
+;'4000'
+Saldo acreedor: $4000
+
+CMV
+Debe;Haber
+'2500';
+Saldo deudor: $2500
+
+Gastos de Publicidad
+Debe;Haber
+'100';
+Saldo deudor: $100
+
+Sueldos
+Debe;Haber
+'50';
+Saldo deudor: $50
+
+Cargas Sociales
+Debe;Haber
+'50';
+Saldo deudor: $50
 
