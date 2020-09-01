@@ -21,13 +21,18 @@ void OP_Transaccion();
 void NotaDC(bool credito);
 
 void OP_mostrarLibroDiario();
-std::string formatearColumnaCuenta(std::string str);
 std::string formatearColumnaNumero(int str);
+std::string formatearColumnaCuenta(std::string str);
+
+void OP_mostrarLibroMayor();
+std::string formatearNombreCuenta(std::string str);
+
+void OP_mostrarEstadoResultados();
 
 void EXP_LibroDiario(bool mostrarMensaje);
 void EXP_LibroMayor(bool mostrarMensaje);
 void EXP_EstadoResultados(bool mostrarMensaje);
-std::string formatear(std::string texto);
-std::string formatear(int valor);
+std::string formatearParaArchivo(std::string texto);
+std::string formatearParaArchivo(int valor);
 
 void initVectores();

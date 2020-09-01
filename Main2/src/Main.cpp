@@ -289,10 +289,10 @@ void NotaDC(bool credito)
 
 void OP_mostrarLibroDiario()
 {
+	header("LIBRO DIARIO", 3);
+
 	std::string separador = "--------------------------------------------------+------------+------------";
 	std::string lineaVacia = "|            |            ";
-
-	header("LIBRO DIARIO", 3);
 
 	//                 50                  |     12     |     12     
 	std::cout << "Cuenta                                            |    Debe    |   Haber  " << std::endl
@@ -352,7 +352,6 @@ void OP_mostrarLibroDiario()
 	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
 	_getch();
 }
-
 std::string formatearColumnaCuenta(std::string str)
 {
 	if (str.size() > 50)
@@ -380,6 +379,80 @@ std::string formatearColumnaNumero(int num)
 	return str;
 }
 
+void OP_mostrarLibroMayor()
+{
+	header("LIBRO MAYOR", 3);
+
+	std::vector<int> debes; std::vector<int> haberes;
+	int saldo;
+	bool salir;
+
+	for (Cuenta& cuenta : CUENTAS)
+	{
+		debes.clear(); haberes.clear();
+
+		if (cuenta.hayDias())
+		{
+			//           12     |    12
+			std::cout << formatearNombreCuenta(cuenta.getNombre()) << std::endl 
+				<< "    Debe    |   Haber  " << std::endl;
+
+			saldo = 0; salir = false;
+
+			for (DiaCuenta& dia : cuenta.getDias())
+			{
+				if (dia.delta > 0)
+				{
+					debes.push_back(dia.delta);
+				}
+				else if (dia.delta < 0)
+				{
+					haberes.push_back(abs(dia.delta));
+				}
+
+				saldo += dia.delta;
+			}
+
+			unsigned int lineaActual = 0;
+			while (lineaActual < debes.size() || lineaActual < haberes.size())
+			{
+				std::cout
+					<< (lineaActual < debes.size() ? formatearColumnaNumero(debes[lineaActual]) : "            ") << "|"
+					<< (lineaActual < haberes.size() ? formatearColumnaNumero(haberes[lineaActual]) : "            ") << std::endl;
+				lineaActual++;
+			}
+			std::cout << "------------+------------" << std::endl;
+
+			if (saldo != 0)
+			{
+				std::cout << ((saldo > 0) ? "Saldo deudor: $" : "Saldo acreedor: $") << abs(saldo);
+			}
+			else {
+				std::cout << "Cuenta saldada: $0";
+			}
+			std::cout << std::endl << std::endl << std::endl << std::endl;
+		}
+	}
+
+	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
+	_getch();
+}
+std::string formatearNombreCuenta(std::string str)
+{
+	str.insert(0, " "); str.append(" ");
+	if (str.size() < 25)
+	{
+		bool alternar = true;
+		while (str.size() < 25)
+		{
+			str.insert((alternar ? str.size() : 0), "=");
+			alternar = !alternar;
+		}
+	}
+	return str;
+}
+
+
 void EXP_LibroDiario(bool mostrarMensaje)
 {
 	//inicializa archivo
@@ -393,7 +466,7 @@ void EXP_LibroDiario(bool mostrarMensaje)
 
 	for (DiaOperaciones &dia : DIAS)
 	{
-		LibroDiario << formatear(dia.getFecha()) << std::endl; // "'01/01'"
+		LibroDiario << formatearParaArchivo(dia.getFecha()) << std::endl; // "'01/01'"
 
 		for (const Operacion* operacion : dia.getOperaciones())
 		{
@@ -427,8 +500,8 @@ void EXP_LibroDiario(bool mostrarMensaje)
 				LibroDiario << "'';"
 							<< nombreCuenta << ";"
 							<< modif << ";" 
-							<< formatear(esDebe ? linea->delta : 0) << ";"
-							<< formatear(!esDebe ? abs(linea->delta) : 0) << std::endl;
+							<< formatearParaArchivo(esDebe ? linea->delta : 0) << ";"
+							<< formatearParaArchivo(!esDebe ? abs(linea->delta) : 0) << std::endl;
 
 			} //lineas
 
@@ -481,8 +554,8 @@ void EXP_LibroMayor(bool mostrarMensaje)
 			while (lineaActual < debes.size() || lineaActual < haberes.size())
 			{
 				LibroMayor
-					<< (lineaActual < debes.size() ? formatear(debes[lineaActual]) : "") << ";"
-					<< (lineaActual < haberes.size() ? formatear(haberes[lineaActual]) : "") << std::endl;
+					<< (lineaActual < debes.size() ? formatearParaArchivo(debes[lineaActual]) : "") << ";"
+					<< (lineaActual < haberes.size() ? formatearParaArchivo(haberes[lineaActual]) : "") << std::endl;
 				lineaActual++;
 			}
 
@@ -499,10 +572,10 @@ void EXP_LibroMayor(bool mostrarMensaje)
 
 	if (mostrarMensaje)
 	{
-	header("EXPORTAR LIBRO MAYOR", 2);
-	std::cout << "Libro mayor exportado como LibroMayor.csv en el directorio actual!";
-	std::cout << "\n\nPresione cualquier tecla para continuar...";
-	_getch();
+		header("EXPORTAR LIBRO MAYOR", 2);
+		std::cout << "Libro mayor exportado como LibroMayor.csv en el directorio actual!";
+		std::cout << "\n\nPresione cualquier tecla para continuar...";
+		_getch();
 	}
 }
 void EXP_EstadoResultados(bool mostrarMensaje)
@@ -534,16 +607,17 @@ void EXP_EstadoResultados(bool mostrarMensaje)
 		_getch();
 	}
 }
-std::string formatear(std::string texto)
+
+std::string formatearParaArchivo(std::string str)
 {
-	texto.insert(0, "'"); texto.append("'");
-	return texto;
+	str.insert(0, "'"); str.append("'");
+	return str;
 }
-std::string formatear(int texto)
+std::string formatearParaArchivo(int num)
 {
-	std::string strTexto = std::to_string(texto);
-	strTexto.insert(0, "'"); strTexto.append("'");
-	return strTexto;
+	std::string str = std::to_string(num);
+	str.insert(0, "'"); str.append("'");
+	return str;
 }
 
 void initVectores() {
@@ -563,6 +637,7 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Nota de Credito", [] { NotaDC(true); }),
 	Opcion("Nota de Debito", [] { NotaDC(false); }),
 	Opcion("Ver L. Diario", [] { OP_mostrarLibroDiario(); }),
+	Opcion("Ver L. Mayor", [] { OP_mostrarLibroMayor(); }),
 	Opcion("Exportar L. Diario", [] { EXP_LibroDiario(true); }),
 	Opcion("Exportar L. Mayor", [] { EXP_LibroMayor(true); }),
 	Opcion("Exportar Estado de Resultados", [] { EXP_EstadoResultados(true); }),
