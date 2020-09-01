@@ -164,6 +164,7 @@ void NotaDC(bool credito)
 	std::vector<const Operacion*> posOper;
 	do
 	{
+		bool hayOperaciones = false;
 		cont = 1;
 		posOper = {};
 		header( std::string(credito ? "NOTA DE CREDITO" : "NOTA DE DEBITO") += ": LISTADO DE OPERACIONES", 1);
@@ -175,8 +176,18 @@ void NotaDC(bool credito)
 				std::cout << "\n" << cont << ". " << operacion->getDocumento() << " (" << dia.getFecha() << ")";
 				posOper.push_back(operacion);
 				cont++;
+
+				hayOperaciones = true;
 			}
 		}
+
+		if (!hayOperaciones)
+		{
+			std::cout << "\nNo hay dias con operaciones validas!\n\nPresione cualquier tecla para volver...";
+			_getch();
+			return;
+		}
+
 		std::cout << "\n" << cont << ". Cancelar";
 
 		std::cout << "\n\nElija la operacion a la que se refiere la nota: ";

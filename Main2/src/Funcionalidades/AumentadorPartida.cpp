@@ -103,7 +103,7 @@ std::string AumentadorPartida::formatearSaldoCuenta(int num)
 
 bool AumentadorPartida::validarAumentoActual(std::string strCantidad)
 {
-	aumentoActual = validarInt(strCantidad, 1, (noHayLimite() ? INT_MAX : abs(limite - aumentoTotal) ), abs(cuentaOperacionActual->getSaldoActual()), abs(limite - aumentoTotal));
+	aumentoActual = validarInt(strCantidad, 1, (noHayLimite() ? INT_MAX : abs(limite - aumentoTotal)), abs(cuentaOperacionActual->getSaldoActual()), abs(limite - aumentoTotal));
 	if (aumentoActual != 0)
 	{
 		ajustarSignoAumentoActual();

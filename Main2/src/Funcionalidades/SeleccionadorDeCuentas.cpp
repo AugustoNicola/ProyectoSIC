@@ -129,7 +129,6 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 	}
 	
 }
-
 void SeleccionadorDeCuentas::separadorDeTipo(Cuenta::TipoCuenta tipo)
 {
 	switch (tipo)

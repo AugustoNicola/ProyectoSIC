@@ -146,12 +146,10 @@ int validarInt(std::string str, std::optional<int> min, std::optional<int> max, 
 		else {
 			/// valor absoluto
 
-			//verifica negativo
-			n *= ((smatch[1].matched) ? -1 : 1);
+			n *= ((smatch[1].matched) ? -1 : 1); //verifica negativo
 
 			return (max >= n && n >= min) ? n : 0;
 		}
-
 	}
 	else {
 		/// no es numero
