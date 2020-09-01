@@ -89,9 +89,16 @@ void AumentadorPartida::elegirAumentoActual()
 
 void AumentadorPartida::mostrarInformacion()
 {
-	header(cuentaOperacionActual->getNombre() += (std::string)" (Saldo Actual: $" += std::to_string(cuentaOperacionActual->getSaldoActual()) += ")", 2);
+	header(cuentaOperacionActual->getNombre() += (std::string)" (Saldo Actual: " += formatearSaldoCuenta(cuentaOperacionActual->getSaldoActual()) += ")", 2);
 	std::cout << "Total actual: $" << abs(aumentoTotal);
 	std::cout << "\nLimite: $" << abs(limite);
+}
+
+std::string AumentadorPartida::formatearSaldoCuenta(int num)
+{
+	std::string str = std::to_string(abs(num));
+	str.insert(0, (num >= 0 ? "$" : "-$"));
+	return str;
 }
 
 bool AumentadorPartida::validarAumentoActual(std::string strCantidad)

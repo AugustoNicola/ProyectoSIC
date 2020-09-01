@@ -19,14 +19,38 @@ private:
 	std::vector<Linea> Lineas;
 
 public:
-
-	std::string getDocumento() const { return Documento; }
-	void setDocumento(std::string nuevoDocumento) { Documento = nuevoDocumento; }
-
 	void crearLinea(Cuenta *cuenta, int modificacion)
 	{
-		Lineas.push_back(Linea(cuenta, modificacion));
+		if (contieneCuenta(cuenta->getNombre()))
+		{
+			modificarLinea(cuenta, modificacion);
+		} else {
+			Lineas.push_back(Linea(cuenta, modificacion));
+		}
 	}
+
+private:
+	void modificarLinea(Cuenta* cuenta, int modificacion)
+	{
+		for (unsigned int i = 0; i < Lineas.size(); i++)
+		{
+			if (Lineas[i].cuenta->getNombre() == cuenta->getNombre())
+			{
+				int total = Lineas[i].delta + modificacion;
+				if (total != 0)
+				{
+					Lineas[i].delta = total;
+				}
+				else {
+					Lineas.erase(Lineas.begin() + i);
+				}
+			}
+		}
+	}
+
+public:
+	std::string getDocumento() const { return Documento; }
+	void setDocumento(std::string nuevoDocumento) { Documento = nuevoDocumento; }
 
 	bool hayLineas() const { return !Lineas.empty(); }
 	std::vector<const Linea*> getLineas() const

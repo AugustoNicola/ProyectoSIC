@@ -33,6 +33,7 @@ private:
 	static bool cuentaOperacionActualEsMercaderia();
 	static void elegirAumentoActual();
 	static void mostrarInformacion();
+	static std::string formatearSaldoCuenta(int num);
 	static bool validarAumentoActual(std::string strCantidad);
 	static void ajustarSignoAumentoActual();
 	static void efectuarAumento();
