@@ -31,9 +31,11 @@ std::string formatearSaldo(int saldo);
 void OP_mostrarEstadoResultados();
 std::string formatearResultado(int num);
 
-void EXP_LibroDiario(bool mostrarMensaje);
-void EXP_LibroMayor(bool mostrarMensaje);
-void EXP_EstadoResultados(bool mostrarMensaje);
+void OP_salir();
+
+void EXP_LibroDiario();
+void EXP_LibroMayor();
+void EXP_EstadoResultados();
 std::string formatearParaArchivo(std::string texto);
 std::string formatearParaArchivo(int valor);
 

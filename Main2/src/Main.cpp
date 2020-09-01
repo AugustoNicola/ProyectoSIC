@@ -498,6 +498,21 @@ std::string formatearResultado(int num)
 	return str;
 }
 
+void OP_salir()
+{
+	EXP_LibroDiario();
+	EXP_LibroMayor();
+	EXP_EstadoResultados();
+
+	header("PROGRAMA FINALIZADO", 2);
+	std::cout << "Archivos .csv guardados correctamente en directorio actual!";
+	std::cout << "\nIngreselos en Microsoft Excel como archivo de texto delimitado por ';' para leerlos correctamente ";
+	std::cout << "\n\nPresione cualquier tecla para cerrar la consola...";
+	_getch();
+
+	loop = false;
+}
+
 void EXP_LibroDiario()
 {
 	//inicializa archivo
@@ -660,7 +675,7 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Ver L. Diario", [] { OP_mostrarLibroDiario(); }),
 	Opcion("Ver L. Mayor", [] { OP_mostrarLibroMayor(); }),
 	Opcion("Ver Estado de Resultados", [] {OP_mostrarEstadoResultados(); }),
-	Opcion("Salir del Programa", []{ loop = false; EXP_LibroDiario(); EXP_LibroMayor(); EXP_EstadoResultados(); })
+	Opcion("Salir del Programa", [] { OP_salir(); })
 };
 
 int main()
