@@ -514,6 +514,7 @@ void OP_salir()
 	EXP_LibroDiario();
 	EXP_LibroMayor();
 	EXP_EstadoResultados();
+	EXP_FichaStock();
 
 	header("PROGRAMA FINALIZADO", 2);
 	std::cout << "Archivos .csv guardados correctamente en directorio actual!";
@@ -654,6 +655,54 @@ void EXP_EstadoResultados()
 
 	EstadoResultados.close();
 }
+void EXP_FichaStock()
+{
+	std::ofstream FichaStock; FichaStock.open("FichaStock.csv");
+
+	bool primerRegistro;
+	std::vector<ExistenciasPrecioMercaderia> Existencias;
+	unsigned int iter;
+
+	for (const Mercaderia& mercaderia : MERCADERIAS)
+	{
+		Existencias.clear();
+
+		FichaStock << ";;;;" << mercaderia.getNombre() << std::endl
+			<< "Fecha;;Ingresos;;;Egresos;;;Existencias;" << std::endl
+			<< ";Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total"
+			<< std::endl << std::endl;
+
+		for (const DiaMercaderia* dia : mercaderia.getDias())
+		{
+			//actualiza Existencias para todo el dia
+			for (const RegistroPrecio& registro : dia->Registros)
+			{
+				unsigned int pos = buscarOCrearExistencia(Existencias, registro.precio);
+				Existencias[pos].modificar(registro.delta);
+				if (Existencias[pos].existencias == 0) { Existencias.erase(Existencias.begin() + pos); }
+			}
+
+			iter = 0;
+			primerRegistro = true;
+			//sigue imprimiendo hasta que no queden ni registros ni existencias
+			while(iter < dia->Registros.size() || iter < Existencias.size())
+			{
+				FichaStock << (primerRegistro ? formatearParaArchivo(dia->Fecha) : "") << ";" //fecha
+					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta > 0 ? imprimirRegistro(dia->Registros[iter]) : ";;;") : ";;;") //ingresos
+					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta < 0 ? imprimirRegistro(dia->Registros[iter]) : ";;;") : ";;;") //egresos
+					<< (iter < Existencias.size() ? imprimirExistencia(Existencias[iter]) : "") //existencias
+					<< std::endl;
+
+				primerRegistro = false;
+				iter++;
+			}
+			FichaStock << std::endl;
+		} //dia
+		FichaStock << std::endl << std::endl;
+	} //mercaderia
+
+	FichaStock.close();
+}
 
 std::string formatearParaArchivo(std::string str)
 {
@@ -665,6 +714,34 @@ std::string formatearParaArchivo(int num)
 	std::string str = std::to_string(num);
 	str.insert(0, "'"); str.append("'");
 	return str;
+}
+unsigned int buscarOCrearExistencia(std::vector<ExistenciasPrecioMercaderia>& Existencias, unsigned int precio)
+{
+	for (unsigned int i = 0; i < Existencias.size(); i++)
+	{
+		if (precio == Existencias[i].precio) 
+		{
+			return i;
+		}
+	}
+	Existencias.push_back(ExistenciasPrecioMercaderia(precio));
+	return Existencias.size() - 1;
+}
+std::string imprimirRegistro(const RegistroPrecio& registro)
+{
+	std::string impresion;
+	impresion.append(std::to_string(abs(registro.delta))); impresion.append(";");
+	impresion.append(std::to_string(registro.precio)); impresion.append(";");
+	impresion.append(std::to_string(abs(registro.delta) * registro.precio)); impresion.append(";");
+	return impresion;
+}
+std::string imprimirExistencia(const ExistenciasPrecioMercaderia& existencia)
+{
+	std::string impresion;
+	impresion.append(std::to_string(existencia.existencias)); impresion.append(";");
+	impresion.append(std::to_string(existencia.precio)); impresion.append(";");
+	impresion.append(std::to_string(existencia.existencias * existencia.precio)); impresion.append(";");
+	return impresion;
 }
 
 void initVectores() {

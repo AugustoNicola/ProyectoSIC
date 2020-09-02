@@ -36,7 +36,12 @@ void OP_salir();
 void EXP_LibroDiario();
 void EXP_LibroMayor();
 void EXP_EstadoResultados();
+void EXP_FichaStock();
+
 std::string formatearParaArchivo(std::string texto);
 std::string formatearParaArchivo(int valor);
+unsigned int buscarOCrearExistencia(std::vector<ExistenciasPrecioMercaderia>& Existencias, unsigned int precio);
+std::string imprimirRegistro(const RegistroPrecio& registro);
+std::string imprimirExistencia(const ExistenciasPrecioMercaderia& existencia);
 
 void initVectores();

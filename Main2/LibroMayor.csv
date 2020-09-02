@@ -1,15 +1,10 @@
-Caja
+Mercaderias
 Debe;Haber
-;'1500'
-Saldo acreedor: $1500
+'5300';
+Saldo deudor: $5300
 
-Fondo Fijo
+Capital
 Debe;Haber
-'1650';
-Saldo deudor: $1650
-
-Proovedores
-Debe;Haber
-;'150'
-Saldo acreedor: $150
+;'5300'
+Saldo acreedor: $5300
 

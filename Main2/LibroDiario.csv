@@ -1,8 +1,8 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/08'
-'';Caja;A-;'0';'1500'
-'';Proovedores;P+;'0';'150'
-'';Fondo Fijo;A+;'1650';'0'
-'';segun uff
+'20/03'
+'';Mercaderias;A+;'5300';'0'
+'';Capital;PN+;'0';'5300'
+'';segun Apertura
 
+'02/02'
