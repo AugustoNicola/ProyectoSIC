@@ -1,10 +1,15 @@
 Mercaderias
 Debe;Haber
-'5300';
-Saldo deudor: $5300
+'3100';
+Saldo deudor: $3100
+
+Proovedores
+Debe;Haber
+;'1400'
+Saldo acreedor: $1400
 
 Capital
 Debe;Haber
-;'5300'
-Saldo acreedor: $5300
+;'1700'
+Saldo acreedor: $1700
 

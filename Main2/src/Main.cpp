@@ -348,7 +348,7 @@ void OP_mostrarLibroDiario()
 				nombreCuenta += " ("; nombreCuenta += modif; nombreCuenta += ")";
 
 				std::cout << formatearColumnaCuenta(nombreCuenta) << "|" 
-					<< formatearColumnaNumero(esDebe ? linea->delta : 0) << "|" 
+					<< formatearColumnaNumero(esDebe ? linea->delta : 0) << "|"
 					<< formatearColumnaNumero(!esDebe ? abs(linea->delta) : 0) << std::endl;
 
 			} //lineas
@@ -384,7 +384,7 @@ std::string formatearColumnaNumero(int num)
 	{
 		while (str.size() < 12)
 		{
-			str.insert(0," ");
+			str.insert(0, " ");
 		}
 	}
 	return str;
@@ -404,8 +404,11 @@ void OP_mostrarLibroMayor()
 
 		if (cuenta.hayDias())
 		{
+			std::string nombreCuenta = cuenta.getNombre();
+			nombreCuenta.insert(0, " "); nombreCuenta.append(" ");
+
 			//           12     |    12
-			std::cout << formatearNombreCuenta(cuenta.getNombre()) << std::endl 
+			std::cout << formatearCentrado(nombreCuenta, 25, "=") << std::endl 
 				<< "    Debe    |   Haber  " << std::endl;
 
 			saldo = 0; salir = false;
@@ -448,34 +451,11 @@ void OP_mostrarLibroMayor()
 	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
 	_getch();
 }
-std::string formatearNombreCuenta(std::string str)
-{
-	str.insert(0, " "); str.append(" ");
-	if (str.size() < 25)
-	{
-		bool alternar = true;
-		while (str.size() < 25)
-		{
-			str.insert((alternar ? str.size() : 0), "=");
-			alternar = !alternar;
-		}
-	}
-	return str;
-}
 std::string formatearSaldo(int saldo)
 {
 	std::string str = std::to_string(abs(saldo));
 	str.insert(0, (saldo > 0 ? "Saldo deudor: $" : "Saldo acreedor: $"));
-	if (str.size() < 25)
-	{
-		bool alternar = true;
-		while (str.size() < 25)
-		{
-			str.insert((alternar ? str.size() : 0), " ");
-			alternar = !alternar;
-		}
-	}
-	return str;
+	return formatearCentrado(str, 25, " ");
 }
 
 void OP_mostrarEstadoResultados()
@@ -507,6 +487,98 @@ std::string formatearResultado(int num)
 	std::string str = std::to_string(abs(num));
 	str.insert(0, (num >= 0 ? "$" : "-$"));
 	return str;
+}
+
+void OP_mostrarFichaStock()
+{
+	std::string grupoVacio = "            |            |            ";
+	std::string separadorDia = "------------||------------+------------+------------||------------+------------+------------||------------+------------+------------||";
+
+	bool primerRegistro;
+	std::vector<ExistenciasPrecioMercaderia> Existencias;
+	unsigned int iter;
+
+	header("FICHA DE STOCK", 2);
+
+	for (const Mercaderia& mercaderia : MERCADERIAS)
+	{
+		Existencias.clear();
+
+		std::cout << formatearNombreMercaderia(mercaderia.getNombre()) << std::endl
+			//     12                          38
+			<< "   Fecha    ||               Ingresos               ||                Egresos               ||              Existencias             ||" << std::endl
+			<< "            ||    unid.   |   costo    | costo tot. ||    unid.   |   costo    | costo tot. ||    unid.   |   costo    | costo tot. ||"
+			<< std::endl;
+
+		for (const DiaMercaderia* dia : mercaderia.getDias())
+		{
+			//actualiza Existencias para todo el dia
+			for (const RegistroPrecio& registro : dia->Registros)
+			{
+				unsigned int pos = buscarOCrearExistencia(Existencias, registro.precio);
+				Existencias[pos].modificar(registro.delta);
+				if (Existencias[pos].existencias == 0) { Existencias.erase(Existencias.begin() + pos); }
+			}
+
+			iter = 0;
+			primerRegistro = true;
+			//sigue imprimiendo hasta que no queden ni registros ni existencias
+			while (iter < dia->Registros.size() || iter < Existencias.size())
+			{
+				std::cout << formatearCentrado( (primerRegistro ? dia->Fecha : ""), 12, " " ) << "||" //fecha
+					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta > 0 ? mostrarRegistro(dia->Registros[iter]) : grupoVacio) : grupoVacio) << "||" //ingresos
+					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta < 0 ? mostrarRegistro(dia->Registros[iter]) : grupoVacio) : grupoVacio) << "||" //egresos
+					<< (iter < Existencias.size() ? mostrarExistencia(Existencias[iter]) : grupoVacio) << "||" //existencias
+					<< std::endl;
+
+				primerRegistro = false;
+				iter++;
+			}
+			std::cout << separadorDia << std::endl;
+		} //dia
+		std::cout << std::endl << std::endl << std::endl;
+	} //mercaderia
+	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
+	_getch();
+}
+std::string formatearNombreMercaderia(std::string nombre)
+{
+	nombre.insert(0, " "); nombre.append(" ");
+	return formatearCentrado(nombre, 134, "=");
+}
+std::string mostrarRegistro(const RegistroPrecio& registro)
+{
+	std::string impresion;
+	impresion.append(formatearColumnaNumero(abs(registro.delta))); impresion.append("|");
+	impresion.append(formatearColumnaNumero(registro.precio)); impresion.append("|");
+	impresion.append(formatearColumnaNumero(abs(registro.delta) * registro.precio));
+	return impresion;
+}
+std::string mostrarExistencia(const ExistenciasPrecioMercaderia& existencia)
+{
+	std::string impresion;
+	impresion.append(formatearColumnaNumero(existencia.existencias)); impresion.append("|");
+	impresion.append(formatearColumnaNumero(existencia.precio)); impresion.append("|");
+	impresion.append(formatearColumnaNumero(existencia.existencias * existencia.precio));
+	return impresion;
+}
+
+std::string formatearCentrado(std::string str, unsigned int longitud, std::string caracter)
+{
+	if (str.size() < longitud)
+	{
+		bool alternar = true;
+		while (str.size() < longitud)
+		{
+			str.insert((alternar ? str.size() : 0), caracter);
+			alternar = !alternar;
+		}
+	}
+	return str;
+}
+std::string formatearCentrado(int num, unsigned int longitud, std::string caracter)
+{
+	return formatearCentrado(std::to_string(num), longitud, caracter);
 }
 
 void OP_salir()
@@ -763,6 +835,7 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Ver L. Diario", [] { OP_mostrarLibroDiario(); }),
 	Opcion("Ver L. Mayor", [] { OP_mostrarLibroMayor(); }),
 	Opcion("Ver Estado de Resultados", [] {OP_mostrarEstadoResultados(); }),
+	Opcion("Ver Ficha de Stock", [] {OP_mostrarFichaStock(); }),
 	Opcion("Salir del Programa", [] { OP_salir(); })
 };
 

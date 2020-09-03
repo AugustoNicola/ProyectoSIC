@@ -1,8 +1,9 @@
 '';Cuenta;Modif;Debe;Haber
 
 '20/03'
-'';Mercaderias;A+;'5300';'0'
-'';Capital;PN+;'0';'5300'
+'';Mercaderias;A+;'3100';'0'
+'';Proovedores;P+;'0';'1400'
+'';Capital;PN+;'0';'1700'
 '';segun Apertura
 
-'02/02'
+'02/07'

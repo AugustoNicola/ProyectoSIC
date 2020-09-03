@@ -18,18 +18,29 @@
 
 bool OP_Apertura();
 void OP_Transaccion();
+
+void OP_VentaMercaderias();
+void OP_CompraMercaderias();
+
 void NotaDC(bool credito);
 
 void OP_mostrarLibroDiario();
-std::string formatearColumnaNumero(int str);
 std::string formatearColumnaCuenta(std::string str);
+std::string formatearColumnaNumero(int num);
 
 void OP_mostrarLibroMayor();
-std::string formatearNombreCuenta(std::string str);
 std::string formatearSaldo(int saldo);
 
 void OP_mostrarEstadoResultados();
 std::string formatearResultado(int num);
+
+void OP_mostrarFichaStock();
+std::string formatearNombreMercaderia(std::string nombre);
+std::string mostrarRegistro(const RegistroPrecio& registro);
+std::string mostrarExistencia(const ExistenciasPrecioMercaderia& existencia);
+
+std::string formatearCentrado(std::string str, unsigned int longitud, std::string caracter);
+std::string formatearCentrado(int num, unsigned int longitud, std::string caracter);
 
 void OP_salir();
 

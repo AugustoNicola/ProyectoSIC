@@ -1,13 +1,12 @@
-;;;;Autos
+;;;;autos
 Fecha;;Ingresos;;;Egresos;;;Existencias;
 ;Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total
 
-'20/03';5;500;2500;;;;5;500;2500;
-;2;600;1200;;;;2;600;1200;
+'20/03';3;500;1500;;;;3;500;1500;
 
 
 
-;;;;Motos
+;;;;motos
 Fecha;;Ingresos;;;Egresos;;;Existencias;
 ;Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total
 
