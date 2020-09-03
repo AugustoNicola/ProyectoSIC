@@ -118,11 +118,11 @@ bool SeleccionadorDeMercaderias::validarOpcionMercaderia(std::string strOpcion)
 
 bool SeleccionadorDeMercaderias::opcionCrearMercaderiaElegida(int opcionElegida)
 {
-	return opcionElegida == mercaderiasDisponibles.size() + 1;
+	return (esCompra ? opcionElegida == mercaderiasDisponibles.size() + 1 : false);
 }
 bool SeleccionadorDeMercaderias::opcionCancelarElegida(int opcionElegida)
 {
-	return opcionElegida == mercaderiasDisponibles.size() + (esCompra ? 1 : 0) + 1;
+	return (PermitirCancelar ? opcionElegida == mercaderiasDisponibles.size() + (esCompra ? 1 : 0) + 1 : false);
 }
 
 void SeleccionadorDeMercaderias::elegirPrecioCompra()
