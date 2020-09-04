@@ -1,20 +1,17 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/03'
-'';Mercaderias;A+;'2300';'0'
-'';Capital;PN+;'0';'2300'
+'20/02'
+'';Caja;A+;'100';'0'
+'';Rodados;A+;'100';'0'
+'';Capital;PN+;'0';'200'
 '';segun Apertura
 
-'08/07'
-'';Ventas;R+;'0';'3000'
-'';Caja;A+;'3000';'0'
-'';Mercaderias;A-;'0';'1500'
-'';CMV;R-;'1500';'0'
-'';segun venta
+'02/08'
+'';Caja;A+;'150';'0'
+'';Proovedores;P+;'0';'150'
+'';segun yes
 
-'';Ventas;R+;'0';'3000'
-'';Fondo Fijo;A+;'3000';'0'
-'';Mercaderias;A-;'0';'800'
-'';CMV;R-;'800';'0'
-'';segun motosss
+'';Rodados;A-;'0';'50'
+'';Proovedores;P-;'50';'0'
+'';segun no
 

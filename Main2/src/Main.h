@@ -22,7 +22,33 @@ void OP_Transaccion();
 void OP_VentaMercaderias();
 void OP_CompraMercaderias();
 
-void NotaDC(bool credito);
+class OP_Nota
+{
+private:
+	static bool esCredito;
+
+	static const Operacion* operacionModificada;
+	static std::vector<const Operacion*> operacionesDisponibles;
+	static int posOperacion;
+
+	static const Linea* lineaModificada;
+	static std::vector<const Linea*> lineasDisponibles;
+	static int posLinea;
+
+	static ModoAumento tipo;
+	static int modificacion;
+public:
+	static void efectuarNota(bool _esCredito);
+private:
+	static bool intentarElegirOperacion();
+	static bool validarOperacion(std::string strOperacion);
+	static void elegirLinea();
+	static bool validarLinea(std::string strLinea);
+
+	static void operacionConvencional();
+	static bool validarModificacion(std::string strValorAumento);
+	static void ajustarSignoModificacion();
+};
 
 void OP_mostrarLibroDiario();
 std::string formatearColumnaCuenta(std::string str);
