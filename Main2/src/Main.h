@@ -42,8 +42,11 @@ public:
 private:
 	static bool intentarElegirOperacion();
 	static bool validarOperacion(std::string strOperacion);
+
 	static void elegirLinea();
 	static bool validarLinea(std::string strLinea);
+
+	static void operacionMercaderia();
 
 	static void operacionConvencional();
 	static bool validarModificacion(std::string strValorAumento);

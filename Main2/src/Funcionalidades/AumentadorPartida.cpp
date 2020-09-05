@@ -30,7 +30,7 @@ int AumentadorPartida::realizarAumento(bool _permitirCancelar, Cuenta::TipoCuent
 			{
 				/// hay mercaderias!
 				
-				SeleccionadorDeMercaderias operacionMercaderia(true, true);
+				SeleccionadorDeMercaderias operacionMercaderia(true, SeleccionadorDeMercaderias::TipoOperacion::COMPRA);
 				aumentoActual = operacionMercaderia.getTotalGastadoCompra();
 			}
 			else {

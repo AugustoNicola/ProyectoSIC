@@ -112,7 +112,7 @@ void OP_Transaccion()
 
 void OP_VentaMercaderias()
 {
-	SeleccionadorDeMercaderias venta(true, false);
+	SeleccionadorDeMercaderias venta(true, SeleccionadorDeMercaderias::TipoOperacion::VENTA);
 	if (venta.getCantidad() != 0)
 	{
 		/// venta realizada!
@@ -122,20 +122,20 @@ void OP_VentaMercaderias()
 
 		int igualacionEnDebe = AumentadorPartida::realizarAumento(false ,Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
 
-		/* anotar cmv y mercaderias */
+		// anotar cmv y mercaderias
 		int totalPerdido = venta.getTotalPerdidoVenta();
 
 		modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido * -1);
 		modificarCuenta(buscarCuenta("CMV"), totalPerdido);
 
-		/* guarda operacion */
+		// guarda operacion
 		operacionActual = pedirNombreDocx(operacionActual);
 		commitOperacion(operacionActual);
 	}
 }
 void OP_CompraMercaderias()
 {
-	SeleccionadorDeMercaderias compra(true, true);
+	SeleccionadorDeMercaderias compra(true, SeleccionadorDeMercaderias::TipoOperacion::COMPRA);
 	if (compra.getCantidad() != 0)
 	{
 		/// compra realizada!
@@ -144,7 +144,7 @@ void OP_CompraMercaderias()
 		modificarCuenta(buscarCuenta("Mercaderias"), totalCompraMercaderias);
 		int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalCompraMercaderias * -1);
 
-		/* guarda operacion */
+		// guarda operacion
 		operacionActual = pedirNombreDocx(operacionActual);
 		commitOperacion(operacionActual);
 	}
@@ -173,13 +173,8 @@ void OP_Nota::efectuarNota(bool _esCredito)
 
 		if (lineaModificada->cuenta->getNombre() == "Mercaderias")
 		{
-			/// operacion respecto a mercaderias
-		}
-		else if (lineaModificada->cuenta->getNombre() == "Venta")
-		{
-			/// operacion respecto a venta
-		}
-		else {
+			operacionMercaderia();
+		} else {
 			operacionConvencional();
 		}
 	}
@@ -282,6 +277,41 @@ bool OP_Nota::validarLinea(std::string strLinea)
 		return false;
 	}
 	return true;
+}
+
+void OP_Nota::operacionMercaderia()
+{
+	if (esCredito && lineaModificada->delta > 0)
+	{
+		/// credito en compra de mercaderias
+		SeleccionadorDeMercaderias devolucion(true, SeleccionadorDeMercaderias::TipoOperacion::DEVOLUCION);
+		if (devolucion.getCantidad() != 0)
+		{
+			/// compra realizada!
+			int totalGanadoDevolucion = devolucion.getTotalGanadoDevolucion();
+
+			modificarCuenta(buscarCuenta("Mercaderias"), -totalGanadoDevolucion);
+			int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas con las que se amortiza la devolucion", totalGanadoDevolucion);
+
+			// guarda operacion
+			operacionActual = pedirNombreDocx(operacionActual);
+			commitOperacion(operacionActual);
+		}
+		
+	} else if (esCredito && lineaModificada->delta < 0)
+	{
+		/// credito en venta de mercaderias
+		
+		
+	} else if (!esCredito && lineaModificada->delta > 0)
+	{
+		/// debito de compra de mercaderias
+		OP_CompraMercaderias();
+	} else if (!esCredito && lineaModificada->delta < 0)
+	{
+		/// debito de venta de mercaderias
+		OP_VentaMercaderias();
+	}
 }
 
 void OP_Nota::operacionConvencional()

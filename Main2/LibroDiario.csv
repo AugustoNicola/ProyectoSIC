@@ -1,17 +1,20 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/02'
-'';Caja;A+;'100';'0'
-'';Rodados;A+;'100';'0'
-'';Capital;PN+;'0';'200'
+'20/03'
+'';Mercaderias;A+;'1044';'0'
+'';Caja;A+;'251';'0'
+'';Capital;PN+;'0';'1295'
 '';segun Apertura
 
 '02/08'
-'';Caja;A+;'150';'0'
-'';Proovedores;P+;'0';'150'
+'';Mercaderias;A+;'522';'0'
+'';Proovedores;P+;'0';'522'
 '';segun yes
 
-'';Rodados;A-;'0';'50'
-'';Proovedores;P-;'50';'0'
-'';segun no
+'07/08'
+'';Ventas;R+;'0';'3000'
+'';Caja;A+;'3000';'0'
+'';Mercaderias;A-;'0';'1566'
+'';CMV;R-;'1566';'0'
+'';segun eta
 
