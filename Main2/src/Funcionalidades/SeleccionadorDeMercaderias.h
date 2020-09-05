@@ -12,7 +12,7 @@ class SeleccionadorDeMercaderias
 public:
 	enum class TipoOperacion
 	{
-		COMPRA, VENTA, DEVOLUCION
+		COMPRA, VENTA, DEVOLUCION, REINTEGRO
 	};
 private:
 	TipoOperacion Tipo;
@@ -25,6 +25,7 @@ private:
 	int precioCompra = 0;
 	unsigned int totalGastadoCompra = 0;
 
+	int precioVenta = 0;
 	unsigned int totalPerdidoVenta = 0;
 	unsigned int totalGanadoVenta = 0;
 
@@ -60,11 +61,12 @@ private:
 	bool validarCantidadDevolucion(std::string strCantidad);
 
 public:
-	Mercaderia* getMercaderia();
-	unsigned int getTotalGastadoCompra();
-	unsigned int getTotalPerdidoVenta();
-	unsigned int getTotalGanadoVenta();
-	unsigned int getTotalGanadoDevolucion();
-	unsigned int getCantidad();
+	Mercaderia* getMercaderia() const;
+	unsigned int getTotalGastadoCompra() const;
+	unsigned int getTotalPerdidoVenta() const;
+	unsigned int getTotalGanadoVenta() const;
+	unsigned int getTotalGanadoDevolucion() const;
+	unsigned int getTotalReintegrado() const;
+	unsigned int getCantidad() const;
 };
 

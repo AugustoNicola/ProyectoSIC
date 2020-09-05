@@ -301,7 +301,22 @@ void OP_Nota::operacionMercaderia()
 	} else if (esCredito && lineaModificada->delta < 0)
 	{
 		/// credito en venta de mercaderias
-		
+		SeleccionadorDeMercaderias reintegro(true, SeleccionadorDeMercaderias::TipoOperacion::REINTEGRO);
+		if (reintegro.getCantidad() != 0)
+		{
+			/// compra realizada!
+			int totalReembolsadoPorVenta = reintegro.getTotalGanadoVenta();
+			int totalReembolsadoPorMercaderias = reintegro.getTotalGastadoCompra();
+
+			modificarCuenta(buscarCuenta("Ventas"), totalReembolsadoPorVenta);
+			modificarCuenta(buscarCuenta("CMV"), -totalReembolsadoPorMercaderias);
+			modificarCuenta(buscarCuenta("Mercaderias"), totalReembolsadoPorMercaderias);
+			int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza el reintegro", -totalReembolsadoPorVenta);
+
+			// guarda operacion
+			operacionActual = pedirNombreDocx(operacionActual);
+			commitOperacion(operacionActual);
+		}
 		
 	} else if (!esCredito && lineaModificada->delta > 0)
 	{

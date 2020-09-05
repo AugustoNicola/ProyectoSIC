@@ -1,12 +1,12 @@
-;;;;Auto
+;;;;Autos
 Fecha;;Ingresos;;;Egresos;;;Existencias;
 ;Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total
 
-'20/03';2;522;1044;;;;2;522;1044;
+'20/03';5;100;500;;;;5;100;500;
 
-'02/08';1;522;522;;;;3;522;1566;
+'01/01';;;;3;100;300;2;100;200;
 
-'07/08';;;;3;522;1566;
+'02/02';2;100;200;;;;4;100;400;
 
 
 

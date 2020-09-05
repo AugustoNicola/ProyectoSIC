@@ -16,6 +16,10 @@ SeleccionadorDeMercaderias::SeleccionadorDeMercaderias(bool _permitirCancelar, T
 		} else if (Tipo == TipoOperacion::DEVOLUCION) {
 			elegirPrecioDevolucion();
 			elegirCantidadDevolucion();
+		} else if (Tipo == TipoOperacion::REINTEGRO) {
+			elegirPrecioCompra();
+			elegirCantidadCompra();
+			elegirPrecioVenta();
 		}
 	}
 };
@@ -72,6 +76,9 @@ void SeleccionadorDeMercaderias::cargarMercaderias()
 		break;
 	case SeleccionadorDeMercaderias::TipoOperacion::DEVOLUCION:
 		header("DEVOLUCION DE MERCADERIAS", 1);
+		break;
+	case SeleccionadorDeMercaderias::TipoOperacion::REINTEGRO:
+		header("REINTEGRO DE MERCADERIAS", 1);
 		break;
 	}
 	for (const Mercaderia& mercaderia : MERCADERIAS)
@@ -144,7 +151,8 @@ void SeleccionadorDeMercaderias::elegirPrecioCompra()
 	{
 		listarPreciosMercaderia();
 
-		std::cout << "\n\nIngrese el precio de compra de la mercaderia: $";
+		std::cout << (Tipo == TipoOperacion::COMPRA ? "\n\nIngrese el precio de compra de la mercaderia: $" 
+			: "\n\nIngrese el precio unitario de las mercaderias que se nos devuelve: $");
 		std::cin >> strPrecio;
 	} while (!validarPrecioCompra(strPrecio));
 }
@@ -179,7 +187,8 @@ void SeleccionadorDeMercaderias::elegirCantidadCompra()
 	{
 		header(mercaderiaElegida->getNombre() += std::string(" ($") += std::to_string(precioCompra) += " c/u)", 2);
 		std::cout << "Existencias: " << (mercaderiaElegida->getExistenciasPrecio(precioCompra)) << " unidades";
-		std::cout << "\n\nElija la cantidad de mercaderia que se compra: ";
+		std::cout << "\n\nElija la cantidad de mercaderia que " 
+			<< (Tipo == TipoOperacion::COMPRA ? "se compra: " : "se nos devuelve: $");
 		std::cin >> strCantidad;
 
 	} while (!validarCantidadCompra(strCantidad));
@@ -232,21 +241,22 @@ void SeleccionadorDeMercaderias::elegirPrecioVenta()
 	do
 	{
 		header(mercaderiaElegida->getNombre() += (std::string)" (" += std::to_string(cantidadMercaderias) += " unidades vendida/s", 2);
-		std::cout << "Elija el precio de venta de la/s mercaderia/s vendida/s: $";
+		std::cout << (Tipo == TipoOperacion::COMPRA ? "Elija el precio de venta de la/s mercaderia/s vendida/s: $" 
+			: "Elija el precio al que se vendieron la/s mercaderia/s devuelta/s: $");
 		std::cin >> strPrecio;
 	} while (!validarPrecioVenta(strPrecio));
 }
 
 bool SeleccionadorDeMercaderias::validarPrecioVenta(std::string strPrecio)
 {
-	int precioVentaElegido = validarInt(strPrecio, 1);
-	if (precioVentaElegido == 0)
+	precioVenta = validarInt(strPrecio, 1);
+	if (precioVenta == 0)
 	{
 		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
 		_getch();
 		return false;
 	}
-	totalGanadoVenta = precioVentaElegido * cantidadMercaderias;
+	totalGanadoVenta = precioVenta * cantidadMercaderias;
 	return true;
 }
 
@@ -304,9 +314,10 @@ bool SeleccionadorDeMercaderias::validarCantidadDevolucion(std::string strCantid
 	}
 }
 
-Mercaderia* SeleccionadorDeMercaderias::getMercaderia() { return mercaderiaElegida; }
-unsigned int SeleccionadorDeMercaderias::getTotalGastadoCompra() { return totalGastadoCompra; }
-unsigned int SeleccionadorDeMercaderias::getTotalPerdidoVenta() { return totalPerdidoVenta; }
-unsigned int SeleccionadorDeMercaderias::getTotalGanadoVenta() { return totalGanadoVenta; }
-unsigned int SeleccionadorDeMercaderias::getTotalGanadoDevolucion() { return totalGanadoDevolucion; }
-unsigned int SeleccionadorDeMercaderias::getCantidad() { return cantidadMercaderias; }
+Mercaderia* SeleccionadorDeMercaderias::getMercaderia() const { return mercaderiaElegida; }
+unsigned int SeleccionadorDeMercaderias::getTotalGastadoCompra() const { return totalGastadoCompra; }
+unsigned int SeleccionadorDeMercaderias::getTotalPerdidoVenta() const { return totalPerdidoVenta; }
+unsigned int SeleccionadorDeMercaderias::getTotalGanadoVenta() const { return totalGanadoVenta; }
+unsigned int SeleccionadorDeMercaderias::getTotalGanadoDevolucion() const { return totalGanadoDevolucion; }
+unsigned int SeleccionadorDeMercaderias::getTotalReintegrado() const { return totalReintegrado; }
+unsigned int SeleccionadorDeMercaderias::getCantidad() const { return cantidadMercaderias; }
