@@ -1,22 +1,28 @@
 #include "Varias.h"
 
-
+void error()
+{
+	using namespace conmanip;
+	std::cout << settextcolor(colorError)
+		<< "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
+	_getch();
+}
 void pedirNuevaFecha(std::string mensaje, std::optional<std::string> strHeader)
 {
+	using namespace conmanip;
 	std::string fechaStr;
 	do
 	{
 		system("CLS");
 		if (strHeader) { header(strHeader.value(), 2); }
-		std::cout << mensaje << ": ";
-		std::cin >> fechaStr;
+		std::cout << settextcolor(colorBase) << mensaje << ": ";
+		std::cin >> settextcolor(colorInput) >> fechaStr;
 		if (validarFecha(fechaStr))
 		{
 			break;
 		}
 		else {
-			std::cout << "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
-			_getch();
+			error();
 		}
 	} while (true);
 
@@ -25,11 +31,12 @@ void pedirNuevaFecha(std::string mensaje, std::optional<std::string> strHeader)
 
 void header(std::string texto, unsigned int espacios)
 {
+	using namespace conmanip;
 	std::string header = "===============  ===============";
 	header.insert(16, texto);
 
 	system("CLS");
-	std::cout << header;
+	std::cout << settextcolor(colorBase) << header;
 
 	for (unsigned int i = 0; i < espacios; i++)
 	{
@@ -45,8 +52,7 @@ bool validarStr(std::string str)
 
 	if (str.empty())
 	{
-		std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
-		_getch();
+		error();
 		return false;
 	}
 	return true;
@@ -157,6 +163,13 @@ int validarInt(std::string str, std::optional<int> min, std::optional<int> max, 
 	}
 }
 
+std::string formatearDinero(int saldo)
+{
+	std::string str = std::to_string(abs(saldo));
+	str.insert(0, (saldo >= 0 ? "$" : "-$"));
+	return str;
+}
+
 void modificarCuenta(Cuenta* cuenta, int modificacion)
 {
 	operacionActual->crearLinea(cuenta, modificacion);
@@ -183,11 +196,13 @@ void commitOperacion(Operacion* op)
 
 Operacion* pedirNombreDocx(Operacion* op)
 {
+	using namespace conmanip;
 	std::string nombre;
 	do
 	{
 		header("OPERACION FINALIZADA", 2);
 		std::cout << "Ingrese el nombre del documento de esta operacion: ";
+		std::cin >> settextcolor(colorInput);
 		std::getline(std::cin, nombre);
 	} while (!validarStr(nombre));
 

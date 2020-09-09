@@ -5,9 +5,6 @@
 #include <fstream>
 #include <conio.h>
 
-#include "Globales.h"
-#include "Vectores.h"
-#include "Varias.h"
 #include "SeleccionadorDeMercaderias.h"
 #include "SeleccionadorDeCuentas.h"
 
@@ -33,7 +30,6 @@ private:
 	static bool cuentaOperacionActualEsMercaderia();
 	static void elegirAumentoActual();
 	static void mostrarInformacion();
-	static std::string formatearSaldoCuenta(int num);
 	static bool validarAumentoActual(std::string strCantidad);
 	static void ajustarSignoAumentoActual();
 	static void efectuarAumento();

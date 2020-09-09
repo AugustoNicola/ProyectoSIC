@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Globales.h"
-#include "Vectores.h"
 #include "Varias.h"
 
 

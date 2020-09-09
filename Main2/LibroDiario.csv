@@ -1,21 +1,3 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/03'
-'';Mercaderias;A+;'500';'0'
-'';Capital;PN+;'0';'500'
-'';segun Apertura
-
-'01/01'
-'';Ventas;R+;'0';'3000'
-'';Caja;A+;'3000';'0'
-'';Mercaderias;A-;'0';'300'
-'';CMV;R-;'300';'0'
-'';segun Venta
-
 '02/02'
-'';Ventas;R-;'3000';'0'
-'';CMV;R+;'0';'200'
-'';Mercaderias;A+;'200';'0'
-'';Proovedores;P+;'0';'3000'
-'';segun devol
-

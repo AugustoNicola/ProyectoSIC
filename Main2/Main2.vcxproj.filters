@@ -51,6 +51,9 @@
     <ClInclude Include="src\Funcionalidades\SeleccionadorDeCuentas.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utilidades\conmanip.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Funcionalidades\AumentadorPartida.cpp">

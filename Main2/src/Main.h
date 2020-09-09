@@ -9,12 +9,7 @@
 #include <vector>
 #include <optional>
 
-#include "clases.h"
-#include "Globales.h"
-#include "Vectores.h"
-#include "Varias.h"
 #include "AumentadorPartida.h"
-#include "SeleccionadorDeMercaderias.h"
 
 bool OP_Apertura();
 void OP_Transaccion();
@@ -56,12 +51,12 @@ private:
 void OP_mostrarLibroDiario();
 std::string formatearColumnaCuenta(std::string str);
 std::string formatearColumnaNumero(int num);
+std::string calcularEspacios(std::string str);
 
 void OP_mostrarLibroMayor();
-std::string formatearSaldo(int saldo);
+void formatearSaldo(int saldo);
 
 void OP_mostrarEstadoResultados();
-std::string formatearResultado(int num);
 
 void OP_mostrarFichaStock();
 std::string formatearNombreMercaderia(std::string nombre);
@@ -85,3 +80,4 @@ std::string imprimirRegistro(const RegistroPrecio& registro);
 std::string imprimirExistencia(const ExistenciasPrecioMercaderia& existencia);
 
 void initVectores();
+void initVentana();

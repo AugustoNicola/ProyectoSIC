@@ -12,6 +12,8 @@ std::string SeleccionadorDeCuentas::leyendaGasto;
 
 Cuenta* SeleccionadorDeCuentas::elegirCuenta(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
 {
+	using namespace conmanip;
+
 	PermitirCancelar = _permitirCancelar;
 	FiltroCuentas = _filtroCuentas;
 	modoAumento = _modoAumento;
@@ -25,17 +27,13 @@ Cuenta* SeleccionadorDeCuentas::elegirCuenta(bool _permitirCancelar, Cuenta::Tip
 	do
 	{
 		mostrarCuentas();
-		std::cout << "\n\n" << MsgEleccionCuenta << ": ";
-		std::cin >> strOpcionElegida;
+		std::cout << settextcolor(colorBase) << "\n\n" << MsgEleccionCuenta << ": ";
+		std::cin >> settextcolor(colorInput) >> strOpcionElegida;
 
 		opcionElegida = validarInt(strOpcionElegida, 1, cuentasSeleccionables.size() + (PermitirCancelar ? 1 : 0));
 		if (opcionElegida == 0)
 		{
-			std::cout << "\n\nValor ingresado no valido, intentelo nuevamente.";
-			_getch();
-		}
-		else {
-			break;
+			error();
 		}
 	} while (opcionElegida == 0);
 
@@ -124,24 +122,25 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 	}
 	if (PermitirCancelar)
 	{
-		std::cout << "\n=========================\n" << 
-			contadorCuentasRecorridas << ". " << "Cancelar";
+		std::cout << conmanip::settextcolor(colorBase)
+			<< "\n=========================\n" << contadorCuentasRecorridas << ". " << "Cancelar";
 	}
 	
 }
 void SeleccionadorDeCuentas::separadorDeTipo(Cuenta::TipoCuenta tipo)
 {
+	using namespace conmanip;
 	switch (tipo)
 	{
 	case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
 	case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
-		std::cout << "\n\n-------- ACTIVOS --------";
+		std::cout << settextcolor(console_text_colors::light_green) << "\n\n-------- ACTIVOS --------";
 		break;
 	case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
-		std::cout << "\n\n-------- PASIVOS --------";
+		std::cout << settextcolor(console_text_colors::light_red) << "\n\n-------- PASIVOS --------";
 		break;
 	case Cuenta::TipoCuenta::GASTO_OPERATIVO:
-		std::cout << "\n\n-------- RESULTADOS --------";
+		std::cout << settextcolor(console_text_colors::light_cyan) << "\n\n-------- RESULTADOS --------";
 		break;
 	}
 }

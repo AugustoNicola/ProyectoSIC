@@ -1,5 +1,7 @@
 #include "AumentadorPartida.h"
 
+using namespace conmanip;
+
 bool AumentadorPartida::permitirCancelar;
 Cuenta::TipoCuenta AumentadorPartida::filtroCuentas;
 ModoAumento AumentadorPartida::modoAumento;
@@ -82,23 +84,39 @@ void AumentadorPartida::elegirAumentoActual()
 	do
 	{
 		mostrarInformacion();
-		std::cout << "\n\nSeleccione la cantidad: $";
-		std::cin >> strAumentoActual;
+		std::cout << settextcolor(colorBase) << "\n\nSeleccione la cantidad: $";
+		std::cin >> settextcolor(colorInput) >> strAumentoActual;
 	} while (!validarAumentoActual(strAumentoActual));
 }
 
 void AumentadorPartida::mostrarInformacion()
 {
-	header(cuentaOperacionActual->getNombre() += (std::string)" (Saldo Actual: " += formatearSaldoCuenta(cuentaOperacionActual->getSaldoActual()) += ")", 2);
-	std::cout << "Total actual: $" << abs(aumentoTotal);
-	std::cout << "\nLimite: $" << abs(limite);
-}
 
-std::string AumentadorPartida::formatearSaldoCuenta(int num)
-{
-	std::string str = std::to_string(abs(num));
-	str.insert(0, (num >= 0 ? "$" : "-$"));
-	return str;
+	console_text_colors color;
+	switch (cuentaOperacionActual->getTipo())
+	{
+	case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
+	case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
+		color = console_text_colors::light_green;
+		break;
+	case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
+		color = console_text_colors::light_red;
+		break;
+	case Cuenta::TipoCuenta::GASTO_OPERATIVO:
+		color = console_text_colors::light_cyan;
+		break;
+	}
+
+	system("CLS");
+	std::cout << settextcolor(colorBase) << "=============== "
+		<< settextcolor(color) << cuentaOperacionActual->getNombre()
+		<< settextcolor(colorBase) << " (Saldo Actual: "
+		<< settextcolor(colorDatos) << formatearDinero(cuentaOperacionActual->getSaldoActual())
+		<< settextcolor(colorBase) << ") ==============="
+		<< "\n\nTotal aumentado: " 
+		<< settextcolor(colorDatos) << formatearDinero(aumentoTotal)
+		<< settextcolor(colorBase) << "\nLimite: " 
+		<< settextcolor(colorDatos) << formatearDinero(abs(limite));
 }
 
 bool AumentadorPartida::validarAumentoActual(std::string strCantidad)
@@ -145,7 +163,9 @@ void AumentadorPartida::permitirFinalizar()
 {
 	std::string strFinalizar;
 	header("MODIFICACION REGISTRADA", 2);
-	std::cout << "1. Continuar\n2.Finalizar\n\nElija una opcion: ";
-	std::cin >> strFinalizar;
+	std::cout << settextcolor(console_text_colors::light_green) << "1. Continuar"
+		<< settextcolor(colorError) << "\n2.Finalizar"
+		<< settextcolor(colorBase) << "\n\nElija una opcion: ";
+	std::cin >> settextcolor(colorInput) >> strFinalizar;
 	salir = (validarInt(strFinalizar, 1, 2) == 2) ? true : false;
 }

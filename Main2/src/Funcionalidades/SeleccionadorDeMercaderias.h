@@ -3,8 +3,6 @@
 #include <iostream>
 #include <conio.h>
 
-#include "clases.h"
-#include "Vectores.h"
 #include "Varias.h"
 
 class SeleccionadorDeMercaderias
