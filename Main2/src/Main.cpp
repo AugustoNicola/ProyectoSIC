@@ -723,6 +723,16 @@ void OP_salir()
 
 	loop = false;
 }
+void terminarPrograma(int signal)
+{
+	std::filesystem::create_directory("Libros");
+	EXP_LibroDiario();
+	EXP_LibroMayor();
+	EXP_EstadoResultados();
+	EXP_FichaStock();
+
+	exit(signal);
+}
 
 void EXP_LibroDiario()
 {
@@ -968,6 +978,8 @@ const std::vector<Opcion> OPCIONES = {
 
 int main()
 {
+	signal(SIGINT, terminarPrograma);
+
 	console_out_context ctxout;
 	console<console_type::out> conout(ctxout);
 	COORD info = { conout.getsize().X, 100 };

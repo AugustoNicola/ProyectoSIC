@@ -9,6 +9,7 @@
 #include <vector>
 #include <optional>
 #include <filesystem>
+#include <csignal>
 
 #include "AumentadorPartida.h"
 
@@ -68,6 +69,7 @@ std::string formatearCentrado(std::string str, unsigned int longitud, std::strin
 std::string formatearCentrado(int num, unsigned int longitud, std::string caracter);
 
 void OP_salir();
+void terminarPrograma(int signal);
 
 void EXP_LibroDiario();
 void EXP_LibroMayor();
