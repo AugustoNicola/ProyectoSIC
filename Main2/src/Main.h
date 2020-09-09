@@ -8,6 +8,7 @@
 #include <regex>
 #include <vector>
 #include <optional>
+#include <filesystem>
 
 #include "AumentadorPartida.h"
 
@@ -80,4 +81,3 @@ std::string imprimirRegistro(const RegistroPrecio& registro);
 std::string imprimirExistencia(const ExistenciasPrecioMercaderia& existencia);
 
 void initVectores();
-void initVentana();

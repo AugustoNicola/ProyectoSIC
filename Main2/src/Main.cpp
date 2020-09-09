@@ -708,6 +708,7 @@ std::string formatearCentrado(int num, unsigned int longitud, std::string caract
 
 void OP_salir()
 {
+	std::filesystem::create_directory("Libros");
 	EXP_LibroDiario();
 	EXP_LibroMayor();
 	EXP_EstadoResultados();
@@ -726,7 +727,7 @@ void OP_salir()
 void EXP_LibroDiario()
 {
 	//inicializa archivo
-	std::ofstream LibroDiario; LibroDiario.open("LibroDiario.csv");
+	std::ofstream LibroDiario; LibroDiario.open("Libros/LibroDiario.csv");
 
 	LibroDiario << "'';Cuenta;Modif;Debe;Haber" << std::endl << std::endl;
 
@@ -783,7 +784,7 @@ void EXP_LibroDiario()
 }
 void EXP_LibroMayor()
 {
-	std::ofstream LibroMayor; LibroMayor.open("LibroMayor.csv");
+	std::ofstream LibroMayor; LibroMayor.open("Libros/LibroMayor.csv");
 
 	std::vector<int> debes; std::vector<int> haberes;
 	int saldo;
@@ -834,7 +835,7 @@ void EXP_LibroMayor()
 }
 void EXP_EstadoResultados()
 {
-	std::ofstream EstadoResultados; EstadoResultados.open("EstadoResultados.csv");
+	std::ofstream EstadoResultados; EstadoResultados.open("Libros/EstadoResultados.csv");
 	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
 
 	EstadoResultados << "Ventas;$" << buscarCuenta("Ventas")->getSaldoActual() * -1 << std::endl;
@@ -855,7 +856,7 @@ void EXP_EstadoResultados()
 }
 void EXP_FichaStock()
 {
-	std::ofstream FichaStock; FichaStock.open("FichaStock.csv");
+	std::ofstream FichaStock; FichaStock.open("Libros/FichaStock.csv");
 
 	bool primerRegistro;
 	std::vector<ExistenciasPrecioMercaderia> Existencias;
@@ -967,8 +968,6 @@ const std::vector<Opcion> OPCIONES = {
 
 int main()
 {
-	using namespace conmanip;
-
 	console_out_context ctxout;
 	console<console_type::out> conout(ctxout);
 	COORD info = { conout.getsize().X, 100 };

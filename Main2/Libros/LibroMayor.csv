@@ -1,0 +1,10 @@
+Caja
+Debe;Haber
+'2500';
+Saldo deudor: $2500
+
+Capital
+Debe;Haber
+;'2500'
+Saldo acreedor: $2500
+
