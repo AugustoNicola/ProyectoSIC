@@ -715,9 +715,11 @@ void OP_salir()
 	EXP_FichaStock();
 
 	header("PROGRAMA FINALIZADO", 2);
-	std::cout << settextcolor(console_text_colors::light_green) << "Archivos .csv guardados correctamente en directorio actual!";
-	std::cout << settextcolor(colorDatos) << "\nIngreselos en Microsoft Excel como archivo de texto delimitado por "
+	std::cout << settextcolor(console_text_colors::light_green) << "Archivos .csv guardados correctamente en carpeta"
+		<< settextcolor(colorEnfoque) << " 'Libros' " << settextcolor(console_text_colors::light_green) << "!"
+	<< settextcolor(colorDatos) << "\nIngreselos en Microsoft Excel como archivo de texto delimitado por "
 		<< settextcolor(colorEnfoque) << "';'" << settextcolor(colorDatos) << " para leerlos correctamente.";
+
 	std::cout << settextcolor(colorBase) << "\n\nPresione cualquier tecla para cerrar la consola...";
 	_getch();
 
@@ -976,23 +978,16 @@ const std::vector<Opcion> OPCIONES = {
 	Opcion("Salir del Programa", [] { OP_salir(); })
 };
 
+
 int main()
 {
 	signal(SIGINT, terminarPrograma);
 
 	console_out_context ctxout;
 	console<console_type::out> conout(ctxout);
-	COORD info = { conout.getsize().X, 100 };
-	//HANDLE hStdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
 	conout.settitle("Proyecto SIC v1.0");
-	//int Status = ::SetConsoleDisplayMode(hStdHandle, (DWORD)1, nullptr);
-	//if (Status == 0)
-	//{
-	//	Status = GetLastError();
-	//	std::cout << "SetConsoleScreenBufferSize() failed! Reason : " << Status << std::endl;
-	//	exit(Status);
-	//}
+	::SetConsoleDisplayMode(ctxout.handle, (DWORD)CONSOLE_WINDOWED_MODE, nullptr);
+	COORD info = { conout.getsize().X, 100 };
 	::SetConsoleScreenBufferSize(ctxout.handle, info);
 
 	initVectores();

@@ -111,7 +111,7 @@ void AumentadorPartida::mostrarInformacion()
 	std::cout << settextcolor(colorBase) << "=============== "
 		<< settextcolor(color) << cuentaOperacionActual->getNombre()
 		<< settextcolor(colorBase) << " (Saldo Actual: "
-		<< settextcolor(colorDatos) << formatearDinero(cuentaOperacionActual->getSaldoActual())
+		<< settextcolor(colorDatos) << formatearDinero(abs(cuentaOperacionActual->getSaldoActual()))
 		<< settextcolor(colorBase) << ") ==============="
 		<< "\n\nTotal aumentado: " 
 		<< settextcolor(colorDatos) << formatearDinero(aumentoTotal)
@@ -128,8 +128,7 @@ bool AumentadorPartida::validarAumentoActual(std::string strCantidad)
 		return true;
 	}
 	else {
-		std::cout << "\nValor ingresado no valido, intentelo nuevamente.";
-		_getch();
+		error();
 		return false;
 	}
 }

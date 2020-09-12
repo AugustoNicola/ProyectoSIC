@@ -60,7 +60,7 @@ void SeleccionadorDeCuentas::configurarFiltroCuentas()
 	cuentasSeleccionables = {};
 	if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::ACTIVO_OPERATIVO)
 	{
-		if (modoAumento != ModoAumento::Haber) { cuentasSeleccionables.push_back(buscarCuenta("Mercaderias")); }
+		if (modoAumento == ModoAumento::Apertura) { cuentasSeleccionables.push_back(buscarCuenta("Mercaderias")); }
 		cuentasSeleccionables.insert(cuentasSeleccionables.end(), ACTIVOS.begin(), ACTIVOS.end());
 	}
 	if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::PASIVO_OPERATIVO)

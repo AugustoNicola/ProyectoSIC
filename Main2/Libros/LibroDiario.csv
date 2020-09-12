@@ -1,0 +1,19 @@
+'';Cuenta;Modif;Debe;Haber
+
+'20/03'
+'';Mercaderias;A+;'1500';'0'
+'';Capital;PN+;'0';'1500'
+'';segun Apertura
+
+'01/01'
+'';Proovedores;P+;'0';'250'
+'';Gastos;R+;'0';'250'
+'';Caja;A+;'500';'0'
+'';segun si
+
+'02/02'
+'';Mercaderias;A+;'3000';'0'
+'';Proovedores;P+;'0';'1500'
+'';Acreedores Varios;P+;'0';'1500'
+'';segun  
+

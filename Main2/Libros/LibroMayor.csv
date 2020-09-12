@@ -1,0 +1,32 @@
+Caja
+Debe;Haber
+'500';
+Saldo deudor: $500
+
+Mercaderias
+Debe;Haber
+'1500';
+'3000';
+Saldo deudor: $4500
+
+Proovedores
+Debe;Haber
+;'250'
+;'1500'
+Saldo acreedor: $1750
+
+Acreedores Varios
+Debe;Haber
+;'1500'
+Saldo acreedor: $1500
+
+Capital
+Debe;Haber
+;'1500'
+Saldo acreedor: $1500
+
+Gastos
+Debe;Haber
+;'250'
+Saldo acreedor: $250
+
