@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <conio.h>
-
 #include "Varias.h"
 
 class SeleccionadorDeMercaderias
@@ -50,11 +47,13 @@ private:
 
 	void elegirCantidadVenta();
 	bool validarCantidadVenta(std::string strCantidad);
+	
 	void elegirPrecioVenta();
 	bool validarPrecioVenta(std::string strPrecio);
 
 	void elegirPrecioDevolucion();
 	bool validarPrecioDevolucion(std::string strPrecio);
+	
 	void elegirCantidadDevolucion();
 	bool validarCantidadDevolucion(std::string strCantidad);
 
@@ -64,7 +63,6 @@ public:
 	unsigned int getTotalPerdidoVenta() const;
 	unsigned int getTotalGanadoVenta() const;
 	unsigned int getTotalGanadoDevolucion() const;
-	unsigned int getTotalReintegrado() const;
 	unsigned int getCantidad() const;
 };
 

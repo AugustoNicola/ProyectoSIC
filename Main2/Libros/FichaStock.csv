@@ -1,11 +1,24 @@
-;;;;Auto
+;;;;Autitos
 Fecha;;Ingresos;;;Egresos;;;Existencias;
 ;Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total
 
-'20/03';3;500;1500;;;;3;500;1500;
+'01/01';2;400;800;;;;2;400;800;
 
-'02/02';3;1000;3000;;;;3;500;1500;
-;;;;;;;3;1000;3000;
+'05/01';1;5;5;;;;2;400;800;
+;;;;;;;1;5;5;
+
+'08/01';;;;1;5;5;
+;;;;2;400;800;
+
+
+
+;;;;Motitos
+Fecha;;Ingresos;;;Egresos;;;Existencias;
+;Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total
+
+'05/01';1;470;470;;;;1;470;470;
+
+'08/01';;;;1;470;470;
 
 
 

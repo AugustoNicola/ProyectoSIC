@@ -1,34 +1,5 @@
 #include "Varias.h"
 
-void error()
-{
-	using namespace conmanip;
-	std::cout << settextcolor(colorError)
-		<< "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
-	_getch();
-}
-void pedirNuevaFecha(std::string mensaje, std::optional<std::string> strHeader)
-{
-	using namespace conmanip;
-	std::string fechaStr;
-	do
-	{
-		system("CLS");
-		if (strHeader) { header(strHeader.value(), 2); }
-		std::cout << settextcolor(colorBase) << mensaje << ": ";
-		std::cin >> settextcolor(colorInput) >> fechaStr;
-		if (validarFecha(fechaStr))
-		{
-			break;
-		}
-		else {
-			error();
-		}
-	} while (true);
-
-	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
-}
-
 void header(std::string texto, unsigned int espacios)
 {
 	using namespace conmanip;
@@ -44,6 +15,13 @@ void header(std::string texto, unsigned int espacios)
 	}
 	
 }
+void error()
+{
+	using namespace conmanip;
+	std::cout << settextcolor(colorError)
+		<< "\n\nValor no valido, presione cualquier tecla para intentarlo nuevamente.";
+	_getch();
+}
 
 bool validarStr(std::string str)
 {
@@ -57,7 +35,6 @@ bool validarStr(std::string str)
 	}
 	return true;
 }
-
 bool validarFecha(std::string str)
 {
 	std::cin.clear();
@@ -109,7 +86,6 @@ bool validarFecha(std::string str)
 		return false;
 	}
 }
-
 int validarInt(std::string str, std::optional<int> min, std::optional<int> max, std::optional<int> valorC, std::optional<int> valorT)
 {
 	std::cin.clear();
@@ -175,7 +151,6 @@ void modificarCuenta(Cuenta* cuenta, int modificacion)
 	operacionActual->crearLinea(cuenta, modificacion);
 	cuenta->registrarModificacion(fecha, modificacion);
 }
-
 Cuenta* buscarCuenta(std::string nombre)
 {
 	for (Cuenta &cuenta : CUENTAS)
@@ -193,7 +168,6 @@ void commitOperacion(Operacion* op)
 	DIAS.back().crearOperacion(*op);
 	oper = Operacion();
 }
-
 Operacion* pedirNombreDocx(Operacion* op)
 {
 	using namespace conmanip;
@@ -209,6 +183,24 @@ Operacion* pedirNombreDocx(Operacion* op)
 	op->setDocumento(nombre);
 	return op;
 }
+void pedirNuevaFecha(std::string mensaje, std::optional<std::string> strHeader)
+{
+	using namespace conmanip;
+	std::string fechaStr;
+	do
+	{
+		system("CLS");
+		if (strHeader) { header(strHeader.value(), 2); }
+		std::cout << settextcolor(colorBase) << mensaje << ": ";
+		std::cin >> settextcolor(colorInput) >> fechaStr;
+		if (validarFecha(fechaStr))
+		{
+			break;
+		}
+		else {
+			error();
+		}
+	} while (true);
 
-
-
+	DIAS.push_back(DiaOperaciones(fecha)); //crea el nuevo dia con la fecha ingresada
+}

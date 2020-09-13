@@ -1,3 +1,5 @@
+#pragma once
+
 #include "AumentadorPartida.h"
 
 using namespace conmanip;
@@ -15,27 +17,17 @@ Cuenta* AumentadorPartida::cuentaOperacionActual;
 
 int AumentadorPartida::realizarAumento(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite)
 {
-	permitirCancelar = _permitirCancelar;
-	filtroCuentas = _filtroCuentas;
-	modoAumento = _modoAumento;
-	mensajeEleccionCuenta = _mensajeEleccionCuenta;
-	limite = _limite.has_value() ? _limite.value() : 0;
-	salir = false;
-	aumentoActual = 0;
-	aumentoTotal = 0;
-
+	initVariables(_permitirCancelar, _filtroCuentas, _modoAumento, _mensajeEleccionCuenta, _limite);
+	
 	while (!condicionDeSalidaAlcanzada())
 	{
 		if (intentarElegirCuenta())
 		{
 			if (cuentaOperacionActualEsMercaderia())
 			{
-				/// hay mercaderias!
-				
 				SeleccionadorDeMercaderias operacionMercaderia(true, SeleccionadorDeMercaderias::TipoOperacion::COMPRA);
 				aumentoActual = operacionMercaderia.getTotalGastadoCompra();
-			}
-			else {
+			} else {
 				elegirAumentoActual();
 			}
 
@@ -50,6 +42,17 @@ int AumentadorPartida::realizarAumento(bool _permitirCancelar, Cuenta::TipoCuent
 		}
 	}
 	return aumentoTotal;
+}
+void AumentadorPartida::initVariables(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _mensajeEleccionCuenta, std::optional<int> _limite)
+{
+	permitirCancelar = _permitirCancelar;
+	filtroCuentas = _filtroCuentas;
+	modoAumento = _modoAumento;
+	mensajeEleccionCuenta = _mensajeEleccionCuenta;
+	limite = _limite.has_value() ? _limite.value() : 0;
+	salir = false;
+	aumentoActual = 0;
+	aumentoTotal = 0;
 }
 
 bool AumentadorPartida::condicionDeSalidaAlcanzada()
@@ -70,6 +73,7 @@ bool AumentadorPartida::intentarElegirCuenta()
 {
 	cuentaOperacionActual = SeleccionadorDeCuentas::elegirCuenta(permitirCancelar, filtroCuentas, modoAumento, mensajeEleccionCuenta);
 	permitirCancelar = false;
+
 	return ( (cuentaOperacionActual != nullptr) ? true : false);
 }
 
@@ -87,8 +91,9 @@ void AumentadorPartida::elegirAumentoActual()
 		std::cout << settextcolor(colorBase) << "\n\nSeleccione la cantidad: $";
 		std::cin >> settextcolor(colorInput) >> strAumentoActual;
 	} while (!validarAumentoActual(strAumentoActual));
-}
 
+	ajustarSignoAumentoActual();
+}
 void AumentadorPartida::mostrarInformacion()
 {
 
@@ -108,31 +113,32 @@ void AumentadorPartida::mostrarInformacion()
 	}
 
 	system("CLS");
-	std::cout << settextcolor(colorBase) << "=============== "
+	std::cout
+		<< settextcolor(colorBase) << "=============== "
 		<< settextcolor(color) << cuentaOperacionActual->getNombre()
 		<< settextcolor(colorBase) << " (Saldo Actual: "
 		<< settextcolor(colorDatos) << formatearDinero(abs(cuentaOperacionActual->getSaldoActual()))
 		<< settextcolor(colorBase) << ") ==============="
-		<< "\n\nTotal aumentado: " 
-		<< settextcolor(colorDatos) << formatearDinero(aumentoTotal)
+
+		<< settextcolor(colorBase) << "\n\nTotal aumentado: "
+		<< settextcolor(colorDatos) << formatearDinero(abs(aumentoTotal))
 		<< settextcolor(colorBase) << "\nLimite: " 
 		<< settextcolor(colorDatos) << formatearDinero(abs(limite));
 }
-
 bool AumentadorPartida::validarAumentoActual(std::string strCantidad)
 {
 	aumentoActual = validarInt(strCantidad, 1, (noHayLimite() ? INT_MAX : abs(limite - aumentoTotal)), abs(cuentaOperacionActual->getSaldoActual()), abs(limite - aumentoTotal));
-	if (aumentoActual != 0)
+	if (aumentoActual == 0)
 	{
-		ajustarSignoAumentoActual();
-		return true;
-	}
-	else {
 		error();
 		return false;
 	}
+	return true;
 }
-
+bool AumentadorPartida::noHayLimite()
+{
+	return limite == 0;
+}
 void AumentadorPartida::ajustarSignoAumentoActual()
 {
 	if (modoAumento == ModoAumento::Apertura)
@@ -153,18 +159,16 @@ void AumentadorPartida::efectuarAumento()
 	}
 }
 
-bool AumentadorPartida::noHayLimite()
-{
-	return limite == 0;
-}
-
 void AumentadorPartida::permitirFinalizar()
 {
 	std::string strFinalizar;
+
 	header("MODIFICACION REGISTRADA", 2);
-	std::cout << settextcolor(console_text_colors::light_green) << "1. Continuar"
+	std::cout
+		<< settextcolor(console_text_colors::light_green) << "1. Continuar"
 		<< settextcolor(colorError) << "\n2.Finalizar"
 		<< settextcolor(colorBase) << "\n\nElija una opcion: ";
 	std::cin >> settextcolor(colorInput) >> strFinalizar;
+
 	salir = (validarInt(strFinalizar, 1, 2) == 2) ? true : false;
 }

@@ -1,15 +1,9 @@
 #pragma once
 
-#include <iostream>
 #include <fstream>
-#include <conio.h>
-#include <climits>
-#include <cmath>
-#include <regex>
-#include <vector>
-#include <optional>
-#include <filesystem>
 #include <csignal>
+#include <cmath>
+#include <filesystem>
 
 #include "AumentadorPartida.h"
 
@@ -42,6 +36,7 @@ private:
 
 	static void elegirLinea();
 	static bool validarLinea(std::string strLinea);
+	static bool lineaEsMercaderia();
 
 	static void operacionMercaderia();
 
@@ -61,16 +56,13 @@ void formatearSaldo(int saldo);
 void OP_mostrarEstadoResultados();
 
 void OP_mostrarFichaStock();
-std::string formatearNombreMercaderia(std::string nombre);
 std::string mostrarRegistro(const RegistroPrecio& registro);
 std::string mostrarExistencia(const ExistenciasPrecioMercaderia& existencia);
 
 std::string formatearCentrado(std::string str, unsigned int longitud, std::string caracter);
 std::string formatearCentrado(int num, unsigned int longitud, std::string caracter);
 
-void OP_salir();
 void terminarPrograma(int signal);
-
 void EXP_LibroDiario();
 void EXP_LibroMayor();
 void EXP_EstadoResultados();

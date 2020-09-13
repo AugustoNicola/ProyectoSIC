@@ -1,32 +1,61 @@
-Caja
-Debe;Haber
-'500';
-Saldo deudor: $500
+CajaDebe;Haber
+'5000';'2000'
+'3000';'1150'
+'100';
+'300';
+Saldo deudor: $5250
 
-Mercaderias
-Debe;Haber
+Fondo FijoDebe;Haber
+'1000';'250'
+Saldo deudor: $750
+
+Marcas de FabricaDebe;Haber
 '1500';
-'3000';
-Saldo deudor: $4500
+Saldo deudor: $1500
 
-Proovedores
-Debe;Haber
+MercaderiasDebe;Haber
+'800';'1275'
+'475';'0'
+Cuenta saldada: $0
+
+ProovedoresDebe;Haber
+'2000';'1000'
+'150';'1000'
 ;'250'
-;'1500'
-Saldo acreedor: $1750
+Saldo acreedor: $100
 
-Acreedores Varios
-Debe;Haber
-;'1500'
-Saldo acreedor: $1500
+Acreedores PrendariosDebe;Haber
+;'400'
+Saldo acreedor: $400
 
-Capital
-Debe;Haber
-;'1500'
-Saldo acreedor: $1500
+Dividendo a PagarDebe;Haber
+;'70'
+Saldo acreedor: $70
 
-Gastos
-Debe;Haber
-;'250'
-Saldo acreedor: $250
+Prevision para Accidentes de TrabajoDebe;Haber
+'1000';
+Saldo deudor: $1000
+
+CapitalDebe;Haber
+;'4800'
+Saldo acreedor: $4800
+
+VentasDebe;Haber
+;'4500'
+;'1000'
+Saldo acreedor: $5500
+
+CMVDebe;Haber
+'1275';
+'700';
+Saldo deudor: $1975
+
+GastosDebe;Haber
+'400';'5'
+;'150'
+Saldo deudor: $245
+
+Gastos de PublicidadDebe;Haber
+'150';
+Saldo deudor: $150
 

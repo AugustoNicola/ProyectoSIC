@@ -89,7 +89,8 @@ bool OP_Apertura()
 {
 	pedirNuevaFecha("Ingrese la fecha de apertura", "APERTURA");
 
-	int aumentoTotal = AumentadorPartida::realizarAumento(true, Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura, "Elija la cuenta usada en el inicio de operaciones", {});
+	int aumentoTotal = AumentadorPartida::realizarAumento(true, Cuenta::TipoCuenta::F_OPER, ModoAumento::Apertura,
+		"Elija la cuenta usada en el inicio de operaciones", {});
 	
 	if (aumentoTotal == 0) { return false; }
 	
@@ -103,65 +104,61 @@ bool OP_Apertura()
 }
 void OP_Transaccion()
 {
-	int aumentoPerdida = AumentadorPartida::realizarAumento(true, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas del haber", {});
-	if (aumentoPerdida == 0) { return; }
+	int aumentoPerdida = AumentadorPartida::realizarAumento(true, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber,
+		"Elija las cuentas del haber", {});
 	
-	int aumentoGanancia = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas del debe", abs(aumentoPerdida));
-
-	operacionActual = pedirNombreDocx(operacionActual);
-	commitOperacion(operacionActual);
-}
-
-void OP_VentaMercaderias()
-{
-	SeleccionadorDeMercaderias venta(true, SeleccionadorDeMercaderias::TipoOperacion::VENTA);
-	if (venta.getCantidad() != 0)
+	if (aumentoPerdida != 0)
 	{
-		/// venta realizada!
+		int aumentoGanancia = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe,
+			"Elija las cuentas del debe", abs(aumentoPerdida));
 
-		int totalGanado = venta.getTotalGanadoVenta();
-		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1);
-
-		int igualacionEnDebe = AumentadorPartida::realizarAumento(false ,Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas de ganancia de la venta", totalGanado);
-
-		// anotar cmv y mercaderias
-		int totalPerdido = venta.getTotalPerdidoVenta();
-
-		modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido * -1);
-		modificarCuenta(buscarCuenta("CMV"), totalPerdido);
-
-		// guarda operacion
 		operacionActual = pedirNombreDocx(operacionActual);
 		commitOperacion(operacionActual);
 	}
+	
 }
+
 void OP_CompraMercaderias()
 {
 	SeleccionadorDeMercaderias compra(true, SeleccionadorDeMercaderias::TipoOperacion::COMPRA);
 	if (compra.getCantidad() != 0)
 	{
-		/// compra realizada!
 		int totalCompraMercaderias = compra.getTotalGastadoCompra();
 
 		modificarCuenta(buscarCuenta("Mercaderias"), totalCompraMercaderias);
 		int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza la compra", totalCompraMercaderias * -1);
 
-		// guarda operacion
+		operacionActual = pedirNombreDocx(operacionActual);
+		commitOperacion(operacionActual);
+	}
+}
+void OP_VentaMercaderias()
+{
+	SeleccionadorDeMercaderias venta(true, SeleccionadorDeMercaderias::TipoOperacion::VENTA);
+	if (venta.getCantidad() != 0)
+	{
+		int totalGanado = venta.getTotalGanadoVenta();
+		modificarCuenta(buscarCuenta("Ventas"), totalGanado * -1);
+
+		int igualacionEnDebe = AumentadorPartida::realizarAumento(false ,Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe,
+			"Elija las cuentas de ganancia de la venta", totalGanado);
+
+		int totalPerdido = venta.getTotalPerdidoVenta();
+		modificarCuenta(buscarCuenta("Mercaderias"), totalPerdido * -1);
+		modificarCuenta(buscarCuenta("CMV"), totalPerdido);
+
 		operacionActual = pedirNombreDocx(operacionActual);
 		commitOperacion(operacionActual);
 	}
 }
 
 bool OP_Nota::esCredito;
-
 const Operacion* OP_Nota::operacionModificada;
 std::vector<const Operacion*> OP_Nota::operacionesDisponibles;
 int OP_Nota::posOperacion;
-
 const Linea* OP_Nota::lineaModificada;
 std::vector<const Linea*> OP_Nota::lineasDisponibles;
 int OP_Nota::posLinea;
-
 ModoAumento OP_Nota::tipo;
 int OP_Nota::modificacion;
 
@@ -173,7 +170,7 @@ void OP_Nota::efectuarNota(bool _esCredito)
 	{
 		elegirLinea();
 
-		if (lineaModificada->cuenta->getNombre() == "Mercaderias")
+		if (lineaEsMercaderia())
 		{
 			operacionMercaderia();
 		} else {
@@ -185,14 +182,15 @@ bool OP_Nota::intentarElegirOperacion()
 {
 	unsigned int cont;
 	std::string strOperacion;
+	bool hayOperaciones = false;
 
 	do
 	{
-		bool hayOperaciones = false;
+		hayOperaciones = false;
 		cont = 1;
 		operacionesDisponibles.clear();
-		header(std::string(esCredito ? "NOTA DE CREDITO" : "NOTA DE DEBITO") += ": LISTADO DE OPERACIONES", 1);
 
+		header(std::string(esCredito ? "NOTA DE CREDITO" : "NOTA DE DEBITO") += ": LISTADO DE OPERACIONES", 1);
 		for (const DiaOperaciones& dia : DIAS)
 		{
 			for (const Operacion* operacion : dia.getOperaciones())
@@ -239,7 +237,6 @@ bool OP_Nota::validarOperacion(std::string strOperacion)
 	}
 	return true;
 }
-
 void OP_Nota::elegirLinea()
 {
 	unsigned int cont;
@@ -249,15 +246,15 @@ void OP_Nota::elegirLinea()
 	{
 		cont = 1;
 		lineasDisponibles.clear();
-		header(operacionModificada->getDocumento() += ": LISTADO DE CUENTAS", 1);
 
+		header(operacionModificada->getDocumento() += ": LISTADO DE CUENTAS", 1);
 		for (const Linea* linea : operacionModificada->getLineas())
 		{
 			if (linea->cuenta->getNombre() != "CMV")
 			{
-				std::cout << "\n" << cont << ". " << linea->cuenta->getNombre() << " ("
-					<< settextcolor(colorDatos) << formatearDinero(linea->delta)
-					<< settextcolor(colorBase) << ")";
+				std::cout
+					<< settextcolor(colorBase) << "\n" << cont << ". " << linea->cuenta->getNombre()
+					<< settextcolor(colorDatos) << " (" << formatearDinero(linea->delta) << ")";
 				lineasDisponibles.push_back(linea);
 				cont++;
 			}
@@ -281,7 +278,10 @@ bool OP_Nota::validarLinea(std::string strLinea)
 	}
 	return true;
 }
-
+bool OP_Nota::lineaEsMercaderia()
+{
+	return lineaModificada->cuenta->getNombre() == "Mercaderias";
+}
 void OP_Nota::operacionMercaderia()
 {
 	if (esCredito && lineaModificada->delta > 0)
@@ -290,13 +290,12 @@ void OP_Nota::operacionMercaderia()
 		SeleccionadorDeMercaderias devolucion(true, SeleccionadorDeMercaderias::TipoOperacion::DEVOLUCION);
 		if (devolucion.getCantidad() != 0)
 		{
-			/// compra realizada!
 			int totalGanadoDevolucion = devolucion.getTotalGanadoDevolucion();
 
 			modificarCuenta(buscarCuenta("Mercaderias"), -totalGanadoDevolucion);
-			int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe, "Elija las cuentas con las que se amortiza la devolucion", totalGanadoDevolucion);
+			int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Debe,
+				"Elija las cuentas con las que se amortiza la devolucion", totalGanadoDevolucion);
 
-			// guarda operacion
 			operacionActual = pedirNombreDocx(operacionActual);
 			commitOperacion(operacionActual);
 		}
@@ -307,14 +306,14 @@ void OP_Nota::operacionMercaderia()
 		SeleccionadorDeMercaderias reintegro(true, SeleccionadorDeMercaderias::TipoOperacion::REINTEGRO);
 		if (reintegro.getCantidad() != 0)
 		{
-			/// compra realizada!
 			int totalReembolsadoPorVenta = reintegro.getTotalGanadoVenta();
 			int totalReembolsadoPorMercaderias = reintegro.getTotalGastadoCompra();
 
 			modificarCuenta(buscarCuenta("Ventas"), totalReembolsadoPorVenta);
 			modificarCuenta(buscarCuenta("CMV"), -totalReembolsadoPorMercaderias);
 			modificarCuenta(buscarCuenta("Mercaderias"), totalReembolsadoPorMercaderias);
-			int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber, "Elija las cuentas con las que se amortiza el reintegro", -totalReembolsadoPorVenta);
+			int igualacionEnHaber = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, ModoAumento::Haber,
+				"Elija las cuentas con las que se amortiza el reintegro", -totalReembolsadoPorVenta);
 
 			// guarda operacion
 			operacionActual = pedirNombreDocx(operacionActual);
@@ -331,7 +330,6 @@ void OP_Nota::operacionMercaderia()
 		OP_VentaMercaderias();
 	}
 }
-
 void OP_Nota::operacionConvencional()
 {
 	std::string strValorAumento;
@@ -346,10 +344,8 @@ void OP_Nota::operacionConvencional()
 	} while (!validarModificacion(strValorAumento));
 
 	ajustarSignoModificacion();
+	modificarCuenta(lineaModificada->cuenta, modificacion);
 
-	modificarCuenta(lineaModificada->cuenta, modificacion); //realiza modificacion
-
-	// realizar aumentoPartida para saciarlo
 	std::string mensaje = std::string("Elija las cuentas que saldan el ") += (esCredito ? "credito" : "debito");
 	int aumento = AumentadorPartida::realizarAumento(false, Cuenta::TipoCuenta::F_OPER, tipo, mensaje, modificacion * -1);
 
@@ -369,32 +365,19 @@ bool OP_Nota::validarModificacion(std::string strValorAumento)
 }
 void OP_Nota::ajustarSignoModificacion()
 {
-	if (lineaModificada->delta > 0)
-	{
-		/// La cuenta tenia una modificacion en el debe
-		modificacion = modificacion * ((!esCredito) ? 1 : -1); //si es debito la aumenta en el debe, sino en el haber
-		tipo = (!esCredito) ? ModoAumento::Haber : ModoAumento::Debe; //contrrarestar acorde
-	} else {
-		/// La cuenta tenia una modificacion en el haber
-		modificacion = modificacion * ((!esCredito) ? -1 : 1); //si es debito la aumenta en el haber, sino en el debe
-		tipo = (!esCredito) ? ModoAumento::Debe : ModoAumento::Haber; //contrarrestar acorde
-	}
+	modificacion *= (lineaModificada->delta > 0 ?
+		(esCredito ? -1 : 1) :
+		(esCredito ? 1 : -1) );
+	tipo = (lineaModificada->delta > 0 ? 
+		(esCredito ? ModoAumento::Debe : ModoAumento::Haber) :
+		(esCredito ? ModoAumento::Haber : ModoAumento::Debe) );
 }
 
 void OP_mostrarLibroDiario()
 {
-	header("LIBRO DIARIO", 3);
-
+	// medidas de columnas: 50/12/12
 	std::string separador = "--------------------------------------------------+------------+------------";
 	std::string lineaVacia = "|            |            ";
-
-	// medidas de columnas: 50/12/12
-	std::cout << settextcolor(colorEnfoque) << "Cuenta                                            "
-		<< settextcolor(colorBase) << "|"
-		<< settextcolor(colorEnfoque) << "    Debe    "
-		<< settextcolor(colorBase) << "|"
-		<< settextcolor(colorEnfoque) << "   Haber  " << std::endl
-		<< settextcolor(colorBase) << separador << std::endl;
 
 	std::string nombreCuenta;
 	std::string nombreCuentaCompleto;
@@ -403,9 +386,19 @@ void OP_mostrarLibroDiario()
 	console_text_colors colorModif;
 	bool esDebe;
 
+	header("LIBRO DIARIO", 3);
+	std::cout
+		<< settextcolor(colorEnfoque) << "Cuenta                                            "
+		<< settextcolor(colorBase) << "|"
+		<< settextcolor(colorEnfoque) << "    Debe    "
+		<< settextcolor(colorBase) << "|"
+		<< settextcolor(colorEnfoque) << "   Haber  " << std::endl
+		<< settextcolor(colorBase) << separador << std::endl;
+
 	for (DiaOperaciones& dia : DIAS)
 	{
-		std::cout << settextcolor(colorInput) << formatearColumnaCuenta(dia.getFecha())
+		std::cout 
+			<< settextcolor(colorInput) << formatearColumnaCuenta(dia.getFecha())
 			<< settextcolor(colorBase) << lineaVacia << std::endl
 			<< formatearColumnaCuenta("") << lineaVacia << std::endl;
 
@@ -421,38 +414,41 @@ void OP_mostrarLibroDiario()
 				{
 				case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
 				case Cuenta::TipoCuenta::ACTIVO_NO_OPERATIVO:
-					modif = esDebe ? "A+" : "A-";
+					modif = esDebe ? " (A+) " : " (A-) ";
 					colorModif = console_text_colors::light_green;
 					break;
 				case Cuenta::TipoCuenta::PASIVO_OPERATIVO:
 				case Cuenta::TipoCuenta::PASIVO_NO_OPERATIVO:
-					modif = esDebe ? "P-" : "P+";
+					modif = esDebe ? " (P-) " : " (P+) ";
 					colorModif = console_text_colors::light_red;
 					break;
 				case Cuenta::TipoCuenta::GASTO_OPERATIVO:
 				case Cuenta::TipoCuenta::GASTO_NO_OPERATIVO:
 				case Cuenta::TipoCuenta::GANANCIA:
-					modif = esDebe ? "R-" : "R+";
+					modif = esDebe ? " (R-) " : " (R+) ";
 					colorModif = console_text_colors::light_cyan;
 					break;
 				case Cuenta::TipoCuenta::PATRIMONIO_NETO:
-					modif = esDebe ? "PN-" : "PN+";
+					modif = esDebe ? " (PN-) " : " (PN+) ";
 					colorModif = console_text_colors::light_magenta;
 					break;
 				}
-				nombreCuentaCompleto = nombreCuenta; nombreCuentaCompleto += " ("; nombreCuentaCompleto += modif; nombreCuentaCompleto += ")";
+
+				nombreCuentaCompleto = nombreCuenta; nombreCuentaCompleto += modif;
 				espacios = calcularEspacios(nombreCuentaCompleto);
 
-				std::cout << settextcolor(colorBase) << nombreCuenta << " " 
-					<< settextcolor(colorModif) << "(" << modif << ")" << espacios
+				std::cout
+					<< settextcolor(colorBase) << nombreCuenta
+					<< settextcolor(colorModif) << modif << espacios
 					<< settextcolor(colorBase) << "|"
 					<< formatearColumnaNumero(esDebe ? linea->delta : 0) << "|"
 					<< formatearColumnaNumero(!esDebe ? abs(linea->delta) : 0) << std::endl;
 
 			} //lineas
 
-			std::string nombreDocumento = "segun "; nombreDocumento += operacion->getDocumento();
-			std::cout << settextcolor(colorDatos) << formatearColumnaCuenta(nombreDocumento)
+			std::string nombreDocumento = "s/"; nombreDocumento += operacion->getDocumento();
+			std::cout
+				<< settextcolor(colorEnfoque) << formatearColumnaCuenta(nombreDocumento)
 				<< settextcolor(colorBase) << lineaVacia << std::endl
 				<< settextcolor(colorBase) << separador << std::endl;
 		} //operaciones
@@ -505,23 +501,22 @@ std::string calcularEspacios(std::string str)
 
 void OP_mostrarLibroMayor()
 {
-	header("LIBRO MAYOR", 3);
-
+	//medidas de columnas: 12/12
 	std::vector<int> debes; std::vector<int> haberes;
 	int saldo;
 	bool salir;
-
+	
+	header("LIBRO MAYOR", 3);
 	for (Cuenta& cuenta : CUENTAS)
 	{
 		debes.clear(); haberes.clear();
-
 		if (cuenta.hayDias())
 		{
 			std::string nombreCuenta = cuenta.getNombre();
 			nombreCuenta.insert(0, " "); nombreCuenta.append(" ");
 
-			//estructura: 12/12
-			std::cout << settextcolor(colorInput) << formatearCentrado(nombreCuenta, 25, "=") << std::endl 
+			std::cout
+				<< settextcolor(colorInput) << formatearCentrado(nombreCuenta, 25, "=") << std::endl 
 				<< settextcolor(colorEnfoque) << "    Debe    "
 				<< settextcolor(colorBase) <<  "|"
 				<< settextcolor(colorEnfoque) << "   Haber  " << std::endl;
@@ -530,15 +525,7 @@ void OP_mostrarLibroMayor()
 
 			for (DiaCuenta& dia : cuenta.getDias())
 			{
-				if (dia.delta > 0)
-				{
-					debes.push_back(dia.delta);
-				}
-				else if (dia.delta < 0)
-				{
-					haberes.push_back(abs(dia.delta));
-				}
-
+				(dia.delta > 0 ? debes : haberes).push_back(abs(dia.delta));
 				saldo += dia.delta;
 			}
 
@@ -561,31 +548,29 @@ void OP_mostrarLibroMayor()
 			}
 			std::cout << std::endl << std::endl << std::endl << std::endl;
 		}
-	}
+	} //cuentas
 
 	std::cout << settextcolor(colorBase) << std::endl << std::endl << "Presione cualquier tecla para volver...";
 	_getch();
 }
 void formatearSaldo(int saldo)
 {
-	if (saldo > 0)
-	{
-		std::cout << settextcolor(console_text_colors::light_green) << "Saldo deudor: " << formatearDinero(saldo);
-	} else {
-		std::cout << settextcolor(console_text_colors::light_red) << "Saldo acreedor: " << formatearDinero(saldo);
-	}
+	std::cout
+		<< settextcolor(saldo > 0 ? console_text_colors::light_green : console_text_colors::light_red)
+		<< (saldo > 0 ? "Saldo deudor: " : "Saldo acreedor: ")
+		<< formatearDinero(saldo);
 }
 
 void OP_mostrarEstadoResultados()
 {
 	header("ESTADO DE RESULTADOS", 3);
 
-	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
+	int utilidad = -(buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual());
 
-	std::cout << "Ventas: " << settextcolor(console_text_colors::light_green) << formatearDinero(buscarCuenta("Ventas")->getSaldoActual() * -1) << std::endl;
-	std::cout << "CMV: " << settextcolor(console_text_colors::light_red) << formatearDinero(buscarCuenta("CMV")->getSaldoActual() * -1) << std::endl << std::endl;
-
-	std::cout << "Utilidad Bruta: " << settextcolor(console_text_colors::light_cyan) << formatearDinero(utilidad) << std::endl << std::endl;
+	std::cout
+		<< "Ventas: " << settextcolor(console_text_colors::light_green) << formatearDinero(abs(buscarCuenta("Ventas")->getSaldoActual())) << std::endl
+		<< "CMV: " << settextcolor(console_text_colors::light_red) << formatearDinero(abs(buscarCuenta("CMV")->getSaldoActual())) << std::endl << std::endl
+		<< "Utilidad Bruta: " << settextcolor(console_text_colors::light_cyan) << formatearDinero(utilidad) << std::endl << std::endl;
 
 	for (const Cuenta* cuentaGastos : GASTOS)
 	{
@@ -597,27 +582,29 @@ void OP_mostrarEstadoResultados()
 	}
 	std::cout << settextcolor(console_text_colors::light_magenta) << std::endl << "Utilidad Neto: " << formatearDinero(utilidad);
 
-	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
+	std::cout << settextcolor(colorBase) << std::endl << std::endl << "Presione cualquier tecla para volver...";
 	_getch();
 }
 
 void OP_mostrarFichaStock()
 {
-	//estructura: 12/38(12/12/12)/38(idem)/38(idem)
+	//medidas de columnas: 12/38(12/12/12)/38(idem)/38(idem)
 	std::string grupoVacio = "            |            |            ";
 	std::string separadorDia = "------------||------------+------------+------------||------------+------------+------------||------------+------------+------------||";
 
+	std::string nombreMercaderia;
 	bool primerRegistro;
 	std::vector<ExistenciasPrecioMercaderia> Existencias;
 	unsigned int iter;
 
 	header("FICHA DE STOCK", 2);
-
 	for (const Mercaderia& mercaderia : MERCADERIAS)
 	{
 		Existencias.clear();
+		nombreMercaderia = "  "; nombreMercaderia.insert(1, mercaderia.getNombre());
 
-		std::cout << settextcolor(console_text_colors::light_magenta) << formatearNombreMercaderia(mercaderia.getNombre()) << std::endl
+		std::cout
+			<< settextcolor(console_text_colors::light_magenta) << formatearCentrado(nombreMercaderia, 134, "=") << std::endl
 			<< settextcolor(colorEnfoque) << "   Fecha    " << settextcolor(colorBase) << "||"
 			<< settextcolor(colorEnfoque) << "               Ingresos               " << settextcolor(colorBase) << "||"
 			<< settextcolor(colorEnfoque) << "                Egresos               " << settextcolor(colorBase) << "||"
@@ -650,7 +637,9 @@ void OP_mostrarFichaStock()
 			//sigue imprimiendo hasta que no queden ni registros ni existencias
 			while (iter < dia->Registros.size() || iter < Existencias.size())
 			{
-				std::cout << settextcolor(colorInput) << formatearCentrado( (primerRegistro ? dia->Fecha : ""), 12, " " ) << settextcolor(colorBase) << "||" //fecha
+				std::cout
+					<< settextcolor(colorInput) << formatearCentrado( (primerRegistro ? dia->Fecha : ""), 12, " " ) //fecha
+					<< settextcolor(colorBase) << "||"
 					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta > 0 ? mostrarRegistro(dia->Registros[iter]) : grupoVacio) : grupoVacio) << "||" //ingresos
 					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta < 0 ? mostrarRegistro(dia->Registros[iter]) : grupoVacio) : grupoVacio) << "||" //egresos
 					<< (iter < Existencias.size() ? mostrarExistencia(Existencias[iter]) : grupoVacio) << "||" //existencias
@@ -663,13 +652,9 @@ void OP_mostrarFichaStock()
 		} //dia
 		std::cout << std::endl << std::endl << std::endl;
 	} //mercaderia
+
 	std::cout << std::endl << std::endl << "Presione cualquier tecla para volver...";
 	_getch();
-}
-std::string formatearNombreMercaderia(std::string nombre)
-{
-	nombre.insert(0, " "); nombre.append(" ");
-	return formatearCentrado(nombre, 134, "=");
 }
 std::string mostrarRegistro(const RegistroPrecio& registro)
 {
@@ -706,25 +691,6 @@ std::string formatearCentrado(int num, unsigned int longitud, std::string caract
 	return formatearCentrado(std::to_string(num), longitud, caracter);
 }
 
-void OP_salir()
-{
-	std::filesystem::create_directory("Libros");
-	EXP_LibroDiario();
-	EXP_LibroMayor();
-	EXP_EstadoResultados();
-	EXP_FichaStock();
-
-	header("PROGRAMA FINALIZADO", 2);
-	std::cout << settextcolor(console_text_colors::light_green) << "Archivos .csv guardados correctamente en carpeta"
-		<< settextcolor(colorEnfoque) << " 'Libros' " << settextcolor(console_text_colors::light_green) << "!"
-	<< settextcolor(colorDatos) << "\nIngreselos en Microsoft Excel como archivo de texto delimitado por "
-		<< settextcolor(colorEnfoque) << "';'" << settextcolor(colorDatos) << " para leerlos correctamente.";
-
-	std::cout << settextcolor(colorBase) << "\n\nPresione cualquier tecla para cerrar la consola...";
-	_getch();
-
-	loop = false;
-}
 void terminarPrograma(int signal)
 {
 	std::filesystem::create_directory("Libros");
@@ -733,23 +699,33 @@ void terminarPrograma(int signal)
 	EXP_EstadoResultados();
 	EXP_FichaStock();
 
-	exit(signal);
-}
+	if (signal == -1)
+	{
+		header("PROGRAMA FINALIZADO", 2);
+		std::cout << settextcolor(console_text_colors::light_green) << "Archivos .csv guardados correctamente en carpeta"
+			<< settextcolor(colorEnfoque) << " 'Libros' " << settextcolor(console_text_colors::light_green) << "!"
+			<< settextcolor(colorDatos) << "\nIngreselos en Microsoft Excel como archivo de texto delimitado por "
+			<< settextcolor(colorEnfoque) << "';'" << settextcolor(colorDatos) << " para leerlos correctamente.";
 
+		std::cout << settextcolor(colorBase) << "\n\nPresione cualquier tecla para cerrar la consola...";
+		_getch();
+		loop = false;
+	}
+	else {
+		exit(signal);
+	}
+}
 void EXP_LibroDiario()
 {
-	//inicializa archivo
-	std::ofstream LibroDiario; LibroDiario.open("Libros/LibroDiario.csv");
-
-	LibroDiario << "'';Cuenta;Modif;Debe;Haber" << std::endl << std::endl;
-
 	std::string nombreCuenta;
 	std::string modif;
 	bool esDebe;
-
+	
+	std::ofstream LibroDiario; LibroDiario.open("Libros/LibroDiario.csv");
+	LibroDiario << "'';Cuenta;Modif;Debe;Haber" << std::endl << std::endl;
 	for (DiaOperaciones &dia : DIAS)
 	{
-		LibroDiario << formatearParaArchivo(dia.getFecha()) << std::endl; // "'01/01'"
+		LibroDiario << formatearParaArchivo(dia.getFecha()) << std::endl;
 
 		for (const Operacion* operacion : dia.getOperaciones())
 		{
@@ -758,7 +734,6 @@ void EXP_LibroDiario()
 				nombreCuenta = linea->cuenta->getNombre();
 				esDebe = (linea->delta > 0) ? true : false;
 
-				// modificador
 				switch (linea->cuenta->getTipo())
 				{
 				case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:
@@ -779,53 +754,43 @@ void EXP_LibroDiario()
 					break;
 				}
 
-
-				LibroDiario << "'';"
-							<< nombreCuenta << ";"
-							<< modif << ";" 
-							<< formatearParaArchivo(esDebe ? linea->delta : 0) << ";"
-							<< formatearParaArchivo(!esDebe ? abs(linea->delta) : 0) << std::endl;
-
+				LibroDiario 
+					<< "'';"
+					<< nombreCuenta << ";"
+					<< modif << ";" 
+					<< formatearParaArchivo(esDebe ? linea->delta : 0) << ";"
+					<< formatearParaArchivo(!esDebe ? abs(linea->delta) : 0) << std::endl;
 			} //lineas
-
 			LibroDiario << "'';segun " << operacion->getDocumento() << std::endl << std::endl;
 		} //operaciones
-
 	} //dias
+
 	LibroDiario.close();
 }
 void EXP_LibroMayor()
 {
-	std::ofstream LibroMayor; LibroMayor.open("Libros/LibroMayor.csv");
-
 	std::vector<int> debes; std::vector<int> haberes;
 	int saldo;
 	bool salir;
-
+	unsigned int lineaActual;
+	
+	std::ofstream LibroMayor; LibroMayor.open("Libros/LibroMayor.csv");
 	for (Cuenta &cuenta : CUENTAS)
 	{
 		debes.clear(); haberes.clear();
-
 		if (cuenta.hayDias())
 		{
-			LibroMayor << cuenta.getNombre() << std::endl << "Debe;Haber" << std::endl;
-
 			saldo = 0; salir = false;
 
+			LibroMayor << cuenta.getNombre() << std::endl 
+				<< "Debe;Haber" << std::endl;
 			for (DiaCuenta &dia : cuenta.getDias())
 			{
-				if (dia.delta > 0)
-				{
-					debes.push_back(dia.delta);
-				} else if (dia.delta < 0)
-				{
-					haberes.push_back(abs(dia.delta));
-				}
-
+				(dia.delta > 0 ? debes : haberes).push_back(abs(dia.delta));
 				saldo += dia.delta;
 			}
 
-			unsigned int lineaActual = 0;
+			lineaActual = 0;
 			while (lineaActual < debes.size() || lineaActual < haberes.size())
 			{
 				LibroMayor
@@ -841,44 +806,44 @@ void EXP_LibroMayor()
 				LibroMayor << "Cuenta saldada: $0" << std::endl << std::endl;
 			}
 		}
-	}
+	} //cuentas
 
 	LibroMayor.close();
 }
 void EXP_EstadoResultados()
 {
 	std::ofstream EstadoResultados; EstadoResultados.open("Libros/EstadoResultados.csv");
-	int utilidad = (buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual()) * -1;
+	int utilidad = -(buscarCuenta("Ventas")->getSaldoActual() + buscarCuenta("CMV")->getSaldoActual());
 
-	EstadoResultados << "Ventas;$" << buscarCuenta("Ventas")->getSaldoActual() * -1 << std::endl;
-	EstadoResultados << "CMV;$" << buscarCuenta("CMV")->getSaldoActual() * -1 << std::endl << std::endl;
-	EstadoResultados << "Utilidad Bruta;$" << utilidad << std::endl << std::endl;
+	EstadoResultados << "Ventas;" << formatearDinero(abs(buscarCuenta("Ventas")->getSaldoActual())) << std::endl;
+	EstadoResultados << "CMV;" << formatearDinero(abs(buscarCuenta("CMV")->getSaldoActual())) << std::endl << std::endl;
+	EstadoResultados << "Utilidad Bruta;" << formatearDinero(utilidad) << std::endl << std::endl;
 
 	for (const Cuenta *cuentaGastos : GASTOS)
 	{
 		if (cuentaGastos->getSaldoActual() != 0)
 		{
-			EstadoResultados << cuentaGastos->getNombre() << ";$" << cuentaGastos->getSaldoActual() * -1 << std::endl;
+			EstadoResultados << cuentaGastos->getNombre() << ";" << formatearDinero(abs(cuentaGastos->getSaldoActual())) << std::endl;
 			utilidad -= cuentaGastos->getSaldoActual();
 		}
 	}
-	EstadoResultados << std::endl << "Utilidad Neto;$" << utilidad;
+	EstadoResultados << std::endl << "Utilidad Neto;" << formatearDinero(utilidad);
 
 	EstadoResultados.close();
 }
 void EXP_FichaStock()
 {
-	std::ofstream FichaStock; FichaStock.open("Libros/FichaStock.csv");
-
 	bool primerRegistro;
 	std::vector<ExistenciasPrecioMercaderia> Existencias;
 	unsigned int iter;
 
+	std::ofstream FichaStock; FichaStock.open("Libros/FichaStock.csv");
 	for (const Mercaderia& mercaderia : MERCADERIAS)
 	{
 		Existencias.clear();
 
-		FichaStock << ";;;;" << mercaderia.getNombre() << std::endl
+		FichaStock 
+			<< ";;;;" << mercaderia.getNombre() << std::endl
 			<< "Fecha;;Ingresos;;;Egresos;;;Existencias;" << std::endl
 			<< ";Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total; Unidades; C.Unitario; C.Total"
 			<< std::endl << std::endl;
@@ -898,7 +863,8 @@ void EXP_FichaStock()
 			//sigue imprimiendo hasta que no queden ni registros ni existencias
 			while(iter < dia->Registros.size() || iter < Existencias.size())
 			{
-				FichaStock << (primerRegistro ? formatearParaArchivo(dia->Fecha) : "") << ";" //fecha
+				FichaStock 
+					<< (primerRegistro ? formatearParaArchivo(dia->Fecha) : "") << ";" //fecha
 					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta > 0 ? imprimirRegistro(dia->Registros[iter]) : ";;;") : ";;;") //ingresos
 					<< (iter < dia->Registros.size() ? (dia->Registros[iter].delta < 0 ? imprimirRegistro(dia->Registros[iter]) : ";;;") : ";;;") //egresos
 					<< (iter < Existencias.size() ? imprimirExistencia(Existencias[iter]) : "") //existencias
@@ -922,9 +888,7 @@ std::string formatearParaArchivo(std::string str)
 }
 std::string formatearParaArchivo(int num)
 {
-	std::string str = std::to_string(num);
-	str.insert(0, "'"); str.append("'");
-	return str;
+	return formatearParaArchivo(std::to_string(num));
 }
 unsigned int buscarOCrearExistencia(std::vector<ExistenciasPrecioMercaderia>& Existencias, unsigned int precio)
 {
@@ -955,7 +919,8 @@ std::string imprimirExistencia(const ExistenciasPrecioMercaderia& existencia)
 	return impresion;
 }
 
-void initVectores() {
+void initVectores()
+{
 	for (Cuenta& cuenta : CUENTAS)
 	{
 		if (cuenta.getTipo() == Cuenta::TipoCuenta::ACTIVO_OPERATIVO) { ACTIVOS.push_back(&cuenta); }
@@ -967,36 +932,34 @@ void initVectores() {
 const std::vector<Opcion> OPCIONES = {
 	Opcion("Nueva Fecha", [] { pedirNuevaFecha("Ingrese la nueva fecha", "NUEVA FECHA"); }),
 	Opcion("Transaccion de Cuentas", [] { OP_Transaccion(); }),
-	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	Opcion("Compra de Mercaderias", &OP_CompraMercaderias),
+	Opcion("Venta de Mercaderias", &OP_VentaMercaderias),
 	Opcion("Nota de Credito", [] { OP_Nota::efectuarNota(true); }),
 	Opcion("Nota de Debito", [] { OP_Nota::efectuarNota(false); }),
-	Opcion("Ver L. Diario", [] { OP_mostrarLibroDiario(); }),
-	Opcion("Ver L. Mayor", [] { OP_mostrarLibroMayor(); }),
+	Opcion("Ver Libro Diario", [] { OP_mostrarLibroDiario(); }),
+	Opcion("Ver Libro Mayor", [] { OP_mostrarLibroMayor(); }),
 	Opcion("Ver Estado de Resultados", [] {OP_mostrarEstadoResultados(); }),
 	Opcion("Ver Ficha de Stock", [] {OP_mostrarFichaStock(); }),
-	Opcion("Salir del Programa", [] { OP_salir(); })
+	Opcion("Salir del Programa", [] { terminarPrograma(-1); })
 };
 
 
 int main()
 {
 	signal(SIGINT, terminarPrograma);
-
 	console_out_context ctxout;
 	console<console_type::out> conout(ctxout);
 	conout.settitle("Proyecto SIC v1.0");
-	::SetConsoleDisplayMode(ctxout.handle, (DWORD)CONSOLE_WINDOWED_MODE, nullptr);
-	COORD info = { conout.getsize().X, 100 };
-	::SetConsoleScreenBufferSize(ctxout.handle, info);
-
+	::SetConsoleDisplayMode(ctxout.handle, (DWORD)CONSOLE_FULLSCREEN_MODE, nullptr);
+	::SetConsoleScreenBufferSize(ctxout.handle, {conout.getsize().X, 100});
 	initVectores();
 
 	std::string opString;
 	bool pedirFecha = true;
 
 	header("PROYECTO SIC", 2);
-	std::cout << "Iniciar con apertura?"
+	std::cout
+		<< "Iniciar con apertura?"
 		<< settextcolor(console_text_colors::light_green) << "\n\n1. Si"
 		<< settextcolor(console_text_colors::light_red) << "\n2. No"
 		<< settextcolor(colorBase) << "\n\nElija una opcion: ";
@@ -1017,19 +980,16 @@ int main()
 		}
 
 		std::cout << "\n\nSeleccione una opcion: ";
-		std::cin >> opString;
+		std::cin >> settextcolor(console_text_colors::light_magenta) >> opString;
 
 		
 		int op = validarInt(opString, 1, OPCIONES.size());
 		if (op != 0)
 		{
-			/// input valido!
 			OPCIONES[op - 1].Funcion();
 		}
 		else {
-			///input invalido
-			std::cout << "\n\nValor no valido, presione cualquier tecla para volver a intentarlo: ";
-			_getch();
+			error();
 		}
 	} while (loop);
 

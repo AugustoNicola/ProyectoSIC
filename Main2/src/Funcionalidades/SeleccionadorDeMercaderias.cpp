@@ -5,23 +5,27 @@ using namespace conmanip;
 SeleccionadorDeMercaderias::SeleccionadorDeMercaderias(bool _permitirCancelar, TipoOperacion _tipo)
 	: Tipo(_tipo), PermitirCancelar(_permitirCancelar)
 {
-
 	if (intentarElegirMercaderia())
 	{
-		if (Tipo == TipoOperacion::COMPRA)
+		switch (Tipo)
 		{
+		case SeleccionadorDeMercaderias::TipoOperacion::COMPRA:
 			elegirPrecioCompra();
 			elegirCantidadCompra();
-		} else if (Tipo == TipoOperacion::VENTA) {
+			break;
+		case SeleccionadorDeMercaderias::TipoOperacion::VENTA:
 			elegirCantidadVenta();
 			elegirPrecioVenta();
-		} else if (Tipo == TipoOperacion::DEVOLUCION) {
+			break;
+		case SeleccionadorDeMercaderias::TipoOperacion::DEVOLUCION:
 			elegirPrecioDevolucion();
 			elegirCantidadDevolucion();
-		} else if (Tipo == TipoOperacion::REINTEGRO) {
+			break;
+		case SeleccionadorDeMercaderias::TipoOperacion::REINTEGRO:
 			elegirPrecioCompra();
 			elegirCantidadCompra();
 			elegirPrecioVenta();
+			break;
 		}
 	}
 };
@@ -34,7 +38,6 @@ bool SeleccionadorDeMercaderias::intentarElegirMercaderia()
 		do
 		{
 			cargarMercaderias();
-
 			std::cout << settextcolor(colorBase) << "\n\nElija una opcion: ";
 			std::cin >> settextcolor(colorInput) >> strOpcion;
 		} while (!validarMercaderia(strOpcion));
@@ -47,10 +50,9 @@ bool SeleccionadorDeMercaderias::intentarElegirMercaderia()
 		return false;
 	}
 }
-
 bool SeleccionadorDeMercaderias::hayOpcionesMercaderiasValidas()
 {
-	if (Tipo != TipoOperacion::COMPRA)
+	if (Tipo != TipoOperacion::COMPRA || Tipo != TipoOperacion::REINTEGRO)
 	{
 		if (!MERCADERIAS.empty())
 		{
@@ -63,7 +65,6 @@ bool SeleccionadorDeMercaderias::hayOpcionesMercaderiasValidas()
 	}
 	return true;
 }
-
 void SeleccionadorDeMercaderias::cargarMercaderias()
 {
 	unsigned int contadorOpciones = 1;
@@ -104,7 +105,6 @@ void SeleccionadorDeMercaderias::cargarMercaderias()
 			<< "\n" << contadorOpciones << ". " << "Cancelar";
 	}
 }
-
 bool SeleccionadorDeMercaderias::validarMercaderia(std::string strOpcion)
 {
 	int opcionElegida = validarInt(strOpcion, 1, mercaderiasDisponibles.size() 
@@ -137,7 +137,6 @@ bool SeleccionadorDeMercaderias::validarMercaderia(std::string strOpcion)
 		return true;
 	}
 }
-
 bool SeleccionadorDeMercaderias::opcionCrearMercaderiaElegida(int opcionElegida)
 {
 	return (Tipo == TipoOperacion::COMPRA ? opcionElegida == mercaderiasDisponibles.size() + 1 : false);
@@ -160,13 +159,13 @@ void SeleccionadorDeMercaderias::elegirPrecioCompra()
 		std::cin >> settextcolor(colorInput) >> strPrecio;
 	} while (!validarPrecioCompra(strPrecio));
 }
-
 void SeleccionadorDeMercaderias::listarPreciosMercaderia()
 {
 	header(mercaderiaElegida->getNombre() += ": PRECIOS UNITARIOS", 1);
 	for (const ExistenciasPrecioMercaderia& registro : mercaderiaElegida->getExistencias())
 	{
-		std::cout << settextcolor(colorBase) << "\n-" 
+		std::cout
+			<< settextcolor(colorBase) << "\n-" 
 			<< settextcolor(console_text_colors::light_magenta) << "$" << registro.precio 
 			<< settextcolor(colorBase) << " (" 
 			<< settextcolor(console_text_colors::light_yellow) << registro.existencias
@@ -177,7 +176,6 @@ void SeleccionadorDeMercaderias::listarPreciosMercaderia()
 		std::cout << settextcolor(colorError) << "\nTodavia no hay precios unitarios!";
 	}
 }
-
 bool SeleccionadorDeMercaderias::validarPrecioCompra(std::string strPrecio)
 {
 	precioCompra = validarInt(strPrecio, 1);
@@ -195,21 +193,22 @@ void SeleccionadorDeMercaderias::elegirCantidadCompra()
 	do
 	{
 		system("CLS");
-		std::cout << settextcolor(colorBase) << "=============== " << mercaderiaElegida->getNombre() << " ("
+		std::cout
+			<< settextcolor(colorBase) << "=============== " << mercaderiaElegida->getNombre() << " ("
 			<< settextcolor(colorDatos) << formatearDinero(precioCompra)
-			<< settextcolor(colorBase) << " c/u) ===============\n\n";
+			<< settextcolor(colorBase) << " c/u) ===============" << std::endl << std::endl
 
-		std::cout << "Existencias: "
+			<< "Existencias: "
 			<< settextcolor(colorDatos) << (mercaderiaElegida->getExistenciasPrecio(precioCompra))
-			<< settextcolor(colorBase) << " unidades";
+			<< settextcolor(colorBase) << " unidades" << std::endl << std::endl
 
-		std::cout << "\n\nElija la cantidad de mercaderia que " 
+			<< "Elija la cantidad de mercaderia que " 
 			<< (Tipo == TipoOperacion::COMPRA ? "se compra: " : "se nos devuelve: $");
+
 		std::cin >> settextcolor(colorInput) >> strCantidad;
 
 	} while (!validarCantidadCompra(strCantidad));
 }
-
 bool SeleccionadorDeMercaderias::validarCantidadCompra(std::string strCantidad)
 {
 	cantidadMercaderias = validarInt(strCantidad, 1);
@@ -217,10 +216,9 @@ bool SeleccionadorDeMercaderias::validarCantidadCompra(std::string strCantidad)
 	{
 		error();
 		return false;
-	} else {
-		totalGastadoCompra = mercaderiaElegida->registrarCompra(fecha, precioCompra, cantidadMercaderias);
-		return true;
 	}
+	totalGastadoCompra = mercaderiaElegida->registrarCompra(fecha, precioCompra, cantidadMercaderias);
+	return true;
 }
 
 void SeleccionadorDeMercaderias::elegirCantidadVenta()
@@ -233,7 +231,6 @@ void SeleccionadorDeMercaderias::elegirCantidadVenta()
 		std::cin >> settextcolor(colorInput) >> strCantidad;
 	} while (!validarCantidadVenta(strCantidad));
 }
-
 bool SeleccionadorDeMercaderias::validarCantidadVenta(std::string strCantidad)
 {
 	cantidadMercaderias = validarInt(strCantidad, 1, mercaderiaElegida->getExistenciasTotales(), mercaderiaElegida->getExistenciasTotales(), mercaderiaElegida->getExistenciasTotales());
@@ -241,10 +238,9 @@ bool SeleccionadorDeMercaderias::validarCantidadVenta(std::string strCantidad)
 	{
 		error();
 		return false;
-	} else {
-		totalPerdidoVenta = mercaderiaElegida->registarVenta(fecha, cantidadMercaderias);
-		return true;
-	}
+	} 
+	totalPerdidoVenta = mercaderiaElegida->registarVenta(fecha, cantidadMercaderias);
+	return true;
 }
 
 void SeleccionadorDeMercaderias::elegirPrecioVenta()
@@ -252,18 +248,16 @@ void SeleccionadorDeMercaderias::elegirPrecioVenta()
 	std::string strPrecio;
 	do
 	{
-		header(mercaderiaElegida->getNombre() += (std::string)" (" += std::to_string(cantidadMercaderias) += " unidades vendida/s", 2);
 		system("CLS");
-		std::cout << settextcolor(colorBase) << "===============" << mercaderiaElegida->getNombre() << " ("
-			<< settextcolor(colorDatos) << cantidadMercaderias
-			<< settextcolor(colorBase) << " unidad/es vendida/s ===============\n\n";
+		std::cout << settextcolor(colorBase) << "=============== " << mercaderiaElegida->getNombre() << " ("
+			<< settextcolor(colorDatos) << cantidadMercaderias << " unidad/es vendida/s) ===============" << std::endl << std::endl
 		
-		std::cout << (Tipo == TipoOperacion::COMPRA ? "Elija el precio de venta de la/s mercaderia/s vendida/s: $" 
+			<< settextcolor(colorBase) << (Tipo == TipoOperacion::VENTA ? "Elija el precio de venta de la/s mercaderia/s vendida/s: $" 
 			: "Elija el precio al que se vendieron la/s mercaderia/s devuelta/s: $");
+
 		std::cin >> settextcolor(colorInput) >> strPrecio;
 	} while (!validarPrecioVenta(strPrecio));
 }
-
 bool SeleccionadorDeMercaderias::validarPrecioVenta(std::string strPrecio)
 {
 	precioVenta = validarInt(strPrecio, 1);
@@ -282,12 +276,10 @@ void SeleccionadorDeMercaderias::elegirPrecioDevolucion()
 	do
 	{
 		listarPreciosMercaderia();
-
 		std::cout << settextcolor(colorBase) <<"\n\nIngrese el precio de las mercaderias devueltas: $";
 		std::cin >> settextcolor(colorInput) >> strPrecio;
 	} while (!validarPrecioDevolucion(strPrecio));
 }
-
 bool SeleccionadorDeMercaderias::validarPrecioDevolucion(std::string strPrecio)
 {
 	precioDevolucion = validarInt(strPrecio, 1);
@@ -305,7 +297,8 @@ void SeleccionadorDeMercaderias::elegirCantidadDevolucion()
 	do
 	{
 		system("CLS");
-		std::cout << settextcolor(colorBase) << "=============== " << mercaderiaElegida->getNombre() << " ("
+		std::cout
+			<< settextcolor(colorBase) << "=============== " << mercaderiaElegida->getNombre() << " ("
 			<< settextcolor(colorDatos) << formatearDinero(precioDevolucion)
 			<< settextcolor(colorBase) << " c/u) ===============\n\n" << "Existencias: "
 			<< settextcolor(colorDatos) << (mercaderiaElegida->getExistenciasPrecio(precioDevolucion))
@@ -314,19 +307,18 @@ void SeleccionadorDeMercaderias::elegirCantidadDevolucion()
 
 	} while (!validarCantidadDevolucion(strCantidad));
 }
-
 bool SeleccionadorDeMercaderias::validarCantidadDevolucion(std::string strCantidad)
 {
-	cantidadMercaderias = validarInt(strCantidad, 1, mercaderiaElegida->getExistenciasPrecio(precioDevolucion), {}, mercaderiaElegida->getExistenciasPrecio(precioDevolucion));
+	cantidadMercaderias = validarInt(strCantidad, 1, mercaderiaElegida->getExistenciasPrecio(precioDevolucion),
+		{}, mercaderiaElegida->getExistenciasPrecio(precioDevolucion));
 	if (cantidadMercaderias == 0)
 	{
 		error();
 		return false;
 	}
-	else {
-		totalGanadoDevolucion = mercaderiaElegida->registrarCompra(fecha, precioDevolucion, -cantidadMercaderias) * -1;
-		return true;
-	}
+	totalGanadoDevolucion = mercaderiaElegida->registrarCompra(fecha, precioDevolucion, -cantidadMercaderias) * -1;
+	return true;
+	
 }
 
 Mercaderia* SeleccionadorDeMercaderias::getMercaderia() const { return mercaderiaElegida; }

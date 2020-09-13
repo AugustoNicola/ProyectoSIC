@@ -14,7 +14,8 @@
 // You must not remove this notice, or any other, from this software.
 // ----------------------------------------------------------------------------------------------
 
-#pragma once
+#ifndef CONMANIP
+#define CONMANIP
 
 #include <windows.h>
 
@@ -559,3 +560,5 @@ namespace conmanip
       return console_manipulator<COORD>(&_details::_setpos, c, context.handle);
    }
 }
+
+#endif

@@ -2,7 +2,6 @@
 
 #include "Varias.h"
 
-
 enum class ModoAumento
 {
 	Debe, Haber, Apertura
@@ -23,8 +22,10 @@ private:
 
 public:
 	static Cuenta* elegirCuenta(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta);
+	static void initVariables(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta);
 	static void configurarModoAumento();
 	static void configurarFiltroCuentas();
+
 	static void mostrarCuentas();
 	static void separadorDeTipo(Cuenta::TipoCuenta tipo);
 };

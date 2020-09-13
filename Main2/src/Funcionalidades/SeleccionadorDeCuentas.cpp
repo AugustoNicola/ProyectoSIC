@@ -1,5 +1,7 @@
 #include "SeleccionadorDeCuentas.h"
 
+using namespace conmanip;
+
 bool SeleccionadorDeCuentas::PermitirCancelar;
 Cuenta::TipoCuenta SeleccionadorDeCuentas::FiltroCuentas;
 ModoAumento SeleccionadorDeCuentas::modoAumento;
@@ -12,13 +14,7 @@ std::string SeleccionadorDeCuentas::leyendaGasto;
 
 Cuenta* SeleccionadorDeCuentas::elegirCuenta(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
 {
-	using namespace conmanip;
-
-	PermitirCancelar = _permitirCancelar;
-	FiltroCuentas = _filtroCuentas;
-	modoAumento = _modoAumento;
-	MsgEleccionCuenta = _msgEleccionCuenta;
-
+	initVariables(_permitirCancelar, _filtroCuentas, _modoAumento, _msgEleccionCuenta);
 	configurarModoAumento();
 	configurarFiltroCuentas();
 
@@ -40,6 +36,13 @@ Cuenta* SeleccionadorDeCuentas::elegirCuenta(bool _permitirCancelar, Cuenta::Tip
 	return ( (opcionElegida == cuentasSeleccionables.size() + 1) ? 
 		nullptr : cuentasSeleccionables[opcionElegida - 1]);
 }
+void SeleccionadorDeCuentas::initVariables(bool _permitirCancelar, Cuenta::TipoCuenta _filtroCuentas, ModoAumento _modoAumento, std::string _msgEleccionCuenta)
+{
+	PermitirCancelar = _permitirCancelar;
+	FiltroCuentas = _filtroCuentas;
+	modoAumento = _modoAumento;
+	MsgEleccionCuenta = _msgEleccionCuenta;
+}
 void SeleccionadorDeCuentas::configurarModoAumento()
 {
 	switch (modoAumento)
@@ -58,15 +61,18 @@ void SeleccionadorDeCuentas::configurarModoAumento()
 void SeleccionadorDeCuentas::configurarFiltroCuentas()
 {
 	cuentasSeleccionables = {};
+
 	if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::ACTIVO_OPERATIVO)
 	{
 		if (modoAumento == ModoAumento::Apertura) { cuentasSeleccionables.push_back(buscarCuenta("Mercaderias")); }
 		cuentasSeleccionables.insert(cuentasSeleccionables.end(), ACTIVOS.begin(), ACTIVOS.end());
 	}
+
 	if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::PASIVO_OPERATIVO)
 	{
 		cuentasSeleccionables.insert(cuentasSeleccionables.end(), PASIVOS.begin(), PASIVOS.end());
 	}
+
 	if (FiltroCuentas == Cuenta::TipoCuenta::F_OPER || FiltroCuentas == Cuenta::TipoCuenta::GASTO_OPERATIVO)
 	{
 		cuentasSeleccionables.insert(cuentasSeleccionables.end(), GASTOS.begin(), GASTOS.end());
@@ -90,7 +96,7 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 		break;
 	}
 
-	int contadorCuentasRecorridas = 1;
+	unsigned int contadorCuentasRecorridas = 1;
 	std::string leyendaActual;
 
 	separadorDeTipo(cuentasSeleccionables[0]->getTipo());
@@ -122,14 +128,13 @@ void SeleccionadorDeCuentas::mostrarCuentas()
 	}
 	if (PermitirCancelar)
 	{
-		std::cout << conmanip::settextcolor(colorBase)
+		std::cout << settextcolor(colorBase)
 			<< "\n=========================\n" << contadorCuentasRecorridas << ". " << "Cancelar";
 	}
 	
 }
 void SeleccionadorDeCuentas::separadorDeTipo(Cuenta::TipoCuenta tipo)
 {
-	using namespace conmanip;
 	switch (tipo)
 	{
 	case Cuenta::TipoCuenta::ACTIVO_OPERATIVO:

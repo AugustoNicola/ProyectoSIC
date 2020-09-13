@@ -1,19 +1,79 @@
 '';Cuenta;Modif;Debe;Haber
 
-'20/03'
-'';Mercaderias;A+;'1500';'0'
-'';Capital;PN+;'0';'1500'
+'01/01'
+'';Caja;A+;'5000';'0'
+'';Proovedores;P+;'0';'1000'
+'';Mercaderias;A+;'800';'0'
+'';Capital;PN+;'0';'4800'
 '';segun Apertura
 
-'01/01'
-'';Proovedores;P+;'0';'250'
-'';Gastos;R+;'0';'250'
-'';Caja;A+;'500';'0'
-'';segun si
+'02/01'
+'';Proovedores;P+;'0';'1000'
+'';Fondo Fijo;A+;'1000';'0'
+'';segun Aumento deuda
 
-'02/02'
-'';Mercaderias;A+;'3000';'0'
-'';Proovedores;P+;'0';'1500'
-'';Acreedores Varios;P+;'0';'1500'
-'';segun  
+'03/01'
+'';Caja;A-;'0';'2000'
+'';Proovedores;P-;'2000';'0'
+'';segun Disminucion Deuda
+
+'05/01'
+'';Mercaderias;A+;'5';'0'
+'';Gastos;R+;'0';'5'
+'';segun Compra tonta
+
+'';Mercaderias;A+;'470';'0'
+'';Acreedores Prendarios;P+;'0';'400'
+'';Dividendo a Pagar;P+;'0';'70'
+'';segun Compra motitos xd
+
+'08/01'
+'';Ventas;R+;'0';'3000'
+'';Caja;A+;'3000';'0'
+'';Mercaderias;A-;'0';'805'
+'';CMV;R-;'805';'0'
+'';segun Venta?
+
+'';Ventas;R+;'0';'1500'
+'';Marcas de Fabrica;A+;'1500';'0'
+'';Mercaderias;A-;'0';'470'
+'';CMV;R-;'470';'0'
+'';segun venta segura
+
+'09/01'
+'';Caja;A+;'100';'0'
+'';Proovedores;P+;'0';'100'
+'';segun caja
+
+'';Proovedores;P+;'0';'150'
+'';Gastos;R-;'150';'0'
+'';segun proov
+
+'';Gastos;R-;'250';'0'
+'';Fondo Fijo;A-;'0';'250'
+'';segun gastos
+
+'10/01'
+'';Caja;A-;'0';'1000'
+'';Prevision para Accidentes de Trabajo;P-;'1000';'0'
+'';segun caja
+
+'';Proovedores;P-;'150';'0'
+'';Caja;A-;'0';'150'
+'';segun ehhh
+
+'';Gastos;R+;'0';'150'
+'';Gastos de Publicidad;R-;'150';'0'
+'';segun jeje (gastos)
+
+'11/01'
+'';Mercaderias;A+;'700';'0'
+'';Caja;A-;'0';'700'
+'';segun N Deb de Compra
+
+'';Ventas;R+;'0';'1000'
+'';Caja;A+;'1000';'0'
+'';Mercaderias;A-;'0';'700'
+'';CMV;R-;'700';'0'
+'';segun N Deb de Venta
 
