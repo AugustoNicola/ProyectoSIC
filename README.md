@@ -1,6 +1,6 @@
 # Proyecto-SIC: contabilidad en la terminal
 
-![Screenshot](https://raw.githubusercontent.com/AugustoNicola/ProyectoSIC/main/screenshot.png?token=ALORPBRCJKKEADUDLEHP5D3AKUENE)
+![Screenshot](https://raw.githubusercontent.com/AugustoNicola/ProyectoSIC/master/screenshot.png?token=ALORPBUS2H4RISZRPMTGWNLAVZYOA)
 
 ## Resumen
 
